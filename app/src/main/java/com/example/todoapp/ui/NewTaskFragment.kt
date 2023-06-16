@@ -54,7 +54,7 @@ class NewTaskFragment : Fragment() {
 
         val id = args.id
         if(id != null){
-            todoItem = model.getItem(id)
+            todoItem = model.getItem(id).copy()
             updateViewsInfo()
         }
 
