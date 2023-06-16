@@ -169,7 +169,7 @@ class NewTaskFragment : Fragment() {
 
         timePickerDialog = DatePickerDialog(requireContext(),
             R.style.DatePickerStyle,
-            OnDateSetListener { view, year, month, day ->
+            { view, year, month, day ->
                 binding.date.visibility = View.VISIBLE
                 myCalendar.set(Calendar.YEAR, year)
                 myCalendar.set(Calendar.MONTH, month)
