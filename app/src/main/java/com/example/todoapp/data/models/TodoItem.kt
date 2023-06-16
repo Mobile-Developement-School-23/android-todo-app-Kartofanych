@@ -11,7 +11,7 @@ data class TodoItem(
     var importance : Importance,
     var deadline : Long?,
     var done : Boolean,
-    val dateCreation : Long,
+    var dateCreation : Long,
     var dateChanged : String?
 ) {
 

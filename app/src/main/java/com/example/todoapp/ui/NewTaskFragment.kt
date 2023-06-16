@@ -242,10 +242,9 @@ class NewTaskFragment : Fragment() {
 
 
     private fun saveNewTask() {
-
-
         todoItem.id = model.getLastId().toString()
         todoItem.text = binding.editTodo.text.toString()
+        todoItem.dateCreation = System.currentTimeMillis()
         //
         if(todoItem.text.isEmpty()){
             Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT).show()
