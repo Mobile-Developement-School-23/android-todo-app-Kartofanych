@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="separator">#33000000</color>
+    <color name="overlay">#0F000000</color>
+    <color name="nav_bar_blur">#CCFFFFFF</color>
+    <color name="primary">#000000</color>
+    <color name="secondary">#99000000</color>
+    <color name="tertiary">#4D000000</color>
+    <color name="disable">#26000000</color>
+    <color name="red">#FE3B30</color>
+    <color name="green">#34C659</color>
+    <color name="blue">#007AFF</color>
+    <color name="gray">#8D8D92</color>
+    <color name="gray_light">#D0D0D5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="back_primary">#F6F5F1</color>
+    <color name="back_secondary">#FFFFFF</color>
+    <color name="back_elevated">#FFFFFF</color>
+
+</resources>
