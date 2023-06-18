@@ -41,6 +41,7 @@ class TasksFragment : Fragment(){
         super.onCreate(savedInstanceState)
         binding = FragmentTasksBinding.inflate(layoutInflater)
 
+        filter = model.getFilter()
         if(savedInstanceState != null){
             filter = Filter.fromInt(savedInstanceState.getInt("filter"))
             modeAll = savedInstanceState.getBoolean("mode")
@@ -53,6 +54,7 @@ class TasksFragment : Fragment(){
                 }
             }
         }
+
 
 
     }

@@ -75,6 +75,10 @@ class MainViewModel : ViewModel() {
         return currentItem
     }
 
+    fun getFilter() : Filter {
+        return filter
+    }
+
 
     fun getLastId():Int{
         return repository.getLastId()
