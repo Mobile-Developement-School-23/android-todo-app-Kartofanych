@@ -18,37 +18,39 @@ import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.*
-import com.example.todoapp.data.models.TodoItem
 import com.example.todoapp.databinding.FragmentTasksBinding
+import com.example.todoapp.room.TodoItem
 import com.example.todoapp.utils.Filter
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 
-class TasksFragment : Fragment(){
+class TasksFragment : Fragment() {
 
-    private lateinit var adapter : DealsAdapter
+    private lateinit var adapter: DealsAdapter
 
     private val model: MainViewModel by activityViewModels()
 
     private lateinit var binding: FragmentTasksBinding
 
-    private var modeAll : Boolean = false
+    private var modeAll: Boolean = false
 
-    private var filter : Filter = Filter.PRIORITY
+    private var filter: Filter = Filter.PRIORITY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentTasksBinding.inflate(layoutInflater)
 
-        if(savedInstanceState != null){
+        filter = model.getFilter()
+        if (savedInstanceState != null) {
             filter = Filter.fromInt(savedInstanceState.getInt("filter"))
             modeAll = savedInstanceState.getBoolean("mode")
-            when(modeAll){
-                true->{
+            when (modeAll) {
+                true -> {
                     binding.visible.setImageResource(R.drawable.ic_invisible)
                 }
-                false->{
+
+                false -> {
                     binding.visible.setImageResource(R.drawable.ic_visible)
                 }
             }
@@ -71,7 +73,6 @@ class TasksFragment : Fragment(){
     }
 
 
-
     private fun setUpViewModel() {
         model.getData(modeAll, filter)
         model.data.observe(viewLifecycleOwner, Observer {
@@ -89,11 +90,11 @@ class TasksFragment : Fragment(){
     private fun setUpViews() {
         //setUpVisibleButton
         binding.visible.setOnClickListener {
-            if(modeAll){
+            if (modeAll) {
                 modeAll = false
                 YoYo.with(Techniques.BounceIn).duration(200).playOn(binding.visible)
                 binding.visible.setImageResource(R.drawable.ic_visible)
-            }else{
+            } else {
                 modeAll = true
                 YoYo.with(Techniques.BounceIn).duration(200).playOn(binding.visible)
                 binding.visible.setImageResource(R.drawable.ic_invisible)
@@ -104,7 +105,7 @@ class TasksFragment : Fragment(){
         }
 
         //setUp recycler
-        adapter = DealsAdapter(onItemListener = object : DealsAdapter.OnItemListener{
+        adapter = DealsAdapter(onItemListener = object : DealsAdapter.OnItemListener {
             override fun onItemClick(id: String) {
                 val action = TasksFragmentDirections.actionManageTask(id = id)
                 findNavController().navigate(action)
@@ -115,7 +116,8 @@ class TasksFragment : Fragment(){
             }
 
         })
-        binding.recycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.recycler.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.recycler.adapter = adapter
 
         val itemTouchHelper = ItemTouchHelper(touchCallback)
@@ -128,7 +130,7 @@ class TasksFragment : Fragment(){
             findNavController().navigate(action)
         }
 
-        binding.floatingSettings.setOnClickListener{
+        binding.floatingSettings.setOnClickListener {
             val builder: MaterialAlertDialogBuilder = MaterialAlertDialogBuilder(
                 ContextThemeWrapper(
                     context,
@@ -137,9 +139,14 @@ class TasksFragment : Fragment(){
             )
             builder.apply {
 
-                setSingleChoiceItems(arrayOf<String>("По приоритету", "По дате дедлайна","По дате создания"), filter.value-1,
+                setSingleChoiceItems(arrayOf<String>(
+                    "По приоритету",
+                    "По дате дедлайна",
+                    "По дате создания"
+                ),
+                    filter.value - 1,
                     DialogInterface.OnClickListener { dialogInterface, i ->
-                        filter = Filter.fromInt(i+1)
+                        filter = Filter.fromInt(i + 1)
                         model.getData(modeAll, filter)
                         dialogInterface.dismiss()
                     })
@@ -159,8 +166,8 @@ class TasksFragment : Fragment(){
     }
 
 
-    private val touchCallback = object:
-        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+    private val touchCallback = object :
+        ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
         override fun onMove(
             recyclerView: RecyclerView,
             viewHolder: RecyclerView.ViewHolder,
@@ -174,10 +181,11 @@ class TasksFragment : Fragment(){
             val position = viewHolder.absoluteAdapterPosition
             val item = adapter.getElement(position)
 
-            when(direction){
+            when (direction) {
                 ItemTouchHelper.LEFT -> {
                     model.removeData(item.id)
                 }
+
                 ItemTouchHelper.RIGHT -> {
                     model.changeDone(item.id, !item.done)
                     adapter.notifyItemChanged(position)
@@ -229,7 +237,6 @@ class TasksFragment : Fragment(){
         outState.putBoolean("mode", modeAll)
         outState.putInt("filter", filter.value)
     }
-
 
 
 }

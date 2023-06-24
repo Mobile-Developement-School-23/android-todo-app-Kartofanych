@@ -1,7 +1,6 @@
 package com.example.todoapp.ui
 
 import android.app.DatePickerDialog
-import android.app.DatePickerDialog.OnDateSetListener
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -21,9 +20,10 @@ import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewTaskBinding
-import com.example.todoapp.data.models.Importance
-import com.example.todoapp.data.models.TodoItem
+import com.example.todoapp.room.Importance
+import com.example.todoapp.room.TodoItem
 import com.google.gson.Gson
+import java.sql.Date
 import java.util.*
 
 
@@ -31,13 +31,13 @@ class NewTaskFragment : Fragment() {
 
     private var todoItem = TodoItem()
 
-    private lateinit var popupMenu : PopupMenu
-    private lateinit var timePickerDialog : DatePickerDialog
+    private lateinit var popupMenu: PopupMenu
+    private lateinit var timePickerDialog: DatePickerDialog
 
 
     private lateinit var binding: FragmentNewTaskBinding
 
-    private val args : NewTaskFragmentArgs by navArgs()
+    private val args: NewTaskFragmentArgs by navArgs()
 
     private val model: MainViewModel by activityViewModels()
 
@@ -53,12 +53,12 @@ class NewTaskFragment : Fragment() {
     ): View {
 
         val id = args.id
-        if(id != null){
+        if (id != null) {
             todoItem = model.getItem(id).copy()
             updateViewsInfo()
         }
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             val gson = Gson()
             todoItem = gson.fromJson(savedInstanceState.getString("todoItem"), TodoItem::class.java)
             updateViewsInfo()
@@ -74,33 +74,37 @@ class NewTaskFragment : Fragment() {
     }
 
 
-
     private fun updateViewsInfo() {
         binding.editTodo.setText(todoItem.text)
 
-        when(todoItem.importance){
-            Importance.LOW->{
+        when (todoItem.importance) {
+            Importance.LOW -> {
                 binding.importanceText.text = "Низкая"
             }
-            Importance.URGENT->{
+
+            Importance.URGENT -> {
                 binding.importanceText.text = "!! Высокая"
-                binding.importanceText.setTextColor(AppCompatResources.getColorStateList(requireContext(),
-                    R.color.red
-                ))
+                binding.importanceText.setTextColor(
+                    AppCompatResources.getColorStateList(
+                        requireContext(),
+                        R.color.red
+                    )
+                )
             }
+
             Importance.REGULAR -> {
                 binding.importanceText.text = "Нет"
             }
         }
 
-        if(todoItem.deadline != null){
+        if (todoItem.deadline != null) {
             binding.date.visibility = View.VISIBLE
             binding.date.text = todoItem.deadlineToString()
             binding.switchCompat.isChecked = true
         }
 
 
-        if(todoItem.id != "-1") {
+        if (todoItem.id != "-1") {
             binding.delete.setTextColor(
                 AppCompatResources.getColorStateList(
                     requireContext(),
@@ -124,32 +128,48 @@ class NewTaskFragment : Fragment() {
         //example
         val highElement: MenuItem = popupMenu.menu.getItem(2)
         val s = SpannableString("!! Высокая")
-        s.setSpan(ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.red)), 0, s.length, 0)
+        s.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.red)),
+            0,
+            s.length,
+            0
+        )
         highElement.title = s
 
         popupMenu.setOnMenuItemClickListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.item_middle -> {
                     binding.importanceText.text = "Нет"
-                    binding.importanceText.setTextColor(ContextCompat.getColor(requireContext(),
-                        R.color.tertiary
-                    ))
+                    binding.importanceText.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.tertiary
+                        )
+                    )
                     todoItem.importance = Importance.REGULAR
                     return@setOnMenuItemClickListener true
                 }
+
                 R.id.item_low -> {
                     binding.importanceText.text = "Низкая"
-                    binding.importanceText.setTextColor(ContextCompat.getColor(requireContext(),
-                        R.color.tertiary
-                    ))
+                    binding.importanceText.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.tertiary
+                        )
+                    )
                     todoItem.importance = Importance.LOW
                     return@setOnMenuItemClickListener true
                 }
+
                 R.id.item_high -> {
                     binding.importanceText.text = "!! Высокая"
-                    binding.importanceText.setTextColor(ContextCompat.getColor(requireContext(),
-                        R.color.red
-                    ))
+                    binding.importanceText.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.red
+                        )
+                    )
                     todoItem.importance = Importance.URGENT
                     return@setOnMenuItemClickListener true
                 }
@@ -159,12 +179,11 @@ class NewTaskFragment : Fragment() {
     }
 
 
-
     private fun setUpViews() {
 
         val myCalendar = Calendar.getInstance()
-        if(todoItem.deadline != null){
-            myCalendar.timeInMillis = todoItem.deadline!!
+        if (todoItem.deadline != null) {
+            myCalendar.time = todoItem.deadline!!
         }
 
         timePickerDialog = DatePickerDialog(requireContext(),
@@ -174,21 +193,25 @@ class NewTaskFragment : Fragment() {
                 myCalendar.set(Calendar.YEAR, year)
                 myCalendar.set(Calendar.MONTH, month)
                 myCalendar.set(Calendar.DAY_OF_MONTH, day)
-                todoItem.setDate(myCalendar.timeInMillis)
+                todoItem.deadline = Date(myCalendar.timeInMillis)
                 binding.date.text = todoItem.deadlineToString()
-            }, myCalendar.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH))
+            },
+            myCalendar.get(Calendar.YEAR),
+            myCalendar.get(Calendar.MONTH),
+            myCalendar.get(Calendar.DAY_OF_MONTH)
+        )
 
         timePickerDialog.setOnCancelListener {
-            if(binding.date.visibility == View.INVISIBLE){
+            if (binding.date.visibility == View.INVISIBLE) {
                 binding.switchCompat.isChecked = false
             }
         }
 
 
         binding.switchCompat.setOnCheckedChangeListener { _, checked ->
-            if(checked){
+            if (checked) {
                 openDatePicker()
-            }else{
+            } else {
                 binding.date.visibility = View.INVISIBLE
                 todoItem.deadline = null
             }
@@ -204,7 +227,7 @@ class NewTaskFragment : Fragment() {
 
 
         binding.delete.setOnClickListener {
-            if(args.id != null) {
+            if (args.id != null) {
                 YoYo.with(Techniques.BounceIn)
                     .duration(200)
                     .playOn(binding.delete)
@@ -230,9 +253,9 @@ class NewTaskFragment : Fragment() {
             YoYo.with(Techniques.BounceIn)
                 .duration(200)
                 .playOn(binding.save)
-            if(args.id == null) {
+            if (args.id == null) {
                 saveNewTask()
-            }else{
+            } else {
                 updateTask()
             }
 
@@ -240,14 +263,14 @@ class NewTaskFragment : Fragment() {
     }
 
 
-
     private fun saveNewTask() {
         todoItem.id = model.getLastId().toString()
         todoItem.text = binding.editTodo.text.toString()
         todoItem.dateCreation = System.currentTimeMillis()
         //
-        if(todoItem.text.isEmpty()){
-            Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT).show()
+        if (todoItem.text.isEmpty()) {
+            Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
@@ -260,8 +283,9 @@ class NewTaskFragment : Fragment() {
 
     private fun updateTask() {
         todoItem.text = binding.editTodo.text.toString()
-        if(todoItem.text.isEmpty()){
-            Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT).show()
+        if (todoItem.text.isEmpty()) {
+            Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT)
+                .show()
             return
         }
 
@@ -270,7 +294,7 @@ class NewTaskFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun openDatePicker(){
+    private fun openDatePicker() {
         binding.switchCompat.isChecked = true
         timePickerDialog.show()
     }

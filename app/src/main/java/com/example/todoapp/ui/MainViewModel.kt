@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.todoapp.data.ItemsRepository
-import com.example.todoapp.data.models.TodoItem
+import com.example.todoapp.room.TodoItem
 import com.example.todoapp.utils.Filter
 
 
@@ -73,6 +73,10 @@ class MainViewModel : ViewModel() {
     fun getItem(id: String) : TodoItem {
         currentItem = repository.getItem(id)
         return currentItem
+    }
+
+    fun getFilter() : Filter {
+        return filter
     }
 
 

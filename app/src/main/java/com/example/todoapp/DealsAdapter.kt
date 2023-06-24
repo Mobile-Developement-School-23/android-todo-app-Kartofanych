@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todoapp.data.models.Importance
-import com.example.todoapp.data.models.TodoItem
+import com.example.todoapp.room.Importance
+import com.example.todoapp.room.TodoItem
 import com.example.todoapp.databinding.ElementListBinding
 import com.example.todoapp.utils.DiffUtilCallbackImpl
-import java.util.logging.Handler
 
 class DealsAdapter(
     val onItemListener: OnItemListener
