@@ -74,6 +74,12 @@ class TasksFragment : Fragment() {
             model.data.collectLatest {
                 updateRecycler(it)
             }
+
+        }
+        lifecycleScope.launch {
+            model.countComplete.collectLatest {
+                updateNumberDone(it)
+            }
         }
         /*model.numberDone.observe(viewLifecycleOwner, Observer {
             updateNumberDone(it)

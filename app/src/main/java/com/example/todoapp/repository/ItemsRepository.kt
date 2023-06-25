@@ -1,16 +1,12 @@
 package com.example.todoapp.repository
 
-import androidx.lifecycle.LiveData
-import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
 import com.example.todoapp.room.TodoListDatabase
-import com.example.todoapp.utils.Filter
 import kotlinx.coroutines.flow.Flow
-import java.sql.Date
 
 
 class ItemsRepository(
-    db:TodoListDatabase
+    db: TodoListDatabase
 ) {
     /*init {
         data["1"] = TodoItem("1", "Простая задачка без дедлайна", Importance.REGULAR, null,false, 1586913715141,"Заглушка")
@@ -42,14 +38,14 @@ class ItemsRepository(
 
     private val dao = db.listDao
 
-    fun getData(all: Boolean):Flow<List<TodoItem>> {
-        return when(all) {
-            true-> dao.getAll()
+    fun getData(all: Boolean): Flow<List<TodoItem>> {
+        return when (all) {
+            true -> dao.getAll()
             false -> dao.getToDo()
         }
     }
 
-    suspend fun getItem(itemId: String): Flow<TodoItem> = dao.getItem(itemId)
+    fun getItem(itemId: String): Flow<TodoItem> = dao.getItem(itemId)
 
     suspend fun addItem(todoItem: TodoItem) {
         dao.add(todoItem)

@@ -8,6 +8,7 @@ import com.example.todoapp.utils.localeLazy
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
@@ -17,6 +18,7 @@ class MainViewModel : ViewModel() {
     var modeAll: Boolean = false
 
     val data = MutableSharedFlow<List<TodoItem>>()
+    val countComplete = MutableSharedFlow<Int>()
     private var loadingJob: Job? = null
 
     var item = MutableSharedFlow<TodoItem>()
@@ -29,6 +31,7 @@ class MainViewModel : ViewModel() {
         loadingJob?.cancel()
         loadingJob = viewModelScope.launch {
             data.emitAll(repository.getData(modeAll))
+            countComplete.emitAll(data.map { it.filter { it.done }.size })
         }
     }
 
@@ -61,6 +64,7 @@ class MainViewModel : ViewModel() {
     fun changeItemDone(id: String, done: Boolean) {
         viewModelScope.launch {
             repository.changeDone(id, done)
+            countComplete.emitAll(data.map { it.count { it.done }})
         }
     }
 

@@ -62,18 +62,22 @@ class NewTaskFragment : Fragment() {
                 model.item.collectLatest {
                     todoItem = it.copy()
                     updateViewsInfo()
+                    setUpViews()
                 }
             }
+        }else if(savedInstanceState == null){
+            setUpViews()
         }
 
         if (savedInstanceState != null) {
             val gson = Gson()
             todoItem = gson.fromJson(savedInstanceState.getString("todoItem"), TodoItem::class.java)
             updateViewsInfo()
+            setUpViews()
         }
 
 
-        setUpViews()
+
 
         createPopupMenu()
 
@@ -194,7 +198,8 @@ class NewTaskFragment : Fragment() {
             myCalendar.timeInMillis = todoItem.deadline!!
         }
 
-        timePickerDialog = DatePickerDialog(requireContext(),
+        timePickerDialog = DatePickerDialog(
+            requireContext(),
             R.style.DatePickerStyle,
             { view, year, month, day ->
                 binding.date.visibility = View.VISIBLE
@@ -306,21 +311,22 @@ class NewTaskFragment : Fragment() {
         binding.switchCompat.isChecked = true
         timePickerDialog.show()
     }
+
     private fun saveStates() {
-            todoItem.text = binding.editTodo.text.toString()
-            when (binding.importanceText.text) {
-                "!!Высокая" -> {
-                    todoItem.importance = Importance.URGENT
-                }
-
-                "Нет" -> {
-                    todoItem.importance = Importance.REGULAR
-                }
-
-                "Низкая" -> {
-                    todoItem.importance = Importance.LOW
-                }
+        todoItem.text = binding.editTodo.text.toString()
+        when (binding.importanceText.text) {
+            "!!Высокая" -> {
+                todoItem.importance = Importance.URGENT
             }
+
+            "Нет" -> {
+                todoItem.importance = Importance.REGULAR
+            }
+
+            "Низкая" -> {
+                todoItem.importance = Importance.LOW
+            }
+        }
 
     }
 
