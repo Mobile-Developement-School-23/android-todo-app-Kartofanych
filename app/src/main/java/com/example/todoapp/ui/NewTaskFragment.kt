@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daimajia.androidanimations.library.Techniques
@@ -23,6 +24,8 @@ import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.*
 
@@ -53,9 +56,14 @@ class NewTaskFragment : Fragment() {
     ): View {
 
         val id = args.id
-        if (id != null) {
-            todoItem = model.getItem(id).copy()
-            updateViewsInfo()
+        if (id != null && savedInstanceState == null) {
+            model.getItem(id)
+            lifecycleScope.launch {
+                model.item.collectLatest {
+                    todoItem = it.copy()
+                    updateViewsInfo()
+                }
+            }
         }
 
         if (savedInstanceState != null) {
@@ -183,7 +191,7 @@ class NewTaskFragment : Fragment() {
 
         val myCalendar = Calendar.getInstance()
         if (todoItem.deadline != null) {
-            myCalendar.time = todoItem.deadline!!
+            myCalendar.timeInMillis = todoItem.deadline!!
         }
 
         timePickerDialog = DatePickerDialog(requireContext(),
@@ -193,7 +201,7 @@ class NewTaskFragment : Fragment() {
                 myCalendar.set(Calendar.YEAR, year)
                 myCalendar.set(Calendar.MONTH, month)
                 myCalendar.set(Calendar.DAY_OF_MONTH, day)
-                todoItem.deadline = Date(myCalendar.timeInMillis)
+                todoItem.deadline = myCalendar.timeInMillis
                 binding.date.text = todoItem.deadlineToString()
             },
             myCalendar.get(Calendar.YEAR),
@@ -231,7 +239,7 @@ class NewTaskFragment : Fragment() {
                 YoYo.with(Techniques.BounceIn)
                     .duration(200)
                     .playOn(binding.delete)
-                model.removeData(todoItem.id)
+                model.deleteItem(todoItem)
 
                 val action = NewTaskFragmentDirections.actionMainTasks()
                 findNavController().navigate(action)
@@ -264,7 +272,7 @@ class NewTaskFragment : Fragment() {
 
 
     private fun saveNewTask() {
-        todoItem.id = model.getLastId().toString()
+        todoItem.id = model.getLastId()
         todoItem.text = binding.editTodo.text.toString()
         todoItem.dateCreation = System.currentTimeMillis()
         //
@@ -298,10 +306,27 @@ class NewTaskFragment : Fragment() {
         binding.switchCompat.isChecked = true
         timePickerDialog.show()
     }
+    private fun saveStates() {
+            todoItem.text = binding.editTodo.text.toString()
+            when (binding.importanceText.text) {
+                "!!Высокая" -> {
+                    todoItem.importance = Importance.URGENT
+                }
 
+                "Нет" -> {
+                    todoItem.importance = Importance.REGULAR
+                }
+
+                "Низкая" -> {
+                    todoItem.importance = Importance.LOW
+                }
+            }
+
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        saveStates()
         outState.putString("todoItem", todoItem.toString())
     }
 

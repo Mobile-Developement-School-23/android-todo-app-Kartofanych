@@ -12,7 +12,7 @@ data class TodoItem(
     @PrimaryKey var id : String,
     var text : String,
     var importance : Importance,
-    var deadline : Date?,
+    var deadline : Long?,
     var done : Boolean,
     var dateCreation : Long,
     var dateChanged : String?

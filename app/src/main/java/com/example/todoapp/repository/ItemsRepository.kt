@@ -1,15 +1,18 @@
-package com.example.todoapp.data
+package com.example.todoapp.repository
 
+import androidx.lifecycle.LiveData
 import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
+import com.example.todoapp.room.TodoListDatabase
 import com.example.todoapp.utils.Filter
+import kotlinx.coroutines.flow.Flow
 import java.sql.Date
 
 
-class ItemsRepository {
-    private val data = HashMap<String, TodoItem>()
-
-    init {
+class ItemsRepository(
+    db:TodoListDatabase
+) {
+    /*init {
         data["1"] = TodoItem("1", "Простая задачка без дедлайна", Importance.REGULAR, null,false, 1586913715141,"Заглушка")
         data["2"] = TodoItem("2", "Срочная задачка без дедлайна", Importance.URGENT, null, true,1586913715141,"Заглушка")
         data["3"] = TodoItem("3", "Не обязательная задачка без дедлайна", Importance.LOW, null, false,1586913715141,"Заглушка")
@@ -35,50 +38,33 @@ class ItemsRepository {
         data["16"] = TodoItem("16", "Доделать задачки в Яндекс контесте", Importance.URGENT, null,false, 1586912715141,"Заглушка")
         data["17"] = TodoItem("17", "Радоваться жизни", Importance.URGENT, Date(1584913345141),false, 1586913315141,"Заглушка")
         //numDone = 1
-    }
+    }*/
 
-    fun getData(filter: Filter):List<TodoItem>{
-        return when(filter){
-            Filter.PRIORITY -> ArrayList(data.values.sortedWith(compareBy<TodoItem> { it.importance }.reversed().thenBy(nullsLast()) { it.deadline }))
-            Filter.DEADLINE -> ArrayList(data.values.sortedWith(compareBy<TodoItem, Long?>(nullsLast()) { it.deadline?.time }.thenBy { it.importance }))
-            Filter.DATE_CREATION -> ArrayList(data.values.sortedWith(compareBy<TodoItem> { it.dateCreation }))
+    private val dao = db.listDao
+
+    fun getData(all: Boolean):Flow<List<TodoItem>> {
+        return when(all) {
+            true-> dao.getAll()
+            false -> dao.getToDo()
         }
     }
 
-    fun getNumDone():Int{
-        var i = 0
-        for(j in data.values){
-            if(j.done){
-                i++
-            }
-        }
-        return i
+    suspend fun getItem(itemId: String): Flow<TodoItem> = dao.getItem(itemId)
+
+    suspend fun addItem(todoItem: TodoItem) {
+        dao.add(todoItem)
     }
 
-
-
-    fun addData(todoItem: TodoItem){
-        data[todoItem.id] = todoItem
+    suspend fun deleteItem(todoItem: TodoItem) {
+        dao.delete(todoItem)
     }
 
-    fun removeData(id:String){
-        data.remove(id)
+    suspend fun changeItem(newItem: TodoItem) {
+        dao.update(newItem)
     }
 
-    fun changeStatus(id: String, done: Boolean) {
-        data[id]?.done = done
-    }
-
-    fun updateItem(todoItem: TodoItem) {
-        data[todoItem.id] = todoItem
-    }
-
-    fun getItem(id: String) : TodoItem {
-        return data[id]?: TodoItem()
-    }
-
-    fun getLastId():Int{
-        return data.size
+    suspend fun changeDone(id: String, done: Boolean) {
+        dao.updateDone(id, done)
     }
 
 

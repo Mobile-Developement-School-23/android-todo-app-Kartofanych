@@ -1,87 +1,72 @@
 package com.example.todoapp.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.todoapp.data.ItemsRepository
+import androidx.lifecycle.viewModelScope
+import com.example.todoapp.repository.ItemsRepository
 import com.example.todoapp.room.TodoItem
-import com.example.todoapp.utils.Filter
+import com.example.todoapp.utils.localeLazy
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.launch
 
 
 class MainViewModel : ViewModel() {
 
+    private val repository: ItemsRepository by localeLazy()
+    var modeAll: Boolean = false
 
+    val data = MutableSharedFlow<List<TodoItem>>()
+    private var loadingJob: Job? = null
 
-    private val repository = ItemsRepository()
-    private var modeAll:Boolean = false
-    private var filter:Filter = Filter.PRIORITY
-    private var currentItem = TodoItem()
+    var item = MutableSharedFlow<TodoItem>()
 
-    val numberDone:MutableLiveData<Int> by lazy {
-        MutableLiveData<Int>()
-    }
-
-    val data: MutableLiveData<List<TodoItem>> by lazy {
-        MutableLiveData<List<TodoItem>>()
-    }
-
-    init {
-        data.value = repository.getData(filter).filter { !it.done }
-        numberDone.value = repository.getNumDone()
-    }
-
-
-
-    fun getData(mode:Boolean, filt: Filter) : LiveData<List<TodoItem>>{
+    fun changeDone(mode:Boolean){
         modeAll = mode
-        filter = filt
         loadData()
-        return data
+    }
+    private fun loadData() {
+        loadingJob?.cancel()
+        loadingJob = viewModelScope.launch {
+            data.emitAll(repository.getData(modeAll))
+        }
     }
 
-
-    private fun loadData() {
-        numberDone.postValue(repository.getNumDone())
-        when(modeAll){
-            true -> data.postValue(repository.getData(filter))
-            false -> data.postValue(repository.getData(filter).filter { !it.done })
+    fun getItem(id:String){
+        viewModelScope.launch {
+            item.emitAll(repository.getItem(id))
         }
     }
 
 
-    fun removeData(id:String){
-        repository.removeData(id)
-        loadData()
+    fun addItem(todoItem: TodoItem) {
+        viewModelScope.launch {
+            repository.addItem(todoItem)
+        }
+    }
+
+    fun deleteItem(todoItem: TodoItem) {
+        viewModelScope.launch {
+            repository.deleteItem(todoItem)
+        }
+    }
+
+    fun updateItem(newItem: TodoItem) {
+        viewModelScope.launch {
+            repository.changeItem(newItem)
+        }
     }
 
 
-    fun addItem(todoItem: TodoItem){
-        repository.addData(todoItem)
+    fun changeItemDone(id: String, done: Boolean) {
+        viewModelScope.launch {
+            repository.changeDone(id, done)
+        }
     }
 
-    fun updateItem(todoItem: TodoItem){
-        repository.updateItem(todoItem)
-        loadData()
+    fun getLastId(): String {
+        return (0..100000).random().toString()
     }
 
-
-    fun changeDone(id: String, done: Boolean) {
-        repository.changeStatus(id, done)
-        loadData()
-    }
-
-    fun getItem(id: String) : TodoItem {
-        currentItem = repository.getItem(id)
-        return currentItem
-    }
-
-    fun getFilter() : Filter {
-        return filter
-    }
-
-
-    fun getLastId():Int{
-        return repository.getLastId()
-    }
 
 }

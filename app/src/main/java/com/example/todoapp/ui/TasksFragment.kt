@@ -1,28 +1,27 @@
 package com.example.todoapp.ui
 
-import android.content.DialogInterface
 import android.graphics.Canvas
 import android.os.Bundle
-import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
-import com.example.todoapp.*
+import com.example.todoapp.DealsAdapter
+import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTasksBinding
 import com.example.todoapp.room.TodoItem
-import com.example.todoapp.utils.Filter
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 class TasksFragment : Fragment() {
@@ -35,15 +34,11 @@ class TasksFragment : Fragment() {
 
     private var modeAll: Boolean = false
 
-    private var filter: Filter = Filter.PRIORITY
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentTasksBinding.inflate(layoutInflater)
 
-        filter = model.getFilter()
         if (savedInstanceState != null) {
-            filter = Filter.fromInt(savedInstanceState.getInt("filter"))
             modeAll = savedInstanceState.getBoolean("mode")
             when (modeAll) {
                 true -> {
@@ -74,13 +69,15 @@ class TasksFragment : Fragment() {
 
 
     private fun setUpViewModel() {
-        model.getData(modeAll, filter)
-        model.data.observe(viewLifecycleOwner, Observer {
-            updateRecycler(it)
-        })
-        model.numberDone.observe(viewLifecycleOwner, Observer {
+        model.changeDone(modeAll)
+        lifecycleScope.launch {
+            model.data.collectLatest {
+                updateRecycler(it)
+            }
+        }
+        /*model.numberDone.observe(viewLifecycleOwner, Observer {
             updateNumberDone(it)
-        })
+        })*/
     }
 
     private fun updateNumberDone(it: Int) {
@@ -99,7 +96,7 @@ class TasksFragment : Fragment() {
                 YoYo.with(Techniques.BounceIn).duration(200).playOn(binding.visible)
                 binding.visible.setImageResource(R.drawable.ic_invisible)
             }
-            model.getData(modeAll, filter)
+            model.changeDone(modeAll)
             binding.recycler.scrollToPosition(0)
 
         }
@@ -112,7 +109,7 @@ class TasksFragment : Fragment() {
             }
 
             override fun onCheckClick(todoItem: TodoItem) {
-                model.changeDone(todoItem.id, todoItem.done)
+                model.changeItemDone(todoItem.id, todoItem.done)
             }
 
         })
@@ -130,7 +127,7 @@ class TasksFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        binding.floatingSettings.setOnClickListener {
+        /*binding.floatingSettings.setOnClickListener {
             val builder: MaterialAlertDialogBuilder = MaterialAlertDialogBuilder(
                 ContextThemeWrapper(
                     context,
@@ -155,7 +152,7 @@ class TasksFragment : Fragment() {
 
             }
             builder.show()
-        }
+        }*/
 
 
     }
@@ -183,11 +180,11 @@ class TasksFragment : Fragment() {
 
             when (direction) {
                 ItemTouchHelper.LEFT -> {
-                    model.removeData(item.id)
+                    model.deleteItem(item)
                 }
 
                 ItemTouchHelper.RIGHT -> {
-                    model.changeDone(item.id, !item.done)
+                    model.changeItemDone(item.id, !item.done)
                     adapter.notifyItemChanged(position)
                 }
             }
@@ -235,7 +232,6 @@ class TasksFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("mode", modeAll)
-        outState.putInt("filter", filter.value)
     }
 
 
