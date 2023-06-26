@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -195,7 +196,7 @@ class NewTaskFragment : Fragment() {
 
         val myCalendar = Calendar.getInstance()
         if (todoItem.deadline != null) {
-            myCalendar.timeInMillis = todoItem.deadline!!
+            myCalendar.time = todoItem.deadline!!
         }
 
         timePickerDialog = DatePickerDialog(
@@ -206,7 +207,7 @@ class NewTaskFragment : Fragment() {
                 myCalendar.set(Calendar.YEAR, year)
                 myCalendar.set(Calendar.MONTH, month)
                 myCalendar.set(Calendar.DAY_OF_MONTH, day)
-                todoItem.deadline = myCalendar.timeInMillis
+                todoItem.deadline = Date(myCalendar.timeInMillis)
                 binding.date.text = todoItem.deadlineToString()
             },
             myCalendar.get(Calendar.YEAR),
@@ -244,7 +245,7 @@ class NewTaskFragment : Fragment() {
                 YoYo.with(Techniques.BounceIn)
                     .duration(200)
                     .playOn(binding.delete)
-                model.deleteItem(todoItem)
+                model.deleteItem(todoItem.id)
 
                 val action = NewTaskFragmentDirections.actionMainTasks()
                 findNavController().navigate(action)
@@ -279,7 +280,7 @@ class NewTaskFragment : Fragment() {
     private fun saveNewTask() {
         todoItem.id = model.getLastId()
         todoItem.text = binding.editTodo.text.toString()
-        todoItem.dateCreation = System.currentTimeMillis()
+        todoItem.dateCreation = Date(System.currentTimeMillis())
         //
         if (todoItem.text.isEmpty()) {
             Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT)

@@ -48,9 +48,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun deleteItem(todoItem: TodoItem) {
+    fun deleteItem(id: String) {
         viewModelScope.launch {
-            repository.deleteItem(todoItem)
+            repository.deleteItem(id)
         }
     }
 

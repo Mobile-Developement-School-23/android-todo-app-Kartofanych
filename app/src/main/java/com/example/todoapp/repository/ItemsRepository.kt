@@ -1,8 +1,11 @@
 package com.example.todoapp.repository
 
+import android.util.Log
+import com.example.todoapp.room.ToDoItemEntity
 import com.example.todoapp.room.TodoItem
 import com.example.todoapp.room.TodoListDatabase
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 
 class ItemsRepository(
@@ -40,27 +43,27 @@ class ItemsRepository(
 
     fun getData(all: Boolean): Flow<List<TodoItem>> {
         return when (all) {
-            true -> dao.getAll()
-            false -> dao.getToDo()
+            true -> dao.getAll().map { list -> list.map { it.toItem() } }
+            false -> dao.getToDo().map { list -> list.map { it.toItem() } }
         }
     }
 
-    fun getItem(itemId: String): Flow<TodoItem> = dao.getItem(itemId)
+    fun getItem(itemId: String): Flow<TodoItem> = dao.getItem(itemId).map { it.toItem() }
 
     suspend fun addItem(todoItem: TodoItem) {
-        dao.add(todoItem)
+       return dao.add(ToDoItemEntity.fromItem(todoItem))
     }
 
-    suspend fun deleteItem(todoItem: TodoItem) {
-        dao.delete(todoItem)
+    suspend fun deleteItem(id: String) {
+        return dao.delete(id)
     }
 
-    suspend fun changeItem(newItem: TodoItem) {
-        dao.update(newItem)
+    suspend fun changeItem(todoItem: TodoItem) {
+        return dao.update(ToDoItemEntity.fromItem(todoItem))
     }
 
     suspend fun changeDone(id: String, done: Boolean) {
-        dao.updateDone(id, done)
+        return dao.updateDone(id, done)
     }
 
 

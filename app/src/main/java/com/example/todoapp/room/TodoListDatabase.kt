@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [TodoItem::class], version = 1)
+@Database(entities = [ToDoItemEntity::class], version = 2)
 abstract class TodoListDatabase : RoomDatabase(){
     abstract val listDao: TodoListDao
 

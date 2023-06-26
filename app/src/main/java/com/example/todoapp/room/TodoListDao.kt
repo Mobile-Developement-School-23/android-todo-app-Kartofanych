@@ -13,22 +13,22 @@ import kotlinx.coroutines.flow.Flow
 interface TodoListDao {
 
     @Query("SELECT * FROM todolist")
-    fun getAll(): Flow<List<TodoItem>>
+    fun getAll(): Flow<List<ToDoItemEntity>>
 
     @Query("SELECT * FROM todolist WHERE done == 0")
-    fun getToDo(): Flow<List<TodoItem>>
+    fun getToDo(): Flow<List<ToDoItemEntity>>
 
     @Query("SELECT * FROM todolist WHERE id=:itemId")
-    fun getItem(itemId: String): Flow<TodoItem>
+    fun getItem(itemId: String): Flow<ToDoItemEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun add(todoItem: TodoItem)
+    suspend fun add(todoItem: ToDoItemEntity)
 
     @Update
-    suspend fun update(newItem: TodoItem)
+    suspend fun update(newItem: ToDoItemEntity)
 
-    @Delete
-    suspend fun delete(todoItem: TodoItem)
+    @Query("DELETE FROM todoList WHERE id = :id")
+    suspend fun delete(id: String)
 
     @Query("UPDATE todolist SET done= :done WHERE id = :id")
     suspend fun updateDone(id: String, done: Boolean)
