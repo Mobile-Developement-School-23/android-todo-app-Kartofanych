@@ -25,6 +25,7 @@ import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.sql.Date
@@ -247,8 +248,7 @@ class NewTaskFragment : Fragment() {
                     .playOn(binding.delete)
                 model.deleteItem(todoItem.id)
 
-                val action = NewTaskFragmentDirections.actionMainTasks()
-                findNavController().navigate(action)
+                findNavController().popBackStack()
 
             }
         }
@@ -258,8 +258,7 @@ class NewTaskFragment : Fragment() {
                 .duration(200)
                 .playOn(binding.close)
 
-            val action = NewTaskFragmentDirections.actionMainTasks()
-            findNavController().navigate(action)
+            findNavController().popBackStack()
         }
 
 
@@ -290,8 +289,7 @@ class NewTaskFragment : Fragment() {
 
 
         model.addItem(todoItem)
-        val action = NewTaskFragmentDirections.actionMainTasks()
-        findNavController().navigate(action)
+        findNavController().popBackStack()
 
     }
 
@@ -304,8 +302,7 @@ class NewTaskFragment : Fragment() {
         }
 
         model.updateItem(todoItem)
-        val action = NewTaskFragmentDirections.actionMainTasks()
-        findNavController().navigate(action)
+        findNavController().popBackStack()
     }
 
     private fun openDatePicker() {

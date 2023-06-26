@@ -1,10 +1,13 @@
 package com.example.todoapp.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.todoapp.network.NetworkAccess
 import com.example.todoapp.repository.ItemsRepository
 import com.example.todoapp.room.TodoItem
 import com.example.todoapp.utils.localeLazy
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
@@ -24,45 +27,57 @@ class MainViewModel : ViewModel() {
     var item = MutableSharedFlow<TodoItem>()
 
     fun changeDone(mode:Boolean){
+        loadingJob?.cancel()
         modeAll = mode
         loadData()
     }
     private fun loadData() {
-        loadingJob?.cancel()
+        when(modeAll){
+            true -> loadAllData()
+            false -> loadToDoData()
+        }
+    }
+    private fun loadAllData() {
         loadingJob = viewModelScope.launch {
-            data.emitAll(repository.getData(modeAll))
-            countComplete.emitAll(data.map { it.filter { it.done }.size })
+            data.emitAll(repository.getAllData())
         }
     }
 
+    private fun loadToDoData() {
+        loadingJob = viewModelScope.launch {
+            data.emitAll(repository.getToDoData())
+        }
+    }
+
+
     fun getItem(id:String){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             item.emitAll(repository.getItem(id))
         }
     }
 
 
     fun addItem(todoItem: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.addItem(todoItem)
         }
     }
 
     fun deleteItem(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.deleteItem(id)
         }
     }
 
     fun updateItem(newItem: TodoItem) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.changeItem(newItem)
         }
     }
 
 
     fun changeItemDone(id: String, done: Boolean) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.changeDone(id, done)
             countComplete.emitAll(data.map { it.count { it.done }})
         }
@@ -70,6 +85,21 @@ class MainViewModel : ViewModel() {
 
     fun getLastId(): String {
         return (0..100000).random().toString()
+    }
+
+    fun loadNetworkList(){
+        viewModelScope.launch(Dispatchers.IO) {
+            val state = repository.getNetworkData()
+            when(state){
+                is NetworkAccess.Success->{
+                    data.emit(state.data.list.map{it.toItem()})
+                }
+                is NetworkAccess.Error->{
+
+                }
+            }
+        }
+
     }
 
 

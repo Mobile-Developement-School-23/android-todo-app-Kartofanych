@@ -23,6 +23,7 @@ import com.example.todoapp.adapter.SwipeHelper
 import com.example.todoapp.databinding.FragmentTasksBinding
 import com.example.todoapp.room.TodoItem
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -98,21 +99,25 @@ class TasksFragment : Fragment() {
                 }
 
 
+                refresher.setOnRefreshListener {
+                    viewModel.loadNetworkList()
+                    refresher.isRefreshing = false
+                }
+
+
             }
 
 
             viewModel.changeDone(modeAll)
-            viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launch {
                 viewModel.data.collect {
                     updateUI(it)
                 }
             }
 
-
         }
 
         private fun updateUI(list: List<TodoItem>) {
-            Log.d("1", list.size.toString())
             adapter?.submitList(list)
         }
 

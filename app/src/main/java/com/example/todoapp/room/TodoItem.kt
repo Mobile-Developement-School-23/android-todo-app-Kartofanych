@@ -39,5 +39,5 @@ data class TodoItem(
 enum class Importance {
     LOW,
     REGULAR,
-    URGENT
+    URGENT;
 }

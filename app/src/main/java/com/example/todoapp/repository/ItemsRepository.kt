@@ -1,11 +1,14 @@
 package com.example.todoapp.repository
 
-import android.util.Log
+import com.example.todoapp.network.Common
+import com.example.todoapp.network.NetworkAccess
+import com.example.todoapp.network.responces.ListApiResponse
 import com.example.todoapp.room.ToDoItemEntity
 import com.example.todoapp.room.TodoItem
 import com.example.todoapp.room.TodoListDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import retrofit2.awaitResponse
 
 
 class ItemsRepository(
@@ -41,12 +44,10 @@ class ItemsRepository(
 
     private val dao = db.listDao
 
-    fun getData(all: Boolean): Flow<List<TodoItem>> {
-        return when (all) {
-            true -> dao.getAll().map { list -> list.map { it.toItem() } }
-            false -> dao.getToDo().map { list -> list.map { it.toItem() } }
-        }
-    }
+    fun getAllData(): Flow<List<TodoItem>> = dao.getAll().map { list -> list.map { it.toItem() } }
+
+    fun getToDoData():Flow<List<TodoItem>> = dao.getToDo().map { list -> list.map { it.toItem() } }
+
 
     fun getItem(itemId: String): Flow<TodoItem> = dao.getItem(itemId).map { it.toItem() }
 
@@ -64,6 +65,29 @@ class ItemsRepository(
 
     suspend fun changeDone(id: String, done: Boolean) {
         return dao.updateDone(id, done)
+    }
+
+
+    private val service = Common.retrofitService
+    suspend fun getNetworkData():NetworkAccess<ListApiResponse>{
+        val response = service.getList().awaitResponse()
+
+        if(response.isSuccessful){
+            val responseBody = response.body()
+            if(responseBody == null){
+               return NetworkAccess.Error(response)
+            }else{
+                updateRoom(responseBody)
+                return NetworkAccess.Success(responseBody)
+            }
+        }
+        return NetworkAccess.Error(response)
+    }
+
+    private suspend fun updateRoom(response: ListApiResponse){
+        dao.deleteAll()
+        val list = response.list.map{it.toItem()}
+        dao.addList(list.map { ToDoItemEntity.fromItem(it) })
     }
 
 
