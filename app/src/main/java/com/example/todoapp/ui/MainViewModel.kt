@@ -1,6 +1,5 @@
 package com.example.todoapp.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.network.NetworkAccess
@@ -12,14 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 
@@ -31,21 +24,22 @@ class MainViewModel : ViewModel() {
     var modeAll: Boolean = false
 
     val data = MutableSharedFlow<List<TodoItem>>()
-    val countComplete : Flow<Int> = data.map { it.count{item->item.done} }
+    val countComplete: Flow<Int> = data.map { it.count { item -> item.done } }
 
     var item = MutableSharedFlow<TodoItem>()
 
-    var job:Job? = null
+    var job: Job? = null
 
     init {
         loadData()
     }
 
-    fun changeDone(mode:Boolean){
+    fun changeDone(mode: Boolean) {
         modeAll = mode
         job?.cancel()
         loadData()
     }
+
     private fun loadData() {
         job = viewModelScope.launch(Dispatchers.IO) {
             data.emitAll(repository.getAllData())
@@ -53,7 +47,7 @@ class MainViewModel : ViewModel() {
     }
 
 
-    fun getItem(id:String){
+    fun getItem(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             item.emitAll(repository.getItem(id))
         }
@@ -89,28 +83,28 @@ class MainViewModel : ViewModel() {
         return (0..100000).random().toString()
     }
 
-    fun loadNetworkList(){
+    fun loadNetworkList() {
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.getNetworkData(sharedPreferencesHelper.getLastRevision())
-            when(response){
-                is NetworkAccess.Success->{
+            when (response) {
+                is NetworkAccess.Success -> {
                     sharedPreferencesHelper.putRevision(response.data.revision)
                 }
-                is NetworkAccess.Error->{
+                is NetworkAccess.Error -> {
 
                 }
             }
         }
     }
 
-    fun uploadNetworkItem(todoItem: TodoItem){
+    fun uploadNetworkItem(todoItem: TodoItem) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = repository.postItem(sharedPreferencesHelper.getLastRevision(), todoItem)
-            when(response){
-                is NetworkAccess.Success->{
+            when (response) {
+                is NetworkAccess.Success -> {
                     sharedPreferencesHelper.putRevision(response.data.revision)
                 }
-                is NetworkAccess.Error->{
+                is NetworkAccess.Error -> {
 
                 }
             }
