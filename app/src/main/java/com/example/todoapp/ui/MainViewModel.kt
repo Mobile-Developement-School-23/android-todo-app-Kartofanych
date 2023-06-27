@@ -30,17 +30,24 @@ class MainViewModel : ViewModel() {
 
     var modeAll: Boolean = false
 
-    val data = MutableStateFlow<List<TodoItem>>(listOf())
+    val data = MutableSharedFlow<List<TodoItem>>()
     val countComplete : Flow<Int> = data.map { it.count{item->item.done} }
 
     var item = MutableSharedFlow<TodoItem>()
 
+    var job:Job? = null
+
+    init {
+        loadData()
+    }
+
     fun changeDone(mode:Boolean){
         modeAll = mode
+        job?.cancel()
         loadData()
     }
     private fun loadData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        job = viewModelScope.launch(Dispatchers.IO) {
             data.emitAll(repository.getAllData())
         }
     }
@@ -87,7 +94,6 @@ class MainViewModel : ViewModel() {
             val response = repository.getNetworkData(sharedPreferencesHelper.getLastRevision())
             when(response){
                 is NetworkAccess.Success->{
-                    data.emit(response.data.list.map{it.toItem()})
                     sharedPreferencesHelper.putRevision(response.data.revision)
                 }
                 is NetworkAccess.Error->{

@@ -109,7 +109,7 @@ class TasksFragment : Fragment() {
         }
 
 
-        viewModel.changeDone(modeAll)
+        //viewModel.changeDone(modeAll)
         lifecycleScope.launch {
             viewModel.data.collectLatest {
                 updateUI(it)
