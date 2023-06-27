@@ -4,12 +4,12 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
@@ -25,11 +25,10 @@ import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.sql.Date
-import java.util.*
+import java.util.Calendar
 
 
 class NewTaskFragment : Fragment() {
@@ -67,7 +66,7 @@ class NewTaskFragment : Fragment() {
                     setUpViews()
                 }
             }
-        }else if(savedInstanceState == null){
+        } else if (savedInstanceState == null) {
             setUpViews()
         }
 
@@ -289,18 +288,19 @@ class NewTaskFragment : Fragment() {
 
 
         model.addItem(todoItem)
+        model.uploadNetworkItem(todoItem)
         findNavController().popBackStack()
 
     }
 
     private fun updateTask() {
         todoItem.text = binding.editTodo.text.toString()
+        todoItem.dateChanged = Date(System.currentTimeMillis())
         if (todoItem.text.isEmpty()) {
             Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT)
                 .show()
             return
         }
-
         model.updateItem(todoItem)
         findNavController().popBackStack()
     }

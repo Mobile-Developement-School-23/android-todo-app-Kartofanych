@@ -1,6 +1,7 @@
 package com.example.todoapp.adapter
 
 import android.graphics.Paint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,6 +82,7 @@ class ViewHolder(private val binding: ElementListBinding): RecyclerView.ViewHold
         }
 
         binding.checkBox.setOnClickListener {
+            Log.d("1", binding.checkBox.isChecked.toString())
             onItemListener.onCheckClick(item.id, binding.checkBox.isChecked)
         }
 

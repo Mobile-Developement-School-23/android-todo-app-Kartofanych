@@ -1,8 +1,6 @@
 package com.example.todoapp.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -13,10 +11,11 @@ import kotlinx.coroutines.flow.Flow
 interface TodoListDao {
 
     @Query("SELECT * FROM todolist")
-    fun getAll(): Flow<List<ToDoItemEntity>>
+    fun getAllFlow(): Flow<List<ToDoItemEntity>>
 
-    @Query("SELECT * FROM todolist WHERE done == 0")
-    fun getToDo(): Flow<List<ToDoItemEntity>>
+
+    @Query("SELECT * FROM todolist")
+    fun getAll(): List<ToDoItemEntity>
 
     @Query("SELECT * FROM todolist WHERE id=:itemId")
     fun getItem(itemId: String): Flow<ToDoItemEntity>

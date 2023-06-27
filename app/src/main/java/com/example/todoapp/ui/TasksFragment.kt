@@ -30,105 +30,121 @@ import kotlinx.coroutines.launch
 
 class TasksFragment : Fragment() {
 
-        private val viewModel: MainViewModel by activityViewModels()
-        private var binding: FragmentTasksBinding? = null
-        private val adapter: DealsAdapter? get() = views { recycler.adapter as DealsAdapter }
+    private val viewModel: MainViewModel by activityViewModels()
+    private var binding: FragmentTasksBinding? = null
+    private val adapter: DealsAdapter? get() = views { recycler.adapter as DealsAdapter }
 
-        private var modeAll:Boolean = false
-        override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
-        ): View = FragmentTasksBinding.inflate(LayoutInflater.from(context)).also { binding = it }.root
+    private var modeAll: Boolean = false
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = FragmentTasksBinding.inflate(LayoutInflater.from(context)).also { binding = it }.root
 
 
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            views {
-                if(savedInstanceState!=null){
-                    if(savedInstanceState.getBoolean("modeAll")){
-                        modeAll = true
-                        visible.setImageResource(R.drawable.ic_invisible)
-                    }
-                }
-                if(viewModel.modeAll){
+        views {
+            if (savedInstanceState != null) {
+                if (savedInstanceState.getBoolean("modeAll")) {
                     modeAll = true
                     visible.setImageResource(R.drawable.ic_invisible)
                 }
+            }
+            if (viewModel.modeAll) {
+                modeAll = true
+                visible.setImageResource(R.drawable.ic_invisible)
+            }
 
-                floatingNewTask.setOnClickListener {
-                    val action = TasksFragmentDirections.actionManageTask(null)
+            floatingNewTask.setOnClickListener {
+                val action = TasksFragmentDirections.actionManageTask(null)
+                findNavController().navigate(action)
+            }
+
+            recycler.adapter = DealsAdapter(object : OnItemListener {
+                override fun onItemClick(id: String) {
+                    val action = TasksFragmentDirections.actionManageTask(id = id)
                     findNavController().navigate(action)
                 }
 
-                recycler.adapter = DealsAdapter(object : OnItemListener {
-                    override fun onItemClick(id: String) {
-                        val action = TasksFragmentDirections.actionManageTask(id = id)
-                        findNavController().navigate(action)
-                    }
-
-                    override fun onCheckClick(id: String, done: Boolean) {
-                        viewModel.changeItemDone(id, done)
-                    }
-
-                })
-                val helper = SwipeHelper(object : SwipeCallbackInterface {
-                    override fun onDelete(todoItem: TodoItem) {
-                        viewModel.deleteItem(todoItem.id)
-                    }
-
-                    override fun onChangeDone(todoItem: TodoItem) {
-                        viewModel.changeItemDone(todoItem.id, !todoItem.done)
-                    }
-
-                }, requireContext())
-                helper.attachToRecyclerView(recycler)
-
-
-                visible.setOnClickListener {
-                    modeAll = !modeAll
-                    when (modeAll) {
-                        true -> {
-                            visible.setImageResource(R.drawable.ic_invisible)
-                        }
-                        false -> {
-                            visible.setImageResource(R.drawable.ic_visible)
-                        }
-                    }
-                    viewModel.changeDone(modeAll)
+                override fun onCheckClick(id: String, done: Boolean) {
+                    viewModel.changeItemDone(id, done)
                 }
 
-
-                refresher.setOnRefreshListener {
-                    viewModel.loadNetworkList()
-                    refresher.isRefreshing = false
+            })
+            val helper = SwipeHelper(object : SwipeCallbackInterface {
+                override fun onDelete(todoItem: TodoItem) {
+                    viewModel.deleteItem(todoItem.id)
                 }
 
+                override fun onChangeDone(todoItem: TodoItem) {
+                    viewModel.changeItemDone(todoItem.id, !todoItem.done)
+                }
 
+            }, requireContext())
+            helper.attachToRecyclerView(recycler)
+
+
+            visible.setOnClickListener {
+                modeAll = !modeAll
+                when (modeAll) {
+                    true -> {
+                        visible.setImageResource(R.drawable.ic_invisible)
+                    }
+
+                    false -> {
+                        visible.setImageResource(R.drawable.ic_visible)
+                    }
+                }
+                viewModel.changeDone(modeAll)
             }
 
 
-            viewModel.changeDone(modeAll)
-            lifecycleScope.launch {
-                viewModel.data.collect {
-                    updateUI(it)
-                }
+            refresher.setOnRefreshListener {
+                viewModel.loadNetworkList()
+                refresher.isRefreshing = false
             }
 
-        }
 
-        private fun updateUI(list: List<TodoItem>) {
-            adapter?.submitList(list)
-        }
-
-        override fun onSaveInstanceState(outState: Bundle) {
-            super.onSaveInstanceState(outState)
-            outState.putBoolean("modeAll", modeAll)
         }
 
 
-        private fun <T : Any> views(block: FragmentTasksBinding.() -> T): T? = binding?.block()
-
+        viewModel.changeDone(modeAll)
+        lifecycleScope.launch {
+            viewModel.data.collectLatest {
+                updateUI(it)
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.countComplete.collectLatest {
+                updateCounter(it)
+            }
+        }
 
     }
+
+    private fun updateCounter(count: Int) {
+        views {
+            numberDone.text = "Выполнено - $count"
+        }
+    }
+
+    private fun updateUI(list: List<TodoItem>) {
+        if(modeAll) {
+            adapter?.submitList(list)
+        }else{
+            adapter?.submitList(list.filter { !it.done })
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("modeAll", modeAll)
+    }
+
+
+    private fun <T : Any> views(block: FragmentTasksBinding.() -> T): T? = binding?.block()
+
+
+}
 

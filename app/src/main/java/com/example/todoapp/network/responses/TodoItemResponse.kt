@@ -1,25 +1,12 @@
-package com.example.todoapp.network.responces
+package com.example.todoapp.network.responses
 
+import com.example.todoapp.network.Common
 import com.example.todoapp.room.Importance
-import com.example.todoapp.room.ToDoItemEntity
 import com.example.todoapp.room.TodoItem
 import com.google.gson.annotations.SerializedName
 import java.sql.Date
 
-data class ListApiResponse(
-    @SerializedName("status")
-    val status: String,
-
-    @SerializedName("list")
-    val list: List<ItemResponse>,
-
-
-    @SerializedName("revision")
-    val revision: Int
-
-)
-
-data class ItemResponse(
+data class TodoItemResponse(
     @SerializedName("id")
     var id: String,
     @SerializedName("text")
@@ -33,7 +20,9 @@ data class ItemResponse(
     @SerializedName("created_at")
     var dateCreation: Long,
     @SerializedName("changed_at")
-    var dateChanged: Long?
+    var dateChanged: Long,
+    @SerializedName("last_updated_by")
+    var updated_by: String
 ) {
 
     fun toItem(): TodoItem = TodoItem(
@@ -54,15 +43,25 @@ data class ItemResponse(
     )
 
     companion object {
-        fun fromItem(toDoItem: TodoItem): ToDoItemEntity {
-            return ToDoItemEntity(
+        fun fromItem(toDoItem: TodoItem): TodoItemResponse {
+            return TodoItemResponse(
                 id = toDoItem.id,
-                description = toDoItem.text,
-                importance = toDoItem.importance,
+                text = toDoItem.text,
+                importance = when (toDoItem.importance) {
+                    Importance.LOW -> "low"
+                    Importance.REGULAR -> "basic"
+                    Importance.URGENT -> "important"
+                },
                 deadline = toDoItem.deadline?.time,
                 done = toDoItem.done,
-                createdAt = toDoItem.dateCreation.time,
-                changedAt = toDoItem.dateChanged?.time
+                dateCreation = toDoItem.dateCreation.time,
+                dateChanged = when (toDoItem.dateChanged) {
+                    null -> toDoItem.dateCreation.time
+                    else -> {
+                        toDoItem.dateChanged!!.time
+                    }
+                },
+                updated_by = Common.updated_by
             )
         }
     }
