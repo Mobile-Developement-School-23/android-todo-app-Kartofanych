@@ -23,18 +23,21 @@ class ItemsRepository(
     fun getAllData(): Flow<List<TodoItem>> =
         dao.getAllFlow().map { list -> list.map { it.toItem() } }
 
-    fun getItem(itemId: String): Flow<TodoItem> = dao.getItem(itemId).map { it.toItem() }
+    fun getItem(itemId: String): TodoItem = dao.getItem(itemId).toItem()
 
     suspend fun addItem(todoItem: TodoItem) {
-        return dao.add(ToDoItemEntity.fromItem(todoItem))
+        val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
+        return dao.add(toDoItemEntity)
     }
 
-    suspend fun deleteItem(id: String) {
-        return dao.delete(id)
+    suspend fun deleteItem(todoItem: TodoItem) {
+        val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
+        return dao.delete(toDoItemEntity)
     }
 
     suspend fun changeItem(todoItem: TodoItem) {
-        return dao.update(ToDoItemEntity.fromItem(todoItem))
+        val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
+        return dao.updateItem(toDoItemEntity)
     }
 
     suspend fun changeDone(id: String, done: Boolean) {
@@ -69,11 +72,23 @@ class ItemsRepository(
         dao.addList(list.map { ToDoItemEntity.fromItem(it) })
     }
 
-    suspend fun postItem(lastRevision: Int, newItem: TodoItem): NetworkAccess<PostItemApiResponse> {
+    suspend fun postNetworkItem(lastRevision: Int, newItem: TodoItem): NetworkAccess<PostItemApiResponse> {
         val postResponse = service.postElement(
             lastRevision,
             PostItemApiRequest(TodoItemResponse.fromItem(newItem))
         )
+
+        if (postResponse.isSuccessful) {
+            val responseBody = postResponse.body()
+            if (responseBody != null) {
+                return NetworkAccess.Success(responseBody)
+            }
+        }
+        return NetworkAccess.Error(postResponse)
+    }
+
+    suspend fun deleteNetworkItem(lastRevision: Int, id: String): NetworkAccess<PostItemApiResponse> {
+        val postResponse = service.deleteElement(id, lastRevision)
 
         if (postResponse.isSuccessful) {
             val responseBody = postResponse.body()

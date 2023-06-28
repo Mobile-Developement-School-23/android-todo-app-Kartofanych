@@ -1,6 +1,7 @@
 package com.example.todoapp.room
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -18,18 +19,18 @@ interface TodoListDao {
     fun getAll(): List<ToDoItemEntity>
 
     @Query("SELECT * FROM todolist WHERE id=:itemId")
-    fun getItem(itemId: String): Flow<ToDoItemEntity>
+    fun getItem(itemId: String): ToDoItemEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add(todoItem: ToDoItemEntity)
 
-    @Update
-    suspend fun update(newItem: ToDoItemEntity)
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addList(newItems: List<ToDoItemEntity>)
 
-    @Query("DELETE FROM todoList WHERE id = :id")
-    suspend fun delete(id: String)
+    @Update
+    suspend fun updateItem(toDoItemEntity: ToDoItemEntity)
+    @Delete
+    suspend fun delete(entity: ToDoItemEntity)
 
     @Query("DELETE FROM todoList")
     suspend fun deleteAll()

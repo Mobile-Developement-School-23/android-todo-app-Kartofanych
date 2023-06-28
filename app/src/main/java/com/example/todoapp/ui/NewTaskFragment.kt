@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -22,6 +24,7 @@ import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewTaskBinding
+import com.example.todoapp.factory
 import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
 import com.google.gson.Gson
@@ -43,7 +46,7 @@ class NewTaskFragment : Fragment() {
 
     private val args: NewTaskFragmentArgs by navArgs()
 
-    private val model: MainViewModel by activityViewModels()
+    private val model: MainViewModel by viewModels { factory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,10 +63,12 @@ class NewTaskFragment : Fragment() {
         if (id != null && savedInstanceState == null) {
             model.getItem(id)
             lifecycleScope.launch {
-                model.item.collectLatest {
-                    todoItem = it.copy()
-                    updateViewsInfo()
-                    setUpViews()
+                model.item.collect {
+                    if(todoItem.id == "-1") {
+                        todoItem = it
+                        updateViewsInfo()
+                        setUpViews()
+                    }
                 }
             }
         } else if (savedInstanceState == null) {
@@ -242,10 +247,10 @@ class NewTaskFragment : Fragment() {
 
         binding.delete.setOnClickListener {
             if (args.id != null) {
-                YoYo.with(Techniques.BounceIn)
-                    .duration(200)
-                    .playOn(binding.delete)
-                model.deleteItem(todoItem.id)
+                //model.deleteNetworkItem(todoItem.id)
+                Log.d("1", todoItem.toString())
+
+                model.deleteItem(todoItem)
 
                 findNavController().popBackStack()
 
@@ -262,9 +267,6 @@ class NewTaskFragment : Fragment() {
 
 
         binding.save.setOnClickListener {
-            YoYo.with(Techniques.BounceIn)
-                .duration(200)
-                .playOn(binding.save)
             if (args.id == null) {
                 saveNewTask()
             } else {
@@ -288,7 +290,6 @@ class NewTaskFragment : Fragment() {
 
 
         model.addItem(todoItem)
-        model.uploadNetworkItem(todoItem)
         findNavController().popBackStack()
 
     }

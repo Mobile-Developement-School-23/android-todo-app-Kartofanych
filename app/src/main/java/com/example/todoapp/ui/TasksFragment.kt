@@ -1,40 +1,33 @@
 package com.example.todoapp.ui
 
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
-import com.daimajia.androidanimations.library.Techniques
-import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.adapter.DealsAdapter
 import com.example.todoapp.adapter.OnItemListener
 import com.example.todoapp.R
 import com.example.todoapp.adapter.SwipeCallbackInterface
 import com.example.todoapp.adapter.SwipeHelper
 import com.example.todoapp.databinding.FragmentTasksBinding
+import com.example.todoapp.factory
 import com.example.todoapp.room.TodoItem
-import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
 class TasksFragment : Fragment() {
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by viewModels { factory() }
     private var binding: FragmentTasksBinding? = null
     private val adapter: DealsAdapter? get() = views { recycler.adapter as DealsAdapter }
 
-    private var modeAll: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,17 +37,10 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        viewModel.loadData()
+
         views {
-            if (savedInstanceState != null) {
-                if (savedInstanceState.getBoolean("modeAll")) {
-                    modeAll = true
-                    visible.setImageResource(R.drawable.ic_invisible)
-                }
-            }
-            if (viewModel.modeAll) {
-                modeAll = true
-                visible.setImageResource(R.drawable.ic_invisible)
-            }
 
             floatingNewTask.setOnClickListener {
                 val action = TasksFragmentDirections.actionManageTask(null)
@@ -74,7 +60,7 @@ class TasksFragment : Fragment() {
             })
             val helper = SwipeHelper(object : SwipeCallbackInterface {
                 override fun onDelete(todoItem: TodoItem) {
-                    viewModel.deleteItem(todoItem.id)
+                    viewModel.deleteItem(todoItem)
                 }
 
                 override fun onChangeDone(todoItem: TodoItem) {
@@ -86,8 +72,8 @@ class TasksFragment : Fragment() {
 
 
             visible.setOnClickListener {
-                modeAll = !modeAll
-                when (modeAll) {
+                viewModel.changeDone()
+                when (viewModel.modeAll) {
                     true -> {
                         visible.setImageResource(R.drawable.ic_invisible)
                     }
@@ -96,7 +82,6 @@ class TasksFragment : Fragment() {
                         visible.setImageResource(R.drawable.ic_visible)
                     }
                 }
-                viewModel.changeDone(modeAll)
             }
 
 
@@ -108,8 +93,6 @@ class TasksFragment : Fragment() {
 
         }
 
-
-        //viewModel.changeDone(modeAll)
         lifecycleScope.launch {
             viewModel.data.collectLatest {
                 updateUI(it)
@@ -130,18 +113,12 @@ class TasksFragment : Fragment() {
     }
 
     private fun updateUI(list: List<TodoItem>) {
-        if(modeAll) {
+        if(viewModel.modeAll) {
             adapter?.submitList(list)
         }else{
             adapter?.submitList(list.filter { !it.done })
         }
     }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("modeAll", modeAll)
-    }
-
 
     private fun <T : Any> views(block: FragmentTasksBinding.() -> T): T? = binding?.block()
 

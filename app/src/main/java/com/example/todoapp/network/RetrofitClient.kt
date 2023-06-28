@@ -5,6 +5,7 @@ import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 
 object RetrofitClient {
@@ -19,10 +20,13 @@ object RetrofitClient {
                     .addHeader("Authorization", "Bearer unaffordable")
                     .build()
                 chain.proceed(newRequest)
-            }.addInterceptor(interceptor).build()
+            }.connectTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
+                .writeTimeout(90, TimeUnit.SECONDS).addInterceptor(interceptor).build()
             retrofitClient = Retrofit.Builder()
                 .client(client)
                 .baseUrl(baseUrl)
+
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }

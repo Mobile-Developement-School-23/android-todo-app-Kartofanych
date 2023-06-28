@@ -1,5 +1,6 @@
 package com.example.todoapp.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.network.NetworkAccess
@@ -7,49 +8,60 @@ import com.example.todoapp.repository.ItemsRepository
 import com.example.todoapp.room.TodoItem
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
 import com.example.todoapp.utils.localeLazy
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.lang.NullPointerException
 
 
-class MainViewModel : ViewModel() {
+class MainViewModel: ViewModel() {
 
     private val sharedPreferencesHelper: SharedPreferencesHelper by localeLazy()
     private val repository: ItemsRepository by localeLazy()
 
     var modeAll: Boolean = false
 
-    val data = MutableSharedFlow<List<TodoItem>>()
-    val countComplete: Flow<Int> = data.map { it.count { item -> item.done } }
+    private val _data = MutableSharedFlow<List<TodoItem>>()
+    val data: SharedFlow<List<TodoItem>> = _data.asSharedFlow()
+    val countComplete: Flow<Int> = _data.map { it.count { item -> item.done } }
 
-    var item = MutableSharedFlow<TodoItem>()
+    private var _item = MutableStateFlow<TodoItem>(TodoItem())
+    var item = _item.asStateFlow()
 
-    var job: Job? = null
+    private var job: Job? = null
 
     init {
         loadData()
     }
 
-    fun changeDone(mode: Boolean) {
-        modeAll = mode
+    fun changeDone() {
+        modeAll = !modeAll
         job?.cancel()
         loadData()
     }
 
-    private fun loadData() {
+
+    fun loadData() {
         job = viewModelScope.launch(Dispatchers.IO) {
-            data.emitAll(repository.getAllData())
+            _data.emitAll(repository.getAllData())
         }
     }
 
 
     fun getItem(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            item.emitAll(repository.getItem(id))
+        viewModelScope.launch (Dispatchers.IO) {
+            _item.emit(repository.getItem(id))
         }
     }
 
@@ -58,11 +70,12 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addItem(todoItem)
         }
+        uploadNetworkItem(todoItem)
     }
 
-    fun deleteItem(id: String) {
+    fun deleteItem(todoItem: TodoItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteItem(id)
+            repository.deleteItem(todoItem)
         }
     }
 
@@ -97,9 +110,23 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun uploadNetworkItem(todoItem: TodoItem) {
+    private fun uploadNetworkItem(todoItem: TodoItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.postItem(sharedPreferencesHelper.getLastRevision(), todoItem)
+            val response = repository.postNetworkItem(sharedPreferencesHelper.getLastRevision(), todoItem)
+            when (response) {
+                is NetworkAccess.Success -> {
+                    sharedPreferencesHelper.putRevision(response.data.revision)
+                }
+                is NetworkAccess.Error -> {
+
+                }
+            }
+        }
+    }
+
+    fun deleteNetworkItem(id:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = repository.deleteNetworkItem(sharedPreferencesHelper.getLastRevision(), id)
             when (response) {
                 is NetworkAccess.Success -> {
                     sharedPreferencesHelper.putRevision(response.data.revision)
@@ -110,6 +137,11 @@ class MainViewModel : ViewModel() {
             }
         }
 
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        job?.cancel()
     }
 
 
