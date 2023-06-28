@@ -1,7 +1,6 @@
 package com.example.todoapp.adapter
 
 import android.graphics.Paint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +11,12 @@ import com.example.todoapp.databinding.ElementListBinding
 import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
 
-class ViewHolder(private val binding: ElementListBinding): RecyclerView.ViewHolder(binding.root){
+class ViewHolder(private val binding: ElementListBinding) : RecyclerView.ViewHolder(binding.root) {
 
     var todoItem: TodoItem? = null
-    fun bind(item: TodoItem, onItemListener: OnItemListener){
+    fun bind(item: TodoItem, onItemListener: OnItemListener) {
         this.todoItem = item
-        if(item.done) {
+        if (item.done) {
             binding.text.text = item.text
             binding.text.paintFlags = binding.text.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             binding.text.setTextColor(itemView.context.getColor(R.color.tertiary))
@@ -32,16 +31,15 @@ class ViewHolder(private val binding: ElementListBinding): RecyclerView.ViewHold
             binding.deadline.visibility = View.GONE
 
 
-
-        }else{
+        } else {
             binding.text.text = item.text
             binding.text.paintFlags = binding.text.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
             binding.text.setTextColor(itemView.context.getColor(R.color.primary))
             binding.checkBox.isChecked = false
-            if(item.deadline != null) {
+            if (item.deadline != null) {
                 binding.deadline.visibility = View.VISIBLE
                 binding.deadline.text = item.deadlineToString()
-            }else{
+            } else {
                 binding.deadline.visibility = View.GONE
             }
             when (item.importance) {
@@ -56,6 +54,7 @@ class ViewHolder(private val binding: ElementListBinding): RecyclerView.ViewHold
                         )
                     )
                 }
+
                 Importance.LOW -> {
                     binding.importance.visibility = View.VISIBLE
                     binding.checkBox.buttonTintList =
@@ -70,6 +69,7 @@ class ViewHolder(private val binding: ElementListBinding): RecyclerView.ViewHold
                         )
                     )
                 }
+
                 Importance.REGULAR -> {
                     binding.importance.visibility = View.GONE
                     binding.checkBox.buttonTintList =
@@ -82,8 +82,7 @@ class ViewHolder(private val binding: ElementListBinding): RecyclerView.ViewHold
         }
 
         binding.checkBox.setOnClickListener {
-            Log.d("1", binding.checkBox.isChecked.toString())
-            onItemListener.onCheckClick(item.id, binding.checkBox.isChecked)
+            onItemListener.onCheckClick(item)
         }
 
 
@@ -92,6 +91,7 @@ class ViewHolder(private val binding: ElementListBinding): RecyclerView.ViewHold
 
         }
     }
+
     companion object {
         fun create(parent: ViewGroup) = ElementListBinding.inflate(
             LayoutInflater.from(parent.context),

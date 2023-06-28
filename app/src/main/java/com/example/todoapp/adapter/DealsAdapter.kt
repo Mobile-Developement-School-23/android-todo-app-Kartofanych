@@ -7,7 +7,7 @@ import com.example.todoapp.room.TodoItem
 interface OnItemListener{
     fun onItemClick(id: String)
 
-    fun onCheckClick(id:String, done:Boolean)
+    fun onCheckClick(todoItem: TodoItem)
 }
 
 class DealsAdapter(

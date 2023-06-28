@@ -4,6 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.ui.MainViewModel
+import com.example.todoapp.utils.locale
 
 class ViewModelFactory(
     private val app: App
@@ -13,7 +14,7 @@ class ViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel = when (modelClass) {
             MainViewModel::class.java -> {
-                MainViewModel()
+                MainViewModel(locale(), locale(), locale())
             }
             else -> {
                 throw IllegalStateException("Unknown view model class")

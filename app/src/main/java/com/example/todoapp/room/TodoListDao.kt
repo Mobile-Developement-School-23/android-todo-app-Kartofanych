@@ -24,7 +24,7 @@ interface TodoListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun add(todoItem: ToDoItemEntity)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addList(newItems: List<ToDoItemEntity>)
 
     @Update

@@ -25,7 +25,9 @@ class SwipeCallback(
         if (direction == ItemTouchHelper.LEFT) {
             (viewHolder as? ViewHolder)?.todoItem?.let { swipeCallback.onDelete(it) }
         } else if (direction == ItemTouchHelper.RIGHT) {
-            (viewHolder as? ViewHolder)?.todoItem?.let { swipeCallback.onChangeDone(it) }
+            (viewHolder as? ViewHolder)?.todoItem?.let {
+                swipeCallback.onChangeDone(it)
+            }
         }
     }
 
@@ -71,7 +73,6 @@ class SwipeCallback(
             .decorate()
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
-
 
 
 }

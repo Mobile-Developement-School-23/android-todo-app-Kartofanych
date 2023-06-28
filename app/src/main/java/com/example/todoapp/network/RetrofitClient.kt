@@ -20,13 +20,17 @@ object RetrofitClient {
                     .addHeader("Authorization", "Bearer unaffordable")
                     .build()
                 chain.proceed(newRequest)
+
             }.connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
-                .writeTimeout(90, TimeUnit.SECONDS).addInterceptor(interceptor).build()
+                .writeTimeout(90, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .addInterceptor(interceptor).build()
+
+
             retrofitClient = Retrofit.Builder()
                 .client(client)
                 .baseUrl(baseUrl)
-
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }

@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Calendar
+import java.util.UUID
 
 
 class NewTaskFragment : Fragment() {
@@ -46,7 +47,7 @@ class NewTaskFragment : Fragment() {
 
     private val args: NewTaskFragmentArgs by navArgs()
 
-    private val model: MainViewModel by viewModels { factory() }
+    private val model: MainViewModel by activityViewModels{factory()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -278,7 +279,7 @@ class NewTaskFragment : Fragment() {
 
 
     private fun saveNewTask() {
-        todoItem.id = model.getLastId()
+        todoItem.id = UUID.randomUUID().toString()
         todoItem.text = binding.editTodo.text.toString()
         todoItem.dateCreation = Date(System.currentTimeMillis())
         //

@@ -1,8 +1,8 @@
 package com.example.todoapp.repository
 
+import android.util.Log
 import com.example.todoapp.network.Common
 import com.example.todoapp.network.NetworkAccess
-import com.example.todoapp.network.responses.GetListApiResponse
 import com.example.todoapp.network.responses.PatchListApiRequest
 import com.example.todoapp.network.responses.PostItemApiRequest
 import com.example.todoapp.network.responses.PostItemApiResponse
@@ -10,12 +10,16 @@ import com.example.todoapp.network.responses.TodoItemResponse
 import com.example.todoapp.room.ToDoItemEntity
 import com.example.todoapp.room.TodoItem
 import com.example.todoapp.room.TodoListDatabase
+import com.example.todoapp.shared_preferences.SharedPreferencesHelper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 
 class ItemsRepository(
-    db: TodoListDatabase
+    db: TodoListDatabase,
+    private val sharedPreferencesHelper: SharedPreferencesHelper
 ) {
 
     private val dao = db.listDao
@@ -47,32 +51,65 @@ class ItemsRepository(
 
     private val service = Common.retrofitService
 
-    suspend fun getNetworkData(lastRevision: Int): NetworkAccess<GetListApiResponse> {
+    suspend fun getNetworkData() {
+        val networkListResponse = service.getList()
+
+
+        if (networkListResponse.isSuccessful) {
+            val body = networkListResponse.body()
+            if (body != null) {
+                val networkList = body.list
+                val currentList = dao.getAll().map { TodoItemResponse.fromItem(it.toItem()) }
+                val mergedList = HashMap<String, TodoItemResponse>()
+
+                for(item in networkList){
+                    mergedList[item.id] = item
+                    Log.d("1", "${item.id} ${item.dateChanged}")
+                }
+                for (item in currentList) {
+                    if (mergedList.containsKey(item.id)) {
+                        val item1 = mergedList[item.id]
+                        if (item.dateChanged > item1!!.dateChanged) {
+                            mergedList[item.id] = item
+                        }else{
+                            mergedList[item.id] = item1
+                        }
+                    }else{
+                        mergedList[item.id] = item
+                    }
+                }
+
+                updateNetworkList(mergedList.values.toList())
+            }
+        }
+    }
+
+    private suspend fun updateNetworkList(mergedList: List<TodoItemResponse>) {
 
         val updateResponse = service.updateList(
-            lastRevision,
-            PatchListApiRequest(dao.getAll().map { TodoItemResponse.fromItem(it.toItem()) })
+            sharedPreferencesHelper.getLastRevision(),
+            PatchListApiRequest(mergedList)
         )
 
 
         if (updateResponse.isSuccessful) {
             val responseBody = updateResponse.body()
-            if (responseBody == null) {
-                return NetworkAccess.Error(updateResponse)
-            } else {
-                updateRoom(responseBody)
-                return NetworkAccess.Success(responseBody)
+            if (responseBody != null) {
+                sharedPreferencesHelper.putRevision(responseBody.revision)
+                updateRoom(responseBody.list)
             }
         }
-        return NetworkAccess.Error(updateResponse)
     }
 
-    private suspend fun updateRoom(response: GetListApiResponse) {
-        val list = response.list.map { it.toItem() }
+    private suspend fun updateRoom(response: List<TodoItemResponse>) {
+        val list = response.map { it.toItem() }
         dao.addList(list.map { ToDoItemEntity.fromItem(it) })
     }
 
-    suspend fun postNetworkItem(lastRevision: Int, newItem: TodoItem): NetworkAccess<PostItemApiResponse> {
+    suspend fun postNetworkItem(
+        lastRevision: Int,
+        newItem: TodoItem
+    ): NetworkAccess<PostItemApiResponse> {
         val postResponse = service.postElement(
             lastRevision,
             PostItemApiRequest(TodoItemResponse.fromItem(newItem))
@@ -87,7 +124,10 @@ class ItemsRepository(
         return NetworkAccess.Error(postResponse)
     }
 
-    suspend fun deleteNetworkItem(lastRevision: Int, id: String): NetworkAccess<PostItemApiResponse> {
+    suspend fun deleteNetworkItem(
+        lastRevision: Int,
+        id: String
+    ): NetworkAccess<PostItemApiResponse> {
         val postResponse = service.deleteElement(id, lastRevision)
 
         if (postResponse.isSuccessful) {
@@ -97,6 +137,24 @@ class ItemsRepository(
             }
         }
         return NetworkAccess.Error(postResponse)
+    }
+
+    suspend fun updateNetworkItem(
+        lastRevision: Int,
+        item: TodoItem
+    ) = withContext(Dispatchers.IO) {
+
+        val updateItemResponse = service.updateElement(
+            item.id, lastRevision, PostItemApiRequest(
+                TodoItemResponse.fromItem(item)
+            )
+        )
+        if (updateItemResponse.isSuccessful) {
+            val body = updateItemResponse.body()
+            if (body != null) {
+                sharedPreferencesHelper.putRevision(body.revision)
+            }
+        }
     }
 
 

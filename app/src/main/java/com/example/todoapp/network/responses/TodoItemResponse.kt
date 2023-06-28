@@ -39,7 +39,7 @@ data class TodoItemResponse(
         deadline?.let { Date(it) },
         done,
         Date(dateCreation),
-        dateChanged?.let { Date(it) }
+        Date(dateChanged)
     )
 
     companion object {

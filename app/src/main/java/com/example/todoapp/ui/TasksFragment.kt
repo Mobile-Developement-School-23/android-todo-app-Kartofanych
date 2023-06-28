@@ -1,13 +1,11 @@
 package com.example.todoapp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.adapter.DealsAdapter
@@ -24,7 +22,7 @@ import kotlinx.coroutines.launch
 
 class TasksFragment : Fragment() {
 
-    private val viewModel: MainViewModel by viewModels { factory() }
+    private val viewModel: MainViewModel by  activityViewModels{factory()}
     private var binding: FragmentTasksBinding? = null
     private val adapter: DealsAdapter? get() = views { recycler.adapter as DealsAdapter }
 
@@ -36,8 +34,6 @@ class TasksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
         viewModel.loadData()
 
         views {
@@ -53,8 +49,8 @@ class TasksFragment : Fragment() {
                     findNavController().navigate(action)
                 }
 
-                override fun onCheckClick(id: String, done: Boolean) {
-                    viewModel.changeItemDone(id, done)
+                override fun onCheckClick(todoItem: TodoItem) {
+                    viewModel.changeItemDone(todoItem)
                 }
 
             })
@@ -64,7 +60,7 @@ class TasksFragment : Fragment() {
                 }
 
                 override fun onChangeDone(todoItem: TodoItem) {
-                    viewModel.changeItemDone(todoItem.id, !todoItem.done)
+                    viewModel.changeItemDone(todoItem)
                 }
 
             }, requireContext())
@@ -72,7 +68,7 @@ class TasksFragment : Fragment() {
 
 
             visible.setOnClickListener {
-                viewModel.changeDone()
+                viewModel.changeMode()
                 when (viewModel.modeAll) {
                     true -> {
                         visible.setImageResource(R.drawable.ic_invisible)
