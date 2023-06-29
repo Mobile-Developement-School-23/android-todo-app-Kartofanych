@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -16,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -27,8 +25,8 @@ import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.factory
 import com.example.todoapp.room.Importance
 import com.example.todoapp.room.TodoItem
+import com.example.todoapp.utils.ConnectivityObserver
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Calendar
@@ -36,6 +34,9 @@ import java.util.UUID
 
 
 class NewTaskFragment : Fragment() {
+
+
+    private val model: MainViewModel by activityViewModels { factory() }
 
     private var todoItem = TodoItem()
 
@@ -47,29 +48,24 @@ class NewTaskFragment : Fragment() {
 
     private val args: NewTaskFragmentArgs by navArgs()
 
-    private val model: MainViewModel by activityViewModels{factory()}
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = FragmentNewTaskBinding.inflate(layoutInflater)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View = FragmentNewTaskBinding.inflate(LayoutInflater.from(context)).also { binding = it }.root
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val id = args.id
         if (id != null && savedInstanceState == null) {
             model.getItem(id)
             lifecycleScope.launch {
                 model.item.collect {
-                    if(todoItem.id == "-1") {
-                        todoItem = it
-                        updateViewsInfo()
-                        setUpViews()
-                    }
+                    todoItem = it
+                    updateViewsInfo()
+                    setUpViews()
                 }
             }
         } else if (savedInstanceState == null) {
@@ -84,12 +80,8 @@ class NewTaskFragment : Fragment() {
         }
 
 
-
-
         createPopupMenu()
 
-
-        return binding.root
     }
 
 
@@ -248,9 +240,16 @@ class NewTaskFragment : Fragment() {
 
         binding.delete.setOnClickListener {
             if (args.id != null) {
-                //model.deleteNetworkItem(todoItem.id)
-                Log.d("1", todoItem.toString())
 
+                if (model.status.value == ConnectivityObserver.Status.Available) {
+                    model.deleteNetworkItem(todoItem.id)
+                } else {
+                    Toast.makeText(
+                        context,
+                        "No network, will delete later. Continue offline.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 model.deleteItem(todoItem)
 
                 findNavController().popBackStack()
@@ -282,7 +281,6 @@ class NewTaskFragment : Fragment() {
         todoItem.id = UUID.randomUUID().toString()
         todoItem.text = binding.editTodo.text.toString()
         todoItem.dateCreation = Date(System.currentTimeMillis())
-        //
         if (todoItem.text.isEmpty()) {
             Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT)
                 .show()
@@ -290,6 +288,15 @@ class NewTaskFragment : Fragment() {
         }
 
 
+        if (model.status.value == ConnectivityObserver.Status.Available) {
+            model.uploadNetworkItem(todoItem)
+        } else {
+            Toast.makeText(
+                context,
+                "No network, will upload later. Continue offline.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
         model.addItem(todoItem)
         findNavController().popBackStack()
 
@@ -302,6 +309,16 @@ class NewTaskFragment : Fragment() {
             Toast.makeText(requireContext(), "Заполните что нужно сделать!", Toast.LENGTH_SHORT)
                 .show()
             return
+        }
+
+        if (model.status.value == ConnectivityObserver.Status.Available) {
+            model.updateNetworkItem(todoItem)
+        } else {
+            Toast.makeText(
+                context,
+                "No network, will update later. Continue offline.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
         model.updateItem(todoItem)
         findNavController().popBackStack()

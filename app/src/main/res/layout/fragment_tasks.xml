@@ -42,10 +42,19 @@
                     android:textColor="@color/tertiary"
                     android:textSize="16sp"
                     />
-
-
             </FrameLayout>
-
+            <ImageView
+                android:id="@+id/connection"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="13dp"
+                android:layout_marginEnd="70dp"
+                android:fontFamily="@font/regular"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/icon_online"
+                android:textColor="@color/tertiary"
+                android:textSize="16sp"
+                />
 
 
 
@@ -90,6 +99,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loading"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:padding="100dp"
+                app:lottie_rawRes="@raw/loading_animation"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:visibility="visible"
+                />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler"
                 android:layout_width="match_parent"
@@ -98,6 +119,7 @@
                 tools:itemCount="5"
                 tools:listitem="@layout/element_list"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:visibility="gone"
                 />
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

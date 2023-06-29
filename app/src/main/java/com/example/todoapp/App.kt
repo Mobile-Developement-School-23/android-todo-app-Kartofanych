@@ -5,7 +5,7 @@ import android.content.Context
 import com.example.todoapp.repository.ItemsRepository
 import com.example.todoapp.room.TodoListDatabase
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
-import com.example.todoapp.utils.InternetConnection
+import com.example.todoapp.utils.NetworkConnectivityObserver
 import com.example.todoapp.utils.ServiceLocator
 import com.example.todoapp.utils.locale
 
@@ -16,10 +16,10 @@ class App:Application() {
         super.onCreate()
 
         ServiceLocator.register<Context>(this)
-        ServiceLocator.register(SharedPreferencesHelper(applicationContext))
+        ServiceLocator.register(SharedPreferencesHelper(this))
         ServiceLocator.register(TodoListDatabase.create(locale()))
         ServiceLocator.register(ItemsRepository(locale(), locale()))
-        ServiceLocator.register(InternetConnection(applicationContext))
+        ServiceLocator.register(NetworkConnectivityObserver(this))
     }
 
 }

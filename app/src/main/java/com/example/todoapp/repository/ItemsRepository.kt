@@ -11,6 +11,7 @@ import com.example.todoapp.room.ToDoItemEntity
 import com.example.todoapp.room.TodoItem
 import com.example.todoapp.room.TodoListDatabase
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
+import com.example.todoapp.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -51,40 +52,41 @@ class ItemsRepository(
 
     private val service = Common.retrofitService
 
-    suspend fun getNetworkData() {
+    suspend fun getNetworkData(): LoadingState<Any> {
         val networkListResponse = service.getList()
 
 
         if (networkListResponse.isSuccessful) {
             val body = networkListResponse.body()
             if (body != null) {
+                val revision = body.revision
                 val networkList = body.list
                 val currentList = dao.getAll().map { TodoItemResponse.fromItem(it.toItem()) }
                 val mergedList = HashMap<String, TodoItemResponse>()
 
-                for(item in networkList){
-                    mergedList[item.id] = item
-                    Log.d("1", "${item.id} ${item.dateChanged}")
-                }
                 for (item in currentList) {
+                    mergedList[item.id] = item
+                }
+                for (item in networkList) {
                     if (mergedList.containsKey(item.id)) {
                         val item1 = mergedList[item.id]
                         if (item.dateChanged > item1!!.dateChanged) {
                             mergedList[item.id] = item
-                        }else{
+                        } else {
                             mergedList[item.id] = item1
                         }
-                    }else{
+                    } else if(revision != sharedPreferencesHelper.getLastRevision()){
                         mergedList[item.id] = item
                     }
                 }
 
-                updateNetworkList(mergedList.values.toList())
+                return updateNetworkList(mergedList.values.toList())
             }
         }
+        return LoadingState.Error("Some error occurred, try later")
     }
 
-    private suspend fun updateNetworkList(mergedList: List<TodoItemResponse>) {
+    private suspend fun updateNetworkList(mergedList: List<TodoItemResponse>): LoadingState<Any> {
 
         val updateResponse = service.updateList(
             sharedPreferencesHelper.getLastRevision(),
@@ -97,13 +99,14 @@ class ItemsRepository(
             if (responseBody != null) {
                 sharedPreferencesHelper.putRevision(responseBody.revision)
                 updateRoom(responseBody.list)
+                return LoadingState.Success(responseBody.list)
             }
         }
+        return LoadingState.Error("Some error occurred, try later")
     }
 
-    private suspend fun updateRoom(response: List<TodoItemResponse>) {
-        val list = response.map { it.toItem() }
-        dao.addList(list.map { ToDoItemEntity.fromItem(it) })
+    private suspend fun updateRoom(mergedList: List<TodoItemResponse>) {
+        dao.addList(mergedList.map { ToDoItemEntity.fromItem(it.toItem()) })
     }
 
     suspend fun postNetworkItem(
