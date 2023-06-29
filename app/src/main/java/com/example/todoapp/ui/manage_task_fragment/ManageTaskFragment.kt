@@ -1,9 +1,10 @@
-package com.example.todoapp.ui
+package com.example.todoapp.ui.manage_task_fragment
 
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -22,18 +23,21 @@ import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewTaskBinding
-import com.example.todoapp.factory
-import com.example.todoapp.room.Importance
-import com.example.todoapp.room.TodoItem
-import com.example.todoapp.utils.ConnectivityObserver
+import com.example.todoapp.utils.factory
+import com.example.todoapp.data_source.room.Importance
+import com.example.todoapp.data_source.room.TodoItem
+import com.example.todoapp.ui.MainViewModel
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.google.gson.Gson
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Calendar
 import java.util.UUID
 
 
-class NewTaskFragment : Fragment() {
+class ManageTaskFragment : Fragment() {
 
 
     private val model: MainViewModel by activityViewModels { factory() }
@@ -46,7 +50,7 @@ class NewTaskFragment : Fragment() {
 
     private lateinit var binding: FragmentNewTaskBinding
 
-    private val args: NewTaskFragmentArgs by navArgs()
+    private val args: ManageTaskFragmentArgs by navArgs()
 
 
     override fun onCreateView(
@@ -64,11 +68,14 @@ class NewTaskFragment : Fragment() {
             lifecycleScope.launch {
                 model.item.collect {
                     todoItem = it
-                    updateViewsInfo()
-                    setUpViews()
+                    if(todoItem.id!="-1") {
+                        updateViewsInfo()
+                        setUpViews()
+                    }
                 }
             }
         } else if (savedInstanceState == null) {
+            Log.d("1", "hey2")
             setUpViews()
         }
 
@@ -76,6 +83,7 @@ class NewTaskFragment : Fragment() {
             val gson = Gson()
             todoItem = gson.fromJson(savedInstanceState.getString("todoItem"), TodoItem::class.java)
             updateViewsInfo()
+            Log.d("1", "hey3")
             setUpViews()
         }
 
@@ -251,7 +259,7 @@ class NewTaskFragment : Fragment() {
                     ).show()
                 }
                 model.deleteItem(todoItem)
-
+                model.nullItem()
                 findNavController().popBackStack()
 
             }
@@ -262,6 +270,7 @@ class NewTaskFragment : Fragment() {
                 .duration(200)
                 .playOn(binding.close)
 
+            model.nullItem()
             findNavController().popBackStack()
         }
 
@@ -298,6 +307,7 @@ class NewTaskFragment : Fragment() {
             ).show()
         }
         model.addItem(todoItem)
+        model.nullItem()
         findNavController().popBackStack()
 
     }
@@ -321,6 +331,7 @@ class NewTaskFragment : Fragment() {
             ).show()
         }
         model.updateItem(todoItem)
+        model.nullItem()
         findNavController().popBackStack()
     }
 

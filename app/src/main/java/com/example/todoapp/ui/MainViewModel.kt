@@ -2,13 +2,13 @@ package com.example.todoapp.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.network.NetworkAccess
+import com.example.todoapp.data_source.network.NetworkAccess
 import com.example.todoapp.repository.ItemsRepository
-import com.example.todoapp.room.TodoItem
+import com.example.todoapp.data_source.room.TodoItem
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
-import com.example.todoapp.utils.ConnectivityObserver
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.example.todoapp.utils.LoadingState
-import com.example.todoapp.utils.NetworkConnectivityObserver
+import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -49,10 +49,8 @@ class MainViewModel(
     private var job: Job? = null
 
     init {
-
         observeNetwork()
         loadData()
-
     }
 
     private fun observeNetwork() {
@@ -79,8 +77,11 @@ class MainViewModel(
 
     fun getItem(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            _item.emit(repository.getItem(id))
+            _item.value = repository.getItem(id)
         }
+    }
+    fun nullItem() {
+        _item.value = TodoItem()
     }
 
 
@@ -129,7 +130,7 @@ class MainViewModel(
                 }
 
                 is NetworkAccess.Error -> {
-
+                    //Network error
                 }
             }
         }
@@ -145,7 +146,7 @@ class MainViewModel(
                 }
 
                 is NetworkAccess.Error -> {
-
+                    //Network error
                 }
             }
         }

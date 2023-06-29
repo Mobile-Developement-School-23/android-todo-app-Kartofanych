@@ -1,4 +1,4 @@
-package com.example.todoapp.ui
+package com.example.todoapp.ui.tasks_fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,19 +11,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.R
-import com.example.todoapp.adapter.DealsAdapter
-import com.example.todoapp.adapter.OnItemListener
-import com.example.todoapp.adapter.SwipeCallbackInterface
-import com.example.todoapp.adapter.SwipeHelper
+import com.example.todoapp.data_source.room.TodoItem
 import com.example.todoapp.databinding.FragmentTasksBinding
-import com.example.todoapp.factory
-import com.example.todoapp.room.TodoItem
-import com.example.todoapp.utils.ConnectivityObserver
-import com.example.todoapp.utils.ConnectivityObserver.Status.Available
-import com.example.todoapp.utils.ConnectivityObserver.Status.Losing
-import com.example.todoapp.utils.ConnectivityObserver.Status.Lost
-import com.example.todoapp.utils.ConnectivityObserver.Status.Unavailable
+import com.example.todoapp.ui.MainViewModel
+import com.example.todoapp.ui.tasks_fragment.adapter.DealsAdapter
+import com.example.todoapp.ui.tasks_fragment.adapter.OnItemListener
+import com.example.todoapp.ui.tasks_fragment.adapter.SwipeCallbackInterface
+import com.example.todoapp.ui.tasks_fragment.adapter.SwipeHelper
 import com.example.todoapp.utils.LoadingState
+import com.example.todoapp.utils.factory
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Available
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Losing
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Lost
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Unavailable
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

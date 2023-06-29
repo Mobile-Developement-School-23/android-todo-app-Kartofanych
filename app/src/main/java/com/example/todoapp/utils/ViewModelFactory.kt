@@ -1,10 +1,10 @@
-package com.example.todoapp
+package com.example.todoapp.utils
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.todoapp.App
 import com.example.todoapp.ui.MainViewModel
-import com.example.todoapp.utils.locale
 
 class ViewModelFactory(
     private val app: App

@@ -1,15 +1,15 @@
 package com.example.todoapp.repository
 
 import android.util.Log
-import com.example.todoapp.network.Common
-import com.example.todoapp.network.NetworkAccess
-import com.example.todoapp.network.responses.PatchListApiRequest
-import com.example.todoapp.network.responses.PostItemApiRequest
-import com.example.todoapp.network.responses.PostItemApiResponse
-import com.example.todoapp.network.responses.TodoItemResponse
-import com.example.todoapp.room.ToDoItemEntity
-import com.example.todoapp.room.TodoItem
-import com.example.todoapp.room.TodoListDatabase
+import com.example.todoapp.data_source.network.Common
+import com.example.todoapp.data_source.network.NetworkAccess
+import com.example.todoapp.data_source.network.responses.PatchListApiRequest
+import com.example.todoapp.data_source.network.responses.PostItemApiRequest
+import com.example.todoapp.data_source.network.responses.PostItemApiResponse
+import com.example.todoapp.data_source.network.responses.TodoItemResponse
+import com.example.todoapp.data_source.room.ToDoItemEntity
+import com.example.todoapp.data_source.room.TodoItem
+import com.example.todoapp.data_source.room.TodoListDatabase
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
 import com.example.todoapp.utils.LoadingState
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +54,6 @@ class ItemsRepository(
 
     suspend fun getNetworkData(): LoadingState<Any> {
         val networkListResponse = service.getList()
-
 
         if (networkListResponse.isSuccessful) {
             val body = networkListResponse.body()

@@ -1,6 +1,6 @@
-package com.example.todoapp.adapter
+package com.example.todoapp.ui.tasks_fragment.adapter
 
-import com.example.todoapp.room.TodoItem
+import com.example.todoapp.data_source.room.TodoItem
 
 
 interface SwipeCallbackInterface {

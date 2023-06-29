@@ -1,4 +1,4 @@
-package com.example.todoapp.adapter
+package com.example.todoapp.ui.tasks_fragment.adapter
 
 
 import android.content.Context

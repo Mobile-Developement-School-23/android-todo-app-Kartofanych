@@ -1,4 +1,4 @@
-package com.example.todoapp.adapter
+package com.example.todoapp.ui.tasks_fragment.adapter
 
 import android.graphics.Paint
 import android.view.LayoutInflater
@@ -8,8 +8,8 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.databinding.ElementListBinding
-import com.example.todoapp.room.Importance
-import com.example.todoapp.room.TodoItem
+import com.example.todoapp.data_source.room.Importance
+import com.example.todoapp.data_source.room.TodoItem
 
 class ViewHolder(private val binding: ElementListBinding) : RecyclerView.ViewHolder(binding.root) {
 

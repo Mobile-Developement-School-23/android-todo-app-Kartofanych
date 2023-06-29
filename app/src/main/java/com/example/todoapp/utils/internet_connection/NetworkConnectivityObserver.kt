@@ -1,4 +1,4 @@
-package com.example.todoapp.utils
+package com.example.todoapp.utils.internet_connection
 
 import android.content.Context
 import android.net.ConnectivityManager
