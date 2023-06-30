@@ -1,6 +1,7 @@
 package com.example.todoapp.ui.tasks_fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +47,7 @@ class TasksFragment : Fragment() {
     private var binding: FragmentTasksBinding? = null
     private val adapter: DealsAdapter? get() = views { recycler.adapter as DealsAdapter }
 
-    lateinit var internetState:ConnectivityObserver.Status
+    var internetState:ConnectivityObserver.Status = Unavailable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,8 +57,6 @@ class TasksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        internetState = viewModel.status.value
         viewModel.loadData()
 
         views {
@@ -158,7 +157,7 @@ class TasksFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.data.collectLatest {
+            viewModel.data.collect {
                 updateRecyclerData(it)
             }
         }

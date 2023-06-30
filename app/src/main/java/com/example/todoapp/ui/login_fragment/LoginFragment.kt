@@ -38,11 +38,11 @@ class LoginFragment : Fragment() {
     ): View = FragmentLoginBinding.inflate(layoutInflater).also { binding = it }.root
 
 
-    lateinit var sdk: YandexAuthSdk
+    private lateinit var sdk: YandexAuthSdk
+    private var lastToken = "no_token"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d("1", "hey")
-        viewModel.deleteAll()
+        lastToken = sharedPreferencesHelper.getToken()
         sharedPreferencesHelper.putToken("no_token")
         sharedPreferencesHelper.putRevision(0)
 
@@ -56,7 +56,7 @@ class LoginFragment : Fragment() {
 
         views{
             loginWithYandexButton.setOnClickListener {
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, 1)
             }
             loginButton.setOnClickListener {
                 sharedPreferencesHelper.putToken("unaffordable")
@@ -88,6 +88,9 @@ class LoginFragment : Fragment() {
     }
 
     private fun moveToTasks() {
+        if(lastToken != sharedPreferencesHelper.getToken()){
+            viewModel.deleteAll()
+        }
         val action = LoginFragmentDirections.actionMainTasks()
         findNavController().navigate(action)
     }
