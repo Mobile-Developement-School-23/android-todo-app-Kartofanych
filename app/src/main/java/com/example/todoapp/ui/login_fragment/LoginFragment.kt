@@ -13,6 +13,8 @@ import com.example.todoapp.databinding.FragmentLoginBinding
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
 import com.example.todoapp.ui.MainViewModel
 import com.example.todoapp.utils.factory
+import com.example.todoapp.utils.internet_connection.ConnectivityObserver
+import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
 import com.example.todoapp.utils.localeLazy
 import com.yandex.authsdk.YandexAuthException
 import com.yandex.authsdk.YandexAuthLoginOptions
@@ -37,12 +39,8 @@ class LoginFragment : Fragment() {
 
 
     private lateinit var sdk: YandexAuthSdk
-    private var lastToken = "no_token"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lastToken = sharedPreferencesHelper.getToken()
-        sharedPreferencesHelper.putToken("no_token")
-        sharedPreferencesHelper.putRevision(0)
 
         sdk = YandexAuthSdk(
             requireContext(), YandexAuthOptions(requireContext(), true)
@@ -57,7 +55,11 @@ class LoginFragment : Fragment() {
                 startActivityForResult(intent, 1)
             }
             loginButton.setOnClickListener {
-                sharedPreferencesHelper.putToken("unaffordable")
+                if(sharedPreferencesHelper.getToken() != "unaffordable") {
+                    viewModel.deleteAll()
+                    sharedPreferencesHelper.putToken("unaffordable")
+                    sharedPreferencesHelper.putRevision(0)
+                }
                 moveToTasks()
             }
         }
@@ -74,7 +76,12 @@ class LoginFragment : Fragment() {
             try {
                 val yandexAuthToken = sdk.extractToken(resultCode, data)
                 if (yandexAuthToken != null) {
-                    sharedPreferencesHelper.putToken(yandexAuthToken.value)
+                    val curToken = yandexAuthToken.value
+                    if(curToken != sharedPreferencesHelper.getToken()) {
+                        viewModel.deleteAll()
+                        sharedPreferencesHelper.putToken(yandexAuthToken.value)
+                        sharedPreferencesHelper.putRevision(0)
+                    }
                     moveToTasks()
                 }
             } catch (e: YandexAuthException) {
@@ -86,9 +93,6 @@ class LoginFragment : Fragment() {
     }
 
     private fun moveToTasks() {
-        if (lastToken != sharedPreferencesHelper.getToken()) {
-            viewModel.deleteAll()
-        }
         val action = LoginFragmentDirections.actionMainTasks()
         findNavController().navigate(action)
     }
