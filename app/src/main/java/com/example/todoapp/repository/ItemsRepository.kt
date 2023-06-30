@@ -53,55 +53,67 @@ class ItemsRepository(
     private val service = Common.retrofitService
 
     suspend fun getNetworkData(): LoadingState<Any> {
-        val networkListResponse = service.getList()
+        try {
+            val networkListResponse = service.getList()
+            if (networkListResponse.isSuccessful) {
+                val body = networkListResponse.body()
+                if (body != null) {
+                    val revision = body.revision
+                    val networkList = body.list
+                    val currentList = dao.getAll().map { TodoItemResponse.fromItem(it.toItem()) }
+                    val mergedList = HashMap<String, TodoItemResponse>()
 
-        if (networkListResponse.isSuccessful) {
-            val body = networkListResponse.body()
-            if (body != null) {
-                val revision = body.revision
-                val networkList = body.list
-                val currentList = dao.getAll().map { TodoItemResponse.fromItem(it.toItem()) }
-                val mergedList = HashMap<String, TodoItemResponse>()
-
-                for (item in currentList) {
-                    mergedList[item.id] = item
-                }
-                for (item in networkList) {
-                    if (mergedList.containsKey(item.id)) {
-                        val item1 = mergedList[item.id]
-                        if (item.dateChanged > item1!!.dateChanged) {
-                            mergedList[item.id] = item
-                        } else {
-                            mergedList[item.id] = item1
-                        }
-                    } else if (revision != sharedPreferencesHelper.getLastRevision()) {
+                    for (item in currentList) {
                         mergedList[item.id] = item
                     }
-                }
+                    for (item in networkList) {
+                        if (mergedList.containsKey(item.id)) {
+                            val item1 = mergedList[item.id]
+                            if (item.dateChanged > item1!!.dateChanged) {
+                                mergedList[item.id] = item
+                            } else {
+                                mergedList[item.id] = item1
+                            }
+                        } else if (revision != sharedPreferencesHelper.getLastRevision()) {
+                            mergedList[item.id] = item
+                        }
+                    }
 
-                return updateNetworkList(mergedList.values.toList())
+                    return updateNetworkList(mergedList.values.toList())
+                }
+            } else {
+                networkListResponse.errorBody()?.close()
             }
+        }catch (exception:Exception){
+            return LoadingState.Error("Merge failed, continue offline.")
         }
-        return LoadingState.Error("Some error occurred, try later")
+        return LoadingState.Error("Merge failed, continue offline.")
+
     }
 
     private suspend fun updateNetworkList(mergedList: List<TodoItemResponse>): LoadingState<Any> {
 
-        val updateResponse = service.updateList(
-            sharedPreferencesHelper.getLastRevision(),
-            PatchListApiRequest(mergedList)
-        )
+        try {
+            val updateResponse = service.updateList(
+                sharedPreferencesHelper.getLastRevision(),
+                PatchListApiRequest(mergedList)
+            )
 
 
-        if (updateResponse.isSuccessful) {
-            val responseBody = updateResponse.body()
-            if (responseBody != null) {
-                sharedPreferencesHelper.putRevision(responseBody.revision)
-                updateRoom(responseBody.list)
-                return LoadingState.Success(responseBody.list)
+            if (updateResponse.isSuccessful) {
+                val responseBody = updateResponse.body()
+                if (responseBody != null) {
+                    sharedPreferencesHelper.putRevision(responseBody.revision)
+                    updateRoom(responseBody.list)
+                    return LoadingState.Success(responseBody.list)
+                }
+            } else {
+                updateResponse.errorBody()?.close()
             }
+        }catch (err:Exception){
+            return LoadingState.Error("Merge failed, continue offline.")
         }
-        return LoadingState.Error("Some error occurred, try later")
+        return LoadingState.Error("Merge failed, continue offline.")
     }
 
     private suspend fun updateRoom(mergedList: List<TodoItemResponse>) {
@@ -110,51 +122,64 @@ class ItemsRepository(
 
     suspend fun postNetworkItem(
         newItem: TodoItem
-    ): NetworkAccess<PostItemApiResponse> {
-        val postResponse = service.postElement(
-            sharedPreferencesHelper.getLastRevision(),
-            PostItemApiRequest(TodoItemResponse.fromItem(newItem))
-        )
+    ) {
+        try {
+            val postResponse = service.postElement(
+                sharedPreferencesHelper.getLastRevision(),
+                PostItemApiRequest(TodoItemResponse.fromItem(newItem))
+            )
 
-        if (postResponse.isSuccessful) {
-            val responseBody = postResponse.body()
-            if (responseBody != null) {
-                sharedPreferencesHelper.putRevision(responseBody.revision)
-                return NetworkAccess.Success(responseBody)
+            if (postResponse.isSuccessful) {
+                val responseBody = postResponse.body()
+                if (responseBody != null) {
+                    sharedPreferencesHelper.putRevision(responseBody.revision)
+                }
+            }else {
+                postResponse.errorBody()?.close()
             }
+        }catch (err:Exception){
+            Log.d("1", err.message.toString())
         }
-        return NetworkAccess.Error(postResponse)
     }
 
     suspend fun deleteNetworkItem(
         id: String
-    ): NetworkAccess<PostItemApiResponse> {
-        val postResponse = service.deleteElement(id, sharedPreferencesHelper.getLastRevision())
+    ) {
+        try {
+            val postResponse = service.deleteElement(id, sharedPreferencesHelper.getLastRevision())
 
-        if (postResponse.isSuccessful) {
-            val responseBody = postResponse.body()
-            if (responseBody != null) {
-                sharedPreferencesHelper.putRevision(responseBody.revision)
-                return NetworkAccess.Success(responseBody)
+            if (postResponse.isSuccessful) {
+                val responseBody = postResponse.body()
+                if (responseBody != null) {
+                    sharedPreferencesHelper.putRevision(responseBody.revision)
+                }
+            }else {
+                postResponse.errorBody()?.close()
             }
+        }catch (err:Exception){
+            Log.d("1", err.message.toString())
         }
-        return NetworkAccess.Error(postResponse)
     }
 
     suspend fun updateNetworkItem(
         item: TodoItem
-    ) = withContext(Dispatchers.IO) {
-
-        val updateItemResponse = service.updateElement(
-            item.id, sharedPreferencesHelper.getLastRevision(), PostItemApiRequest(
-                TodoItemResponse.fromItem(item)
+    ) {
+        try {
+            val updateItemResponse = service.updateElement(
+                item.id, sharedPreferencesHelper.getLastRevision(), PostItemApiRequest(
+                    TodoItemResponse.fromItem(item)
+                )
             )
-        )
-        if (updateItemResponse.isSuccessful) {
-            val body = updateItemResponse.body()
-            if (body != null) {
-                sharedPreferencesHelper.putRevision(body.revision)
+            if (updateItemResponse.isSuccessful) {
+                val body = updateItemResponse.body()
+                if (body != null) {
+                    sharedPreferencesHelper.putRevision(body.revision)
+                }
+            } else {
+                updateItemResponse.errorBody()?.close()
             }
+        }catch (err:Exception){
+            Log.d("1", "err")
         }
     }
 

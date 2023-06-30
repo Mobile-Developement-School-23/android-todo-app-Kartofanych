@@ -13,6 +13,7 @@ object RetrofitClient {
 
     fun getClient(baseUrl:String):Retrofit{
         if(retrofitClient == null){
+            System.setProperty("http.keepAlive", "false")
             val interceptor = HttpLoggingInterceptor()
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
             val client = OkHttpClient.Builder().addInterceptor { chain ->
@@ -23,8 +24,8 @@ object RetrofitClient {
 
             }.connectTimeout(120, TimeUnit.SECONDS)
                 .readTimeout(120, TimeUnit.SECONDS)
-                .writeTimeout(90, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(false)
                 .addInterceptor(interceptor).build()
 
 

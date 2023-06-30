@@ -179,9 +179,13 @@ class TasksFragment : Fragment() {
             }
 
             is LoadingState.Error -> {
+                views {
+                    recycler.visibility = View.VISIBLE
+                    loading.visibility = View.GONE
+                }
                 Toast.makeText(
                     context,
-                    "Error occurred, loaded local files",
+                    loadingState.error,
                     Toast.LENGTH_SHORT
                 ).show()
             }
