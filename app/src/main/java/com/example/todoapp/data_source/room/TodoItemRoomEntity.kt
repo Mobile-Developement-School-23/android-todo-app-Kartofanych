@@ -24,6 +24,7 @@ data class ToDoItemEntity(
         Date(createdAt),
         changedAt?.let { Date(it) }
     )
+
     companion object {
         fun fromItem(toDoItem: TodoItem): ToDoItemEntity {
             return ToDoItemEntity(

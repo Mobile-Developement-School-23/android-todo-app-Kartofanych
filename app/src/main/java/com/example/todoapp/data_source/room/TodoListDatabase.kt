@@ -6,10 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(entities = [ToDoItemEntity::class], version = 3)
-abstract class TodoListDatabase : RoomDatabase(){
+abstract class TodoListDatabase : RoomDatabase() {
     abstract val listDao: TodoListDao
 
-    companion object{
+    companion object {
         fun create(context: Context) = Room.databaseBuilder(
             context,
             TodoListDatabase::class.java,

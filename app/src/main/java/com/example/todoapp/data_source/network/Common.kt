@@ -8,7 +8,8 @@ object Common {
             RetrofitClient.token = value
         }
     var phoneID = "id"
-    val retrofitService: RetrofitService = RetrofitClient.createClient().create(RetrofitService::class.java)
+    val retrofitService: RetrofitService =
+        RetrofitClient.createClient().create(RetrofitService::class.java)
 
 
 }

@@ -10,7 +10,6 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.todoapp.R
-import com.example.todoapp.data_source.network.Common
 import com.example.todoapp.data_source.network.RetrofitClient
 import com.example.todoapp.utils.MyWorkManager
 import java.util.concurrent.TimeUnit
@@ -38,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         ) R.id.loginFragment else R.id.tasks_fragment
         navGraph.setStartDestination(destination)
         controller.graph = navGraph
-
 
 
     }
@@ -69,8 +67,6 @@ class MainActivity : AppCompatActivity() {
             myWorkRequest
         )
     }
-
-
 
 
 }

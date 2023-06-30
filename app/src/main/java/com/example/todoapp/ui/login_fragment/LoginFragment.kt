@@ -2,7 +2,6 @@ package com.example.todoapp.ui.login_fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.databinding.FragmentLoginBinding
-import com.example.todoapp.databinding.FragmentTasksBinding
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
 import com.example.todoapp.ui.MainViewModel
 import com.example.todoapp.utils.factory
@@ -26,11 +24,11 @@ import com.yandex.authsdk.internal.strategy.LoginType
 class LoginFragment : Fragment() {
 
 
-    private val sharedPreferencesHelper:SharedPreferencesHelper by localeLazy()
+    private val sharedPreferencesHelper: SharedPreferencesHelper by localeLazy()
 
-    private val viewModel:MainViewModel by activityViewModels { factory() }
+    private val viewModel: MainViewModel by activityViewModels { factory() }
 
-    private var binding:FragmentLoginBinding? = null
+    private var binding: FragmentLoginBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +52,7 @@ class LoginFragment : Fragment() {
         val loginOptionsBuilder = YandexAuthLoginOptions.Builder().setLoginType(LoginType.NATIVE)
         val intent = sdk.createLoginIntent(loginOptionsBuilder.build())
 
-        views{
+        views {
             loginWithYandexButton.setOnClickListener {
                 startActivityForResult(intent, 1)
             }
@@ -66,8 +64,8 @@ class LoginFragment : Fragment() {
     }
 
 
-     @Deprecated("Deprecated in Java")
-     override fun onActivityResult(
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
         data: Intent?
@@ -88,7 +86,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun moveToTasks() {
-        if(lastToken != sharedPreferencesHelper.getToken()){
+        if (lastToken != sharedPreferencesHelper.getToken()) {
             viewModel.deleteAll()
         }
         val action = LoginFragmentDirections.actionMainTasks()

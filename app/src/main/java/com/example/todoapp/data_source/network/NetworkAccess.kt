@@ -3,8 +3,8 @@ package com.example.todoapp.data_source.network
 import retrofit2.Response
 
 sealed class NetworkAccess<out T> {
-    data class Success<out T>(val data: T): NetworkAccess<T>()
-    data class Error<T>(val response: Response<T>): NetworkAccess<T>()
+    data class Success<out T>(val data: T) : NetworkAccess<T>()
+    data class Error<T>(val response: Response<T>) : NetworkAccess<T>()
 }
 
 fun <T> Response<T>.parseResponse(): NetworkAccess<T> {

@@ -1,6 +1,5 @@
 package com.example.todoapp.data_source.network
 
-import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -12,9 +11,9 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
     lateinit var retrofitClient: Retrofit
-    private const val baseURL:String = "https://beta.mrdekk.ru/todobackend/"
-    var token:String = Common.token
-        set(value){
+    private const val baseURL: String = "https://beta.mrdekk.ru/todobackend/"
+    var token: String = Common.token
+        set(value) {
             field = value
             retrofitClient = Retrofit.Builder()
                 .client(getHttpClient())
@@ -23,7 +22,7 @@ object RetrofitClient {
                 .build()
         }
 
-    fun createClient():Retrofit{
+    fun createClient(): Retrofit {
         System.setProperty("http.keepAlive", "false")
         retrofitClient = Retrofit.Builder()
             .client(getHttpClient())
@@ -34,7 +33,7 @@ object RetrofitClient {
     }
 
 
-    private fun getHttpClient():OkHttpClient{
+    private fun getHttpClient(): OkHttpClient {
         return OkHttpClient.Builder().addInterceptor { chain ->
             val newRequest: Request = chain.request().newBuilder()
                 .addHeader("Authorization", getAuthString())
@@ -47,14 +46,15 @@ object RetrofitClient {
             .addInterceptor(getInterceptor()).build()
     }
 
-    private fun getAuthString():String {
+    private fun getAuthString(): String {
         return if (token == "unaffordable") {
             "Bearer unaffordable"
         } else {
             "OAuth $token"
         }
     }
-    private fun getInterceptor():Interceptor{
+
+    private fun getInterceptor(): Interceptor {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         return interceptor

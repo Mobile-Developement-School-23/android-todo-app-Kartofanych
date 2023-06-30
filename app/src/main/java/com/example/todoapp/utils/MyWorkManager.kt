@@ -7,14 +7,14 @@ import com.example.todoapp.repository.ItemsRepository
 import kotlinx.coroutines.runBlocking
 
 class MyWorkManager(
-    context:Context,
+    context: Context,
     workerParameters: WorkerParameters,
-    ): Worker(context,workerParameters){
+) : Worker(context, workerParameters) {
 
     private val repository: ItemsRepository by localeLazy()
 
     override fun doWork(): Result {
-        return when(mergeData()){
+        return when (mergeData()) {
             is LoadingState.Success -> Result.success()
             else -> {
                 Result.failure()
@@ -22,7 +22,7 @@ class MyWorkManager(
         }
     }
 
-    private fun mergeData() = runBlocking{
+    private fun mergeData() = runBlocking {
         return@runBlocking repository.getNetworkData()
     }
 

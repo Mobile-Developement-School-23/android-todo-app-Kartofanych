@@ -4,7 +4,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.todoapp.data_source.room.TodoItem
 
-interface OnItemListener{
+interface OnItemListener {
     fun onItemClick(id: String)
 
     fun onCheckClick(todoItem: TodoItem)

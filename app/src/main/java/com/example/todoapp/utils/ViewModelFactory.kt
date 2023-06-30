@@ -16,6 +16,7 @@ class ViewModelFactory(
             MainViewModel::class.java -> {
                 MainViewModel(locale(), locale())
             }
+
             else -> {
                 throw IllegalStateException("Unknown view model class")
             }

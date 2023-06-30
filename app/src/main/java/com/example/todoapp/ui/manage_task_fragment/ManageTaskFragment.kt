@@ -22,15 +22,13 @@ import androidx.navigation.fragment.navArgs
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.R
-import com.example.todoapp.databinding.FragmentNewTaskBinding
-import com.example.todoapp.utils.factory
 import com.example.todoapp.data_source.room.Importance
 import com.example.todoapp.data_source.room.TodoItem
+import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.ui.MainViewModel
+import com.example.todoapp.utils.factory
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Calendar
@@ -56,7 +54,8 @@ class ManageTaskFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = FragmentNewTaskBinding.inflate(LayoutInflater.from(context)).also { binding = it }.root
+    ): View =
+        FragmentNewTaskBinding.inflate(LayoutInflater.from(context)).also { binding = it }.root
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,7 +67,7 @@ class ManageTaskFragment : Fragment() {
             lifecycleScope.launch {
                 model.item.collect {
                     todoItem = it
-                    if(todoItem.id!="-1") {
+                    if (todoItem.id != "-1") {
                         updateViewsInfo()
                         setUpViews()
                     }

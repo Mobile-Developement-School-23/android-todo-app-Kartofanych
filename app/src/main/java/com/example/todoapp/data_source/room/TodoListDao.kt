@@ -29,6 +29,7 @@ interface TodoListDao {
 
     @Update
     suspend fun updateItem(toDoItemEntity: ToDoItemEntity)
+
     @Delete
     suspend fun delete(entity: ToDoItemEntity)
 
@@ -36,5 +37,5 @@ interface TodoListDao {
     suspend fun deleteAll()
 
     @Query("UPDATE todolist SET done= :done, changedAt=:time WHERE id = :id")
-    suspend fun updateDone(id: String, done: Boolean, time:Long)
+    suspend fun updateDone(id: String, done: Boolean, time: Long)
 }

@@ -2,7 +2,6 @@ package com.example.todoapp.ui.tasks_fragment
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,33 +12,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import com.example.todoapp.R
 import com.example.todoapp.data_source.room.TodoItem
 import com.example.todoapp.databinding.FragmentTasksBinding
-import com.example.todoapp.shared_preferences.SharedPreferencesHelper
 import com.example.todoapp.ui.MainViewModel
 import com.example.todoapp.ui.tasks_fragment.adapter.DealsAdapter
 import com.example.todoapp.ui.tasks_fragment.adapter.OnItemListener
 import com.example.todoapp.ui.tasks_fragment.adapter.SwipeCallbackInterface
 import com.example.todoapp.ui.tasks_fragment.adapter.SwipeHelper
 import com.example.todoapp.utils.LoadingState
-import com.example.todoapp.utils.MyWorkManager
 import com.example.todoapp.utils.factory
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Available
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Losing
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Lost
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Unavailable
-import com.example.todoapp.utils.localeLazy
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 
 class TasksFragment : Fragment() {
@@ -153,13 +143,13 @@ class TasksFragment : Fragment() {
                     )
                 )
                 builder.apply {
-                    val title = if(internetState == Available){
+                    val title = if (internetState == Available) {
                         "Вы уверены, что хотите выйти?"
-                    }else{
+                    } else {
                         "Вы уверены, что хотите выйти? Возможна потеря данных оффлайн режима."
                     }
                     setMessage(title)
-                    setPositiveButton("Выйти", object :DialogInterface.OnClickListener{
+                    setPositiveButton("Выйти", object : DialogInterface.OnClickListener {
                         override fun onClick(p0: DialogInterface?, p1: Int) {
                             val action = TasksFragmentDirections.logOut()
                             findNavController().navigate(action)
@@ -293,15 +283,6 @@ class TasksFragment : Fragment() {
         }
     }
 
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        val state = when(internetState){
-            Available -> "available"
-            else -> "unavailable"
-        }
-        outState.putString("internet", state)
-    }
 
     private fun <T : Any> views(block: FragmentTasksBinding.() -> T): T? = binding?.block()
 

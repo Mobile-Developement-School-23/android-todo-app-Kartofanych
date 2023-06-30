@@ -1,7 +1,5 @@
 package com.example.todoapp.data_source.room
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.google.gson.Gson
 import java.sql.Date
 import java.text.SimpleDateFormat
