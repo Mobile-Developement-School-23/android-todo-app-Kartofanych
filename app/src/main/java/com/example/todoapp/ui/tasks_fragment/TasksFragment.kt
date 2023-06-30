@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.tasks_fragment
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -34,6 +36,7 @@ import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Lost
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Unavailable
 import com.example.todoapp.utils.localeLazy
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
@@ -47,13 +50,12 @@ class TasksFragment : Fragment() {
     private var binding: FragmentTasksBinding? = null
     private val adapter: DealsAdapter? get() = views { recycler.adapter as DealsAdapter }
 
-    var internetState:ConnectivityObserver.Status = Unavailable
+    private var internetState = ConnectivityObserver.Status.Unavailable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = FragmentTasksBinding.inflate(LayoutInflater.from(context)).also { binding = it }.root
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -144,8 +146,29 @@ class TasksFragment : Fragment() {
             }
 
             floatingLogOut.setOnClickListener {
-                val action = TasksFragmentDirections.logOut()
-                findNavController().navigate(action)
+                val builder: MaterialAlertDialogBuilder = MaterialAlertDialogBuilder(
+                    ContextThemeWrapper(
+                        context,
+                        R.style.AlertDialogCustom
+                    )
+                )
+                builder.apply {
+                    val title = if(internetState == Available){
+                        "Вы уверены, что хотите выйти?"
+                    }else{
+                        "Вы уверены, что хотите выйти? Возможна потеря данных оффлайн режима."
+                    }
+                    setMessage(title)
+                    setPositiveButton("Выйти", object :DialogInterface.OnClickListener{
+                        override fun onClick(p0: DialogInterface?, p1: Int) {
+                            val action = TasksFragmentDirections.logOut()
+                            findNavController().navigate(action)
+                        }
+                    })
+                }
+                builder.show()
+                    .create()
+
             }
 
         }
@@ -268,6 +291,16 @@ class TasksFragment : Fragment() {
         } else {
             adapter?.submitList(list.filter { !it.done })
         }
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val state = when(internetState){
+            Available -> "available"
+            else -> "unavailable"
+        }
+        outState.putString("internet", state)
     }
 
     private fun <T : Any> views(block: FragmentTasksBinding.() -> T): T? = binding?.block()

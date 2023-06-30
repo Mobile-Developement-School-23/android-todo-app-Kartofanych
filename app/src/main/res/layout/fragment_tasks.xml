@@ -131,12 +131,12 @@
         android:layout_height="56dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="86dp"
-        android:src="@drawable/icon_offline"
-        app:backgroundTint="@color/blue"
+        android:src="@drawable/ic_log_out"
+        app:backgroundTint="@color/back_secondary"
         app:elevation="2dp"
         android:layout_gravity="bottom|end"
-        app:maxImageSize="14dp"
-        app:tint="@color/white" />
+        app:maxImageSize="20dp"
+        app:tint="@color/blue" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_new_task"

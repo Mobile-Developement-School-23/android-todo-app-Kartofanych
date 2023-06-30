@@ -43,4 +43,24 @@
     <style name="DatePickerTheme.ButtonBarButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog"> <item name="android:textColor">@color/blue</item>
         </style>
 
+    <style name="AlertDialogCustom" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <!-- Used for the buttons -->
+        <item name="colorAccent">@color/blue</item>
+        <!-- Used for the title and text -->
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialogText</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialogText</item>
+        <!-- Used for the background -->=
+        <item name="shapeAppearanceOverlay">@style/MaterialAlertDialogCorners</item>
+    </style>
+
+    <style name="MaterialAlertDialogCorners">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="MaterialAlertDialogText" parent="@style/MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="fontFamily">@font/medium</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
 </resources>
