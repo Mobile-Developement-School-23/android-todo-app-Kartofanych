@@ -61,7 +61,7 @@ data class TodoItemResponse(
                         toDoItem.dateChanged!!.time
                     }
                 },
-                updated_by = Common.updated_by
+                updated_by = Common.phoneID
             )
         }
     }

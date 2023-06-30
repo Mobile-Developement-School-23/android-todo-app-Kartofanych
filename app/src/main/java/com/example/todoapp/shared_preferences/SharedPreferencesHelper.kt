@@ -18,7 +18,12 @@ class SharedPreferencesHelper(context: Context){
             editor.apply()
         }
 
-        Common.updated_by = sharedPreferences.getString("UID", "-1").toString()
+        if(!sharedPreferences.contains("token")){
+            putToken("no_token")
+        }
+
+        Common.phoneID = sharedPreferences.getString("UID", "-1").toString()
+        Common.token = sharedPreferences.getString("token", "no_token").toString()
 
     }
 
@@ -26,6 +31,17 @@ class SharedPreferencesHelper(context: Context){
         editor.putInt("REVISION", revision)
         editor.apply()
     }
+
+    fun getToken():String{
+        return sharedPreferences.getString("token", "unaffordable")!!
+    }
+
+    fun putToken(token:String){
+        editor.putString("token", token)
+        Common.token = token
+        editor.apply()
+    }
+
     fun getLastRevision():Int = sharedPreferences.getInt("REVISION", 1)
 
 

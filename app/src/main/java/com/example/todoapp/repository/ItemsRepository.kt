@@ -50,7 +50,9 @@ class ItemsRepository(
     }
 
 
-    private val service = Common.retrofitService
+    private val service by lazy{
+        Common.retrofitService
+    }
 
     suspend fun getNetworkData(): LoadingState<Any> {
         try {
@@ -181,6 +183,10 @@ class ItemsRepository(
         }catch (err:Exception){
             Log.d("1", "err")
         }
+    }
+
+    suspend fun deleteAll() {
+        dao.deleteAll()
     }
 
 

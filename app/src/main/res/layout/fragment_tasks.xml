@@ -38,7 +38,7 @@
                     android:layout_marginStart="60dp"
                     android:fontFamily="@font/regular"
                     android:layout_gravity="bottom"
-                    android:text="Выполнено - 5"
+                    android:text="Выполнено - 0"
                     android:textColor="@color/tertiary"
                     android:textSize="16sp"
                     />
@@ -125,6 +125,18 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_log_out"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="86dp"
+        android:src="@drawable/icon_offline"
+        app:backgroundTint="@color/blue"
+        app:elevation="2dp"
+        android:layout_gravity="bottom|end"
+        app:maxImageSize="14dp"
+        app:tint="@color/white" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_new_task"

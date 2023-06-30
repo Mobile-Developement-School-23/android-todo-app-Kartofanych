@@ -15,6 +15,8 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface RetrofitService {
+
+
     @GET("list")
     suspend fun getList(): Response<GetListApiResponse>
 

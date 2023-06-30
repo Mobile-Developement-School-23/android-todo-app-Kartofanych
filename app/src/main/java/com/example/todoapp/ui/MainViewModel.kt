@@ -34,8 +34,8 @@ class MainViewModel(
     private val _status = MutableStateFlow(ConnectivityObserver.Status.Unavailable)
     val status = _status.asStateFlow()
 
-    private val _data = MutableSharedFlow<List<TodoItem>>()
-    val data: SharedFlow<List<TodoItem>> = _data.asSharedFlow()
+    private val _data = MutableStateFlow<List<TodoItem>>(listOf())
+    val data: StateFlow<List<TodoItem>> = _data.asStateFlow()
     val countComplete: Flow<Int> = _data.map { it.count { item -> item.done } }
 
     private val _loading = MutableStateFlow<LoadingState<Any>>(LoadingState.Success("data"))
@@ -143,6 +143,12 @@ class MainViewModel(
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
+    }
+
+    fun deleteAll() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAll()
+        }
     }
 
 

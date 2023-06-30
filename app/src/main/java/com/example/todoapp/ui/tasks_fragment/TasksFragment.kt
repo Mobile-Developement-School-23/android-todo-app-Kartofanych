@@ -10,23 +10,32 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.example.todoapp.R
 import com.example.todoapp.data_source.room.TodoItem
 import com.example.todoapp.databinding.FragmentTasksBinding
+import com.example.todoapp.shared_preferences.SharedPreferencesHelper
 import com.example.todoapp.ui.MainViewModel
 import com.example.todoapp.ui.tasks_fragment.adapter.DealsAdapter
 import com.example.todoapp.ui.tasks_fragment.adapter.OnItemListener
 import com.example.todoapp.ui.tasks_fragment.adapter.SwipeCallbackInterface
 import com.example.todoapp.ui.tasks_fragment.adapter.SwipeHelper
 import com.example.todoapp.utils.LoadingState
+import com.example.todoapp.utils.MyWorkManager
 import com.example.todoapp.utils.factory
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Available
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Losing
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Lost
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver.Status.Unavailable
+import com.example.todoapp.utils.localeLazy
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 
 class TasksFragment : Fragment() {
@@ -37,7 +46,7 @@ class TasksFragment : Fragment() {
     private var binding: FragmentTasksBinding? = null
     private val adapter: DealsAdapter? get() = views { recycler.adapter as DealsAdapter }
 
-    private var internetState = Unavailable
+    lateinit var internetState:ConnectivityObserver.Status
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,8 +57,8 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.loadData()
         internetState = viewModel.status.value
+        viewModel.loadData()
 
         views {
 
@@ -135,6 +144,11 @@ class TasksFragment : Fragment() {
                 refresher.isRefreshing = false
             }
 
+            floatingLogOut.setOnClickListener {
+                val action = TasksFragmentDirections.logOut()
+                findNavController().navigate(action)
+            }
+
         }
 
         lifecycleScope.launch {
@@ -159,6 +173,8 @@ class TasksFragment : Fragment() {
                 updateLoadingUI(it)
             }
         }
+
+        internetState = viewModel.status.value
 
     }
 

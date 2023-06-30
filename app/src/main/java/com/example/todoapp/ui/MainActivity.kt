@@ -9,8 +9,9 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import com.example.todoapp.R
+import com.example.todoapp.data_source.network.Common
+import com.example.todoapp.data_source.network.RetrofitClient
 import com.example.todoapp.utils.MyWorkManager
 import java.util.concurrent.TimeUnit
 
@@ -29,7 +30,44 @@ class MainActivity : AppCompatActivity() {
                     as NavHostFragment
         controller = navHostFragment.navController
 
+        val graphInflater = navHostFragment.navController.navInflater
+        val navGraph = graphInflater.inflate(R.navigation.tasks_navigation)
+        controller = navHostFragment.navController
 
+        val destination = if (RetrofitClient.token == "no_token"
+        ) R.id.loginFragment else R.id.tasks_fragment
+        navGraph.setStartDestination(destination)
+        controller.graph = navGraph
+
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        periodicUpdate()
+    }
+
+    private fun periodicUpdate() {
+        val constraints: Constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+
+
+        val myWorkRequest = PeriodicWorkRequest.Builder(
+            MyWorkManager::class.java,
+            8,
+            TimeUnit.HOURS
+        )
+            .setConstraints(constraints)
+            .addTag("update_data")
+            .build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "update_data",
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+            myWorkRequest
+        )
     }
 
 

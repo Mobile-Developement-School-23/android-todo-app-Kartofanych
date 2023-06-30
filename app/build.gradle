@@ -15,6 +15,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [YANDEX_CLIENT_ID:"0d0970774e284fa8ba9ff70b6b06479a"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -94,5 +95,8 @@ dependencies {
 
     //Work manager
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
+
+    //Login SDK
+    implementation "com.yandex.android:authsdk:2.5.1"
 
 }
