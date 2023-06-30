@@ -74,7 +74,7 @@ class ItemsRepository(
                         } else {
                             mergedList[item.id] = item1
                         }
-                    } else if(revision != sharedPreferencesHelper.getLastRevision()){
+                    } else if (revision != sharedPreferencesHelper.getLastRevision()) {
                         mergedList[item.id] = item
                     }
                 }
@@ -109,17 +109,17 @@ class ItemsRepository(
     }
 
     suspend fun postNetworkItem(
-        lastRevision: Int,
         newItem: TodoItem
     ): NetworkAccess<PostItemApiResponse> {
         val postResponse = service.postElement(
-            lastRevision,
+            sharedPreferencesHelper.getLastRevision(),
             PostItemApiRequest(TodoItemResponse.fromItem(newItem))
         )
 
         if (postResponse.isSuccessful) {
             val responseBody = postResponse.body()
             if (responseBody != null) {
+                sharedPreferencesHelper.putRevision(responseBody.revision)
                 return NetworkAccess.Success(responseBody)
             }
         }
@@ -127,14 +127,14 @@ class ItemsRepository(
     }
 
     suspend fun deleteNetworkItem(
-        lastRevision: Int,
         id: String
     ): NetworkAccess<PostItemApiResponse> {
-        val postResponse = service.deleteElement(id, lastRevision)
+        val postResponse = service.deleteElement(id, sharedPreferencesHelper.getLastRevision())
 
         if (postResponse.isSuccessful) {
             val responseBody = postResponse.body()
             if (responseBody != null) {
+                sharedPreferencesHelper.putRevision(responseBody.revision)
                 return NetworkAccess.Success(responseBody)
             }
         }
@@ -142,12 +142,11 @@ class ItemsRepository(
     }
 
     suspend fun updateNetworkItem(
-        lastRevision: Int,
         item: TodoItem
     ) = withContext(Dispatchers.IO) {
 
         val updateItemResponse = service.updateElement(
-            item.id, lastRevision, PostItemApiRequest(
+            item.id, sharedPreferencesHelper.getLastRevision(), PostItemApiRequest(
                 TodoItemResponse.fromItem(item)
             )
         )

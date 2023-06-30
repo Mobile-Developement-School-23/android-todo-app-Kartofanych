@@ -26,7 +26,6 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(
     private val repository: ItemsRepository,
-    private val sharedPreferencesHelper: SharedPreferencesHelper,
     private val connection: NetworkConnectivityObserver
 ) : ViewModel() {
 
@@ -80,6 +79,7 @@ class MainViewModel(
             _item.value = repository.getItem(id)
         }
     }
+
     fun nullItem() {
         _item.value = TodoItem()
     }
@@ -122,40 +122,20 @@ class MainViewModel(
 
     fun uploadNetworkItem(todoItem: TodoItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response =
-                repository.postNetworkItem(sharedPreferencesHelper.getLastRevision(), todoItem)
-            when (response) {
-                is NetworkAccess.Success -> {
-                    sharedPreferencesHelper.putRevision(response.data.revision)
-                }
-
-                is NetworkAccess.Error -> {
-                    //Network error
-                }
-            }
+            repository.postNetworkItem(todoItem)
         }
     }
 
     fun deleteNetworkItem(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response =
-                repository.deleteNetworkItem(sharedPreferencesHelper.getLastRevision(), id)
-            when (response) {
-                is NetworkAccess.Success -> {
-                    sharedPreferencesHelper.putRevision(response.data.revision)
-                }
-
-                is NetworkAccess.Error -> {
-                    //Network error
-                }
-            }
+            repository.deleteNetworkItem(id)
         }
     }
 
     fun updateNetworkItem(todoItem: TodoItem) {
         val item = todoItem.copy(done = !todoItem.done)
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateNetworkItem(sharedPreferencesHelper.getLastRevision(), item)
+            repository.updateNetworkItem(item)
         }
     }
 

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.login_fragment.LoginFragment"
+    android:background="@color/back_secondary"
+    >
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.3"
+        android:text="Добро пожаловать!"
+        android:textSize="30sp"
+        android:textColor="@color/primary"
+        android:fontFamily="@font/medium"
+        />
+    <TextView
+        android:id="@+id/title_"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintHorizontal_bias="0.3"
+        android:text="Войдите в аккаунт или воспользуйтесь гостевым входом"
+        android:textSize="30sp"
+        android:textColor="@color/primary"
+        android:fontFamily="@font/medium"
+        />
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/container_login"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="30dp"
+        app:layout_constraintVertical_bias="0.4"
+        android:hint="Введите логин"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeWidth="2dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ed_password"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/regular"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/container_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/container_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="20dp"
+        android:hint="Введите пароль"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxStrokeWidth="2dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/ed_login"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/regular"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

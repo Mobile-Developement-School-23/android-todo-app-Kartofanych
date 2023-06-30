@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tasks_navigation"
-    app:startDestination="@id/tasks_fragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/tasks_fragment"
         android:name="com.example.todoapp.ui.tasks_fragment.TasksFragment"
@@ -30,4 +30,16 @@
             app:destination="@+id/tasks_fragment"
             />
     </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.todoapp.ui.login_fragment.LoginFragment"
+        android:label="loginFragment"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/login"
+            app:destination="@+id/tasks_fragment"
+            />
+    </fragment>
+
 </navigation>
