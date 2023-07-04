@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/back_primary"
     android:id="@+id/tasksFragment"
-    tools:context=".ui.tasks_fragment.TasksFragment">
+    tools:context=".ui.TasksFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

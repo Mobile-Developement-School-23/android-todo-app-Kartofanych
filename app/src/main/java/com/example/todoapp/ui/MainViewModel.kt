@@ -137,7 +137,6 @@ class MainViewModel(
         }
     }
 
-
     override fun onCleared() {
         super.onCleared()
         job?.cancel()

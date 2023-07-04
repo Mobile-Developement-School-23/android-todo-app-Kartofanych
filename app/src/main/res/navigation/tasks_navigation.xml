@@ -6,7 +6,7 @@
     app:startDestination="@id/splash_fragment">
     <fragment
         android:id="@+id/tasks_fragment"
-        android:name="com.example.todoapp.ui.tasks_fragment.TasksFragment"
+        android:name="com.example.todoapp.ui.TasksFragment"
         android:label="tasksFragment"
         tools:layout="@layout/fragment_tasks" >
         <action
