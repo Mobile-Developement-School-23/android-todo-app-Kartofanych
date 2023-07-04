@@ -1,9 +1,9 @@
-package com.example.todoapp.data_source.network
+package com.example.todoapp.data.data_source.network
 
-import com.example.todoapp.data_source.network.responses.GetListApiResponse
-import com.example.todoapp.data_source.network.responses.PatchListApiRequest
-import com.example.todoapp.data_source.network.responses.PostItemApiRequest
-import com.example.todoapp.data_source.network.responses.PostItemApiResponse
+import com.example.todoapp.data.data_source.network.responses.GetListApiResponse
+import com.example.todoapp.data.data_source.network.responses.PatchListApiRequest
+import com.example.todoapp.data.data_source.network.responses.PostItemApiRequest
+import com.example.todoapp.data.data_source.network.responses.PostItemApiResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

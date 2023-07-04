@@ -1,4 +1,4 @@
-package com.example.todoapp.data_source.network.responses
+package com.example.todoapp.data.data_source.network.responses
 
 import com.google.gson.annotations.SerializedName
 

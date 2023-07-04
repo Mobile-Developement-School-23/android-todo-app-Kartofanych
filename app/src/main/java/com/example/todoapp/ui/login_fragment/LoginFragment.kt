@@ -52,6 +52,7 @@ class LoginFragment : Fragment() {
 
         views {
             loginWithYandexButton.setOnClickListener {
+
                 startActivityForResult(intent, 1)
             }
             loginButton.setOnClickListener {

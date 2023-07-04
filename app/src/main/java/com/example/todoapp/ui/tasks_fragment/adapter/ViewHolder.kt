@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
-import com.example.todoapp.data_source.room.Importance
-import com.example.todoapp.data_source.room.TodoItem
+import com.example.todoapp.data.data_source.room.Importance
+import com.example.todoapp.data.data_source.room.TodoItem
 import com.example.todoapp.databinding.ElementListBinding
 
 class ViewHolder(private val binding: ElementListBinding) : RecyclerView.ViewHolder(binding.root) {

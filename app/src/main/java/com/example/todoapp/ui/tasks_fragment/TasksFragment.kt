@@ -13,7 +13,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.R
-import com.example.todoapp.data_source.room.TodoItem
+import com.example.todoapp.data.data_source.room.TodoItem
 import com.example.todoapp.databinding.FragmentTasksBinding
 import com.example.todoapp.ui.MainViewModel
 import com.example.todoapp.ui.tasks_fragment.adapter.DealsAdapter

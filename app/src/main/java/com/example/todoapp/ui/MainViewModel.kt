@@ -2,8 +2,8 @@ package com.example.todoapp.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data_source.room.TodoItem
-import com.example.todoapp.repository.ItemsRepository
+import com.example.todoapp.data.data_source.room.TodoItem
+import com.example.todoapp.data.repository.ItemsRepository
 import com.example.todoapp.utils.LoadingState
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver

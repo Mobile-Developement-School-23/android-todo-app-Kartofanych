@@ -22,8 +22,8 @@ import androidx.navigation.fragment.navArgs
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.R
-import com.example.todoapp.data_source.room.Importance
-import com.example.todoapp.data_source.room.TodoItem
+import com.example.todoapp.data.data_source.room.Importance
+import com.example.todoapp.data.data_source.room.TodoItem
 import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.ui.MainViewModel
 import com.example.todoapp.utils.factory

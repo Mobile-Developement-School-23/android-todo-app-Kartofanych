@@ -10,7 +10,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.todoapp.R
-import com.example.todoapp.data_source.network.RetrofitClient
+import com.example.todoapp.data.data_source.network.RetrofitClient
 import com.example.todoapp.utils.MyWorkManager
 import java.util.concurrent.TimeUnit
 

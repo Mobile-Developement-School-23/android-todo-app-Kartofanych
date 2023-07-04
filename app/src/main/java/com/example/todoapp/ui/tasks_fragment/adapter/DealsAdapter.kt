@@ -2,7 +2,7 @@ package com.example.todoapp.ui.tasks_fragment.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.example.todoapp.data_source.room.TodoItem
+import com.example.todoapp.data.data_source.room.TodoItem
 
 interface OnItemListener {
     fun onItemClick(id: String)

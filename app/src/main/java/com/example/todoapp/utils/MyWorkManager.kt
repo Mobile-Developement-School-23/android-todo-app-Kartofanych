@@ -3,7 +3,7 @@ package com.example.todoapp.utils
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.todoapp.repository.ItemsRepository
+import com.example.todoapp.data.repository.ItemsRepository
 import kotlinx.coroutines.runBlocking
 
 class MyWorkManager(

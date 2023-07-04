@@ -1,13 +1,13 @@
-package com.example.todoapp.repository
+package com.example.todoapp.data.repository
 
 import android.util.Log
-import com.example.todoapp.data_source.network.Common
-import com.example.todoapp.data_source.network.responses.PatchListApiRequest
-import com.example.todoapp.data_source.network.responses.PostItemApiRequest
-import com.example.todoapp.data_source.network.responses.TodoItemResponse
-import com.example.todoapp.data_source.room.ToDoItemEntity
-import com.example.todoapp.data_source.room.TodoItem
-import com.example.todoapp.data_source.room.TodoListDatabase
+import com.example.todoapp.data.data_source.network.Common
+import com.example.todoapp.data.data_source.network.responses.PatchListApiRequest
+import com.example.todoapp.data.data_source.network.responses.PostItemApiRequest
+import com.example.todoapp.data.data_source.network.responses.TodoItemResponse
+import com.example.todoapp.data.data_source.room.ToDoItemEntity
+import com.example.todoapp.data.data_source.room.TodoItem
+import com.example.todoapp.data.data_source.room.TodoListDatabase
 import com.example.todoapp.shared_preferences.SharedPreferencesHelper
 import com.example.todoapp.utils.LoadingState
 import kotlinx.coroutines.flow.Flow
