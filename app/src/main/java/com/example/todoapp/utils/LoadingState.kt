@@ -1,7 +1,8 @@
 package com.example.todoapp.utils
 
-sealed class LoadingState<out T> {
-    data class Error<T>(val error: String) : LoadingState<T>()
-    data class Loading<out T>(val isLoading: Boolean) : LoadingState<T>()
-    data class Success<out T>(val data: T) : LoadingState<T>()
+
+sealed class NetworkState <out T> {
+    object Loading : NetworkState<Nothing>()
+    data class Success<T>(val data: T, val revision: Int) : NetworkState<T>()
+    data class Failure(val cause: Throwable): NetworkState<Nothing>()
 }

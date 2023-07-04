@@ -1,10 +1,9 @@
-package com.example.todoapp.ui.manage_task_fragment
+package com.example.todoapp.ui.view
 
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -22,11 +21,11 @@ import androidx.navigation.fragment.navArgs
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.todoapp.R
-import com.example.todoapp.data.data_source.room.Importance
-import com.example.todoapp.data.data_source.room.TodoItem
 import com.example.todoapp.databinding.FragmentNewTaskBinding
-import com.example.todoapp.ui.MainViewModel
-import com.example.todoapp.utils.factory
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.ioc.factory
+import com.example.todoapp.ui.stateholders.MainViewModel
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
@@ -74,7 +73,6 @@ class ManageTaskFragment : Fragment() {
                 }
             }
         } else if (savedInstanceState == null) {
-            Log.d("1", "hey2")
             setUpViews()
         }
 
@@ -82,7 +80,6 @@ class ManageTaskFragment : Fragment() {
             val gson = Gson()
             todoItem = gson.fromJson(savedInstanceState.getString("todoItem"), TodoItem::class.java)
             updateViewsInfo()
-            Log.d("1", "hey3")
             setUpViews()
         }
 
@@ -143,7 +140,6 @@ class ManageTaskFragment : Fragment() {
         popupMenu = PopupMenu(context, binding.importanceText)
         popupMenu.menuInflater.inflate(R.menu.popup_importance_menu, popupMenu.menu)
 
-        //example
         val highElement: MenuItem = popupMenu.menu.getItem(2)
         val s = SpannableString("!! Высокая")
         s.setSpan(
@@ -329,7 +325,7 @@ class ManageTaskFragment : Fragment() {
                 Toast.LENGTH_SHORT
             ).show()
         }
-        model.updateItem(todoItem)
+        model.setTask(todoItem)
         model.nullItem()
         findNavController().popBackStack()
     }

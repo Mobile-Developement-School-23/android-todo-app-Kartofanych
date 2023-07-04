@@ -1,20 +1,18 @@
-package com.example.todoapp.ui
+package com.example.todoapp.ui.stateholders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data.data_source.room.TodoItem
 import com.example.todoapp.data.repository.ItemsRepository
-import com.example.todoapp.utils.LoadingState
+import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.utils.NetworkState
+import com.example.todoapp.utils.UiState
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emitAll
@@ -27,17 +25,25 @@ class MainViewModel(
     private val connection: NetworkConnectivityObserver
 ) : ViewModel() {
 
-    var modeAll: Boolean = false
-
     private val _status = MutableStateFlow(ConnectivityObserver.Status.Unavailable)
     val status = _status.asStateFlow()
 
-    private val _data = MutableSharedFlow<List<TodoItem>>()
-    val data: SharedFlow<List<TodoItem>> = _data.asSharedFlow()
-    val countComplete: Flow<Int> = _data.map { it.count { item -> item.done } }
+    private val _visibility: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val visibility: StateFlow<Boolean> = _visibility
 
-    private val _loading = MutableStateFlow<LoadingState<Any>>(LoadingState.Success("data"))
-    val loading: StateFlow<LoadingState<Any>> = _loading.asStateFlow()
+    private val _data = MutableStateFlow<UiState<List<TodoItem>>>(UiState.Start)
+    val data: StateFlow<UiState<List<TodoItem>>> = _data.asStateFlow()
+
+
+    val countComplete = _data.map{ state->
+        when(state){
+            is UiState.Success->{
+                state.data.count{it.done}
+            }else->{
+                0
+            }
+        }
+    }
 
 
     private var _item = MutableStateFlow(TodoItem())
@@ -59,15 +65,19 @@ class MainViewModel(
     }
 
     fun changeMode() {
-        modeAll = !modeAll
-        job?.cancel()
-        loadData()
+        _visibility.value = _visibility.value.not()
     }
 
 
-    fun loadData() {
+    fun loadData(){
         job = viewModelScope.launch(Dispatchers.IO) {
             _data.emitAll(repository.getAllData())
+        }
+    }
+    fun loadNetworkList(){
+        _data.value = UiState.Start
+        viewModelScope.launch(Dispatchers.IO) {
+            _data.emit(repository.getNetworkTasks())
         }
     }
 
@@ -95,29 +105,12 @@ class MainViewModel(
         }
     }
 
-    fun updateItem(todoItem: TodoItem) {
-        todoItem.dateChanged?.time = System.currentTimeMillis()
+    fun setTask(task: TodoItem) {
+        task.dateChanged?.time = System.currentTimeMillis()
         viewModelScope.launch(Dispatchers.IO) {
-            repository.changeItem(todoItem)
+            repository.changeItem(task)
         }
     }
-
-
-    fun changeItemDone(todoItem: TodoItem) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.changeDone(todoItem.id, !todoItem.done)
-        }
-    }
-
-    fun loadNetworkList() {
-        if (status.value == ConnectivityObserver.Status.Available) {
-            _loading.value = LoadingState.Loading(true)
-            viewModelScope.launch(Dispatchers.IO) {
-                _loading.emit(repository.getNetworkData())
-            }
-        }
-    }
-
     fun uploadNetworkItem(todoItem: TodoItem) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.postNetworkItem(todoItem)
@@ -140,6 +133,7 @@ class MainViewModel(
     override fun onCleared() {
         super.onCleared()
         job?.cancel()
+        viewModelScope.cancel()
     }
 
     fun deleteAll() {

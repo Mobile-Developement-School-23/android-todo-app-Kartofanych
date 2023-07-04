@@ -18,13 +18,13 @@ interface RetrofitService {
 
 
     @GET("list")
-    suspend fun getList(): Response<GetListApiResponse>
+    suspend fun getList(): GetListApiResponse
 
     @PATCH("list")
     suspend fun updateList(
         @Header("X-Last-Known-Revision") lastKnownRevision: Int,
         @Body list: PatchListApiRequest
-    ): Response<GetListApiResponse>
+    ): GetListApiResponse
 
     @POST("list")
     suspend fun postElement(

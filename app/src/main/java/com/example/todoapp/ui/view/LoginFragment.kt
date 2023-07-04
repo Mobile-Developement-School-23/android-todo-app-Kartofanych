@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.login_fragment
+package com.example.todoapp.ui.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,11 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.databinding.FragmentLoginBinding
-import com.example.todoapp.shared_preferences.SharedPreferencesHelper
-import com.example.todoapp.ui.MainViewModel
-import com.example.todoapp.utils.factory
-import com.example.todoapp.utils.internet_connection.ConnectivityObserver
-import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
+import com.example.todoapp.ioc.SharedPreferencesHelper
+import com.example.todoapp.ioc.factory
+import com.example.todoapp.ui.stateholders.MainViewModel
 import com.example.todoapp.utils.localeLazy
 import com.yandex.authsdk.YandexAuthException
 import com.yandex.authsdk.YandexAuthLoginOptions
@@ -52,7 +50,6 @@ class LoginFragment : Fragment() {
 
         views {
             loginWithYandexButton.setOnClickListener {
-
                 startActivityForResult(intent, 1)
             }
             loginButton.setOnClickListener {
@@ -60,6 +57,7 @@ class LoginFragment : Fragment() {
                     viewModel.deleteAll()
                     sharedPreferencesHelper.putToken("unaffordable")
                     sharedPreferencesHelper.putRevision(0)
+                    viewModel.loadNetworkList()
                 }
                 moveToTasks()
             }
@@ -82,6 +80,7 @@ class LoginFragment : Fragment() {
                         viewModel.deleteAll()
                         sharedPreferencesHelper.putToken(yandexAuthToken.value)
                         sharedPreferencesHelper.putRevision(0)
+                        viewModel.loadNetworkList()
                     }
                     moveToTasks()
                 }

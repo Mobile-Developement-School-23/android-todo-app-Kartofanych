@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.todoapp.data.repository.ItemsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
 class MyWorkManager(
@@ -15,7 +17,7 @@ class MyWorkManager(
 
     override fun doWork(): Result {
         return when (mergeData()) {
-            is LoadingState.Success -> Result.success()
+            is UiState.Success -> Result.success()
             else -> {
                 Result.failure()
             }
@@ -23,7 +25,7 @@ class MyWorkManager(
     }
 
     private fun mergeData() = runBlocking {
-        return@runBlocking repository.getNetworkData()
+        return@runBlocking repository.getNetworkTasks()
     }
 
 }

@@ -6,12 +6,13 @@ import com.example.todoapp.data.data_source.network.responses.PatchListApiReques
 import com.example.todoapp.data.data_source.network.responses.PostItemApiRequest
 import com.example.todoapp.data.data_source.network.responses.TodoItemResponse
 import com.example.todoapp.data.data_source.room.ToDoItemEntity
-import com.example.todoapp.data.data_source.room.TodoItem
 import com.example.todoapp.data.data_source.room.TodoListDatabase
-import com.example.todoapp.shared_preferences.SharedPreferencesHelper
-import com.example.todoapp.utils.LoadingState
+import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.ioc.SharedPreferencesHelper
+import com.example.todoapp.utils.UiState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 
 
 class ItemsRepository(
@@ -21,8 +22,12 @@ class ItemsRepository(
 
     private val dao = db.listDao
 
-    fun getAllData(): Flow<List<TodoItem>> =
-        dao.getAllFlow().map { list -> list.map { it.toItem() } }
+    fun getAllData(): Flow<UiState<List<TodoItem>>> = flow {
+        emit(UiState.Start)
+        dao.getAllFlow().collect { list ->
+            emit(UiState.Success(list.map { it.toItem() }))
+        }
+    }
 
     fun getItem(itemId: String): TodoItem = dao.getItem(itemId).toItem()
 
@@ -41,77 +46,47 @@ class ItemsRepository(
         return dao.updateItem(toDoItemEntity)
     }
 
-    suspend fun changeDone(id: String, done: Boolean) {
-        return dao.updateDone(id, done, System.currentTimeMillis())
-    }
-
 
     private val service by lazy {
         Common.retrofitService
     }
 
-    suspend fun getNetworkData(): LoadingState<Any> {
+
+    suspend fun getNetworkTasks(): UiState<List<TodoItem>>{
         try {
-            val networkListResponse = service.getList()
-            if (networkListResponse.isSuccessful) {
-                val body = networkListResponse.body()
-                if (body != null) {
-                    val revision = body.revision
-                    val networkList = body.list
-                    val currentList = dao.getAll().map { TodoItemResponse.fromItem(it.toItem()) }
-                    val mergedList = HashMap<String, TodoItemResponse>()
+            val getResponse = service.getList()
 
-                    for (item in currentList) {
-                        mergedList[item.id] = item
-                    }
-                    for (item in networkList) {
-                        if (mergedList.containsKey(item.id)) {
-                            val item1 = mergedList[item.id]
-                            if (item.dateChanged > item1!!.dateChanged) {
-                                mergedList[item.id] = item
-                            } else {
-                                mergedList[item.id] = item1
-                            }
-                        } else if (revision != sharedPreferencesHelper.getLastRevision()) {
-                            mergedList[item.id] = item
-                        }
-                    }
+            val revision = getResponse.revision
+            val networkList = getResponse.list
+            val currentList = dao.getAll().map { TodoItemResponse.fromItem(it.toItem()) }
+            val mergedMap = HashMap<String, TodoItemResponse>()
 
-                    return updateNetworkList(mergedList.values.toList())
-                }
-            } else {
-                networkListResponse.errorBody()?.close()
+            for (item in currentList) {
+                mergedMap[item.id] = item
             }
-        } catch (exception: Exception) {
-            return LoadingState.Error("Merge failed, continue offline.")
-        }
-        return LoadingState.Error("Merge failed, continue offline.")
-
-    }
-
-    private suspend fun updateNetworkList(mergedList: List<TodoItemResponse>): LoadingState<Any> {
-
-        try {
-            val updateResponse = service.updateList(
+            for (item in networkList) {
+                if (mergedMap.containsKey(item.id)) {
+                    val item1 = mergedMap[item.id]
+                    if (item.dateChanged > item1!!.dateChanged) {
+                        mergedMap[item.id] = item
+                    } else {
+                        mergedMap[item.id] = item1
+                    }
+                } else if (revision != sharedPreferencesHelper.getLastRevision()) {
+                    mergedMap[item.id] = item
+                }
+            }
+            sharedPreferencesHelper.putRevision(revision)
+            val mergedList = mergedMap.values.toList()
+            val patchResponse = service.updateList(
                 sharedPreferencesHelper.getLastRevision(),
                 PatchListApiRequest(mergedList)
             )
-
-
-            if (updateResponse.isSuccessful) {
-                val responseBody = updateResponse.body()
-                if (responseBody != null) {
-                    sharedPreferencesHelper.putRevision(responseBody.revision)
-                    updateRoom(responseBody.list)
-                    return LoadingState.Success(responseBody.list)
-                }
-            } else {
-                updateResponse.errorBody()?.close()
-            }
-        } catch (err: Exception) {
-            return LoadingState.Error("Merge failed, continue offline.")
+            updateRoom(mergedList)
+            return UiState.Success(patchResponse.list.map { it.toItem() })
+        }catch (exception:Exception){
+            return UiState.Error("Error merging data")
         }
-        return LoadingState.Error("Merge failed, continue offline.")
     }
 
     private suspend fun updateRoom(mergedList: List<TodoItemResponse>) {

@@ -1,4 +1,4 @@
-package com.example.todoapp.shared_preferences
+package com.example.todoapp.ioc
 
 import android.content.Context
 import android.content.SharedPreferences

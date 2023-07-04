@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.tasks_fragment.adapter
+package com.example.todoapp.ui.view.list_adapter
 
 import android.content.Context
 import android.graphics.Canvas

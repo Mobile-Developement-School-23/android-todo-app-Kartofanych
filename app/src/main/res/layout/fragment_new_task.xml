@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/back_primary"
     android:id="@+id/newTaskFragment"
-    tools:context=".ui.manage_task_fragment.ManageTaskFragment"
+    tools:context=".ui.view.ManageTaskFragment"
     >
 
     <com.google.android.material.appbar.AppBarLayout

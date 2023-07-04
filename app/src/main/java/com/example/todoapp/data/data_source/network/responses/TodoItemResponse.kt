@@ -1,8 +1,8 @@
 package com.example.todoapp.data.data_source.network.responses
 
 import com.example.todoapp.data.data_source.network.Common
-import com.example.todoapp.data.data_source.room.Importance
-import com.example.todoapp.data.data_source.room.TodoItem
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.TodoItem
 import com.google.gson.annotations.SerializedName
 import java.sql.Date
 

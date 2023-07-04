@@ -6,7 +6,7 @@
     app:startDestination="@id/splash_fragment">
     <fragment
         android:id="@+id/tasks_fragment"
-        android:name="com.example.todoapp.ui.TasksFragment"
+        android:name="com.example.todoapp.ui.view.TasksFragment"
         android:label="tasksFragment"
         tools:layout="@layout/fragment_tasks" >
         <action
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/newTaskFragment"
-        android:name="com.example.todoapp.ui.manage_task_fragment.ManageTaskFragment"
+        android:name="com.example.todoapp.ui.view.ManageTaskFragment"
         android:label="manageTaskFragment"
         tools:layout="@layout/fragment_new_task" >
         <argument
@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.todoapp.ui.login_fragment.LoginFragment"
+        android:name="com.example.todoapp.ui.view.LoginFragment"
         android:label="loginFragment"
         tools:layout="@layout/fragment_login" >
         <action
@@ -48,7 +48,7 @@
 
     <fragment
         android:id="@+id/splash_fragment"
-        android:name="com.example.todoapp.ui.Splashscreen"
+        android:name="com.example.todoapp.ui.view.Splashscreen"
         android:label="splashFragment"
         tools:layout="@layout/fragment_splashragment" >
     </fragment>

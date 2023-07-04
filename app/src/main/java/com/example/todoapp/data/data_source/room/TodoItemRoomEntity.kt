@@ -3,6 +3,8 @@ package com.example.todoapp.data.data_source.room
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.todoapp.domain.model.Importance
+import com.example.todoapp.domain.model.TodoItem
 import java.sql.Date
 
 @Entity(tableName = "todoList")

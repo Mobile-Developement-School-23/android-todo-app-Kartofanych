@@ -1,4 +1,4 @@
-package com.example.todoapp.data.data_source.room
+package com.example.todoapp.domain.model
 
 import com.google.gson.Gson
 import java.sql.Date
