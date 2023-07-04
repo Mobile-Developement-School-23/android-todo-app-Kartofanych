@@ -38,14 +38,23 @@
                     android:layout_marginStart="60dp"
                     android:fontFamily="@font/regular"
                     android:layout_gravity="bottom"
-                    android:text="Выполнено - 5"
+                    android:text="Выполнено - 0"
                     android:textColor="@color/tertiary"
                     android:textSize="16sp"
                     />
-
-
             </FrameLayout>
-
+            <ImageView
+                android:id="@+id/connection"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="13dp"
+                android:layout_marginEnd="70dp"
+                android:fontFamily="@font/regular"
+                android:layout_gravity="bottom|end"
+                android:src="@drawable/icon_online"
+                android:textColor="@color/tertiary"
+                android:textSize="16sp"
+                />
 
 
 
@@ -78,32 +87,55 @@
 
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresher"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:layout_marginHorizontal="8dp"
-        android:background="@drawable/element_recycler_background"
-        android:layout_marginBottom="10dp"
         android:elevation="1dp"
-        />
+        android:layout_marginBottom="10dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loading"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:padding="100dp"
+                app:lottie_rawRes="@raw/loading_animation"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:visibility="visible"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/element_recycler_background"
+                tools:itemCount="5"
+                tools:listitem="@layout/element_list"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_settings"
+        android:id="@+id/floating_log_out"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="90dp"
-        android:src="@drawable/ic_filter_24"
+        android:layout_marginBottom="86dp"
+        android:src="@drawable/ic_log_out"
         app:backgroundTint="@color/back_secondary"
         app:elevation="2dp"
         android:layout_gravity="bottom|end"
+        app:maxImageSize="20dp"
         app:tint="@color/blue" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

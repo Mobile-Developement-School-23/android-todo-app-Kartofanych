@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tasks_navigation"
-    app:startDestination="@id/tasks_fragment">
+    app:startDestination="@id/splash_fragment">
     <fragment
         android:id="@+id/tasks_fragment"
         android:name="com.example.todoapp.ui.TasksFragment"
@@ -13,11 +13,15 @@
             android:id="@+id/action_manage_task"
             app:destination="@+id/newTaskFragment"
             />
+        <action
+            android:id="@+id/log_out"
+            app:destination="@+id/loginFragment"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/newTaskFragment"
-        android:name="com.example.todoapp.ui.NewTaskFragment"
+        android:name="com.example.todoapp.ui.manage_task_fragment.ManageTaskFragment"
         android:label="manageTaskFragment"
         tools:layout="@layout/fragment_new_task" >
         <argument
@@ -30,4 +34,23 @@
             app:destination="@+id/tasks_fragment"
             />
     </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.todoapp.ui.login_fragment.LoginFragment"
+        android:label="loginFragment"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_main_tasks"
+            app:destination="@+id/tasks_fragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/splash_fragment"
+        android:name="com.example.todoapp.ui.Splashscreen"
+        android:label="splashFragment"
+        tools:layout="@layout/fragment_splashragment" >
+    </fragment>
+
 </navigation>
