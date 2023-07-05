@@ -54,10 +54,9 @@ class LoginFragment : Fragment() {
             }
             loginButton.setOnClickListener {
                 if(sharedPreferencesHelper.getToken() != "unaffordable") {
-                    viewModel.deleteAll()
                     sharedPreferencesHelper.putToken("unaffordable")
                     sharedPreferencesHelper.putRevision(0)
-                    viewModel.loadNetworkList()
+                    viewModel.deleteAll()
                 }
                 moveToTasks()
             }
@@ -77,10 +76,9 @@ class LoginFragment : Fragment() {
                 if (yandexAuthToken != null) {
                     val curToken = yandexAuthToken.value
                     if(curToken != sharedPreferencesHelper.getToken()) {
-                        viewModel.deleteAll()
                         sharedPreferencesHelper.putToken(yandexAuthToken.value)
                         sharedPreferencesHelper.putRevision(0)
-                        viewModel.loadNetworkList()
+                        viewModel.deleteAll()
                     }
                     moveToTasks()
                 }

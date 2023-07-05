@@ -54,9 +54,11 @@ class TasksFragmentViewComponent(
 
                 override fun onCheckClick(todoItem: TodoItem) {
                     if (internetState == ConnectivityObserver.Status.Available) {
-                        viewModel.updateNetworkItem(todoItem.copy(
-                            done = !todoItem.done
-                        ))
+                        viewModel.updateNetworkItem(
+                            todoItem.copy(
+                                done = !todoItem.done
+                            )
+                        )
                     } else {
                         Toast.makeText(
                             context,
@@ -64,9 +66,11 @@ class TasksFragmentViewComponent(
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    viewModel.setTask(todoItem.copy(
-                        done = !todoItem.done
-                    ))
+                    viewModel.setTask(
+                        todoItem.copy(
+                            done = !todoItem.done
+                        )
+                    )
                 }
             })
             val helper = SwipeHelper(object : SwipeCallbackInterface {
@@ -85,9 +89,11 @@ class TasksFragmentViewComponent(
 
                 override fun onChangeDone(todoItem: TodoItem) {
                     if (internetState == ConnectivityObserver.Status.Available) {
-                        viewModel.updateNetworkItem(todoItem.copy(
-                            done = !todoItem.done
-                        ))
+                        viewModel.updateNetworkItem(
+                            todoItem.copy(
+                                done = !todoItem.done
+                            )
+                        )
                     } else {
                         Toast.makeText(
                             context,
@@ -95,9 +101,11 @@ class TasksFragmentViewComponent(
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                    viewModel.setTask(todoItem.copy(
-                        done = !todoItem.done
-                    ))
+                    viewModel.setTask(
+                        todoItem.copy(
+                            done = !todoItem.done
+                        )
+                    )
                 }
             }, context)
             helper.attachToRecyclerView(recycler)
@@ -159,48 +167,7 @@ class TasksFragmentViewComponent(
         }
         lifecycleOwner.lifecycleScope.launch {
             viewModel.visibility.collectLatest { visibilityState ->
-                when (visibilityState) {
-                    true -> {
-                        viewModel.data.collectLatest { uiState ->
-                            when (uiState) {
-                                is UiState.Success -> {
-                                    adapter.submitList(uiState.data)
-                                    views {
-                                        recycler.visibility = View.VISIBLE
-                                        loading.visibility = View.GONE
-                                    }
-                                }
-                                is UiState.Error -> Log.d("1", uiState.cause)
-                                is UiState.Start -> {
-                                    views {
-                                        recycler.visibility = View.GONE
-                                        loading.visibility = View.VISIBLE
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    false -> {
-                        viewModel.data.collectLatest { uiState ->
-                            when (uiState) {
-                                is UiState.Success -> {
-                                    adapter.submitList(uiState.data.filter { !it.done })
-                                    views {
-                                        recycler.visibility = View.VISIBLE
-                                        loading.visibility = View.GONE
-                                    }
-                                }
-                                is UiState.Error -> Log.d("1", uiState.cause)
-                                is UiState.Start -> {
-                                    views {
-                                        recycler.visibility = View.GONE
-                                        loading.visibility = View.VISIBLE
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                updateStateUI(visibilityState)
             }
         }
         lifecycleOwner.lifecycleScope.launch {
@@ -210,6 +177,32 @@ class TasksFragmentViewComponent(
         }
 
         internetState = viewModel.status.value
+    }
+
+    private suspend fun updateStateUI(visibilityState: Boolean) {
+        viewModel.data.collect { uiState ->
+            when (uiState) {
+                is UiState.Success -> {
+                    if (visibilityState) {
+                        adapter.submitList(uiState.data)
+                    } else {
+                        adapter.submitList(uiState.data.filter { !it.done })
+                    }
+                    views {
+                        recycler.visibility = View.VISIBLE
+                        loading.visibility = View.GONE
+                    }
+                }
+
+                is UiState.Error -> Log.d("1", uiState.cause)
+                is UiState.Start -> {
+                    views {
+                        recycler.visibility = View.GONE
+                        loading.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
     }
 
     private fun updateStatusUI(status: ConnectivityObserver.Status) {

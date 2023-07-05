@@ -2,6 +2,7 @@ package com.example.todoapp
 
 import android.app.Application
 import android.content.Context
+import com.example.todoapp.data.data_source.network.NetworkSource
 import com.example.todoapp.data.data_source.room.TodoListDatabase
 import com.example.todoapp.data.repository.ItemsRepository
 import com.example.todoapp.ioc.SharedPreferencesHelper
@@ -19,6 +20,7 @@ class App : Application() {
         ServiceLocator.register<Context>(this)
         ServiceLocator.register(SharedPreferencesHelper(this))
         ServiceLocator.register(TodoListDatabase.create(locale()))
+        ServiceLocator.register(NetworkSource(locale()))
         ServiceLocator.register(ItemsRepository(locale(), locale()))
         ServiceLocator.register(NetworkConnectivityObserver(this))
 

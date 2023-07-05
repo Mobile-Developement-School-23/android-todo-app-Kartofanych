@@ -1,5 +1,6 @@
 package com.example.todoapp.ui.stateholders
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.data.repository.ItemsRepository
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 
@@ -45,11 +47,9 @@ class MainViewModel(
         }
     }
 
-
     private var _item = MutableStateFlow(TodoItem())
     var item = _item.asStateFlow()
 
-    private var job: Job? = null
 
     init {
         observeNetwork()
@@ -70,14 +70,13 @@ class MainViewModel(
 
 
     fun loadData(){
-        job = viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             _data.emitAll(repository.getAllData())
         }
     }
     fun loadNetworkList(){
-        _data.value = UiState.Start
         viewModelScope.launch(Dispatchers.IO) {
-            _data.emit(repository.getNetworkTasks())
+            _data.emitAll(repository.getNetworkTasks())
         }
     }
 
@@ -124,21 +123,21 @@ class MainViewModel(
     }
 
     fun updateNetworkItem(todoItem: TodoItem) {
-        val item = todoItem.copy(done = !todoItem.done)
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateNetworkItem(item)
+            repository.updateNetworkItem(todoItem)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        job?.cancel()
         viewModelScope.cancel()
     }
 
     fun deleteAll() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.deleteAll()
+            Log.d("1", "HEY")
+            loadNetworkList()
         }
     }
 

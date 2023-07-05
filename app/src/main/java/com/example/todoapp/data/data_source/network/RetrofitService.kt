@@ -30,20 +30,20 @@ interface RetrofitService {
     suspend fun postElement(
         @Header("X-Last-Known-Revision") lastKnownRevision: Int,
         @Body element: PostItemApiRequest
-    ): Response<PostItemApiResponse>
+    ): PostItemApiResponse
 
     @DELETE("list/{id}")
     suspend fun deleteElement(
         @Path("id") id: String,
         @Header("X-Last-Known-Revision") lastKnownRevision: Int,
-    ): Response<PostItemApiResponse>
+    ): PostItemApiResponse
 
     @PUT("list/{id}")
     suspend fun updateElement(
         @Path("id") id: String,
         @Header("X-Last-Known-Revision") lastKnownRevision: Int,
         @Body item: PostItemApiRequest
-    ): Response<PostItemApiResponse>
+    ): PostItemApiResponse
 
 
 }

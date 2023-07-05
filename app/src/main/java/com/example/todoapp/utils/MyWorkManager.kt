@@ -5,6 +5,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.todoapp.data.repository.ItemsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
 
@@ -16,12 +17,8 @@ class MyWorkManager(
     private val repository: ItemsRepository by localeLazy()
 
     override fun doWork(): Result {
-        return when (mergeData()) {
-            is UiState.Success -> Result.success()
-            else -> {
-                Result.failure()
-            }
-        }
+        mergeData()
+        return Result.success()
     }
 
     private fun mergeData() = runBlocking {
