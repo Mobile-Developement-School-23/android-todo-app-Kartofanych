@@ -3,14 +3,12 @@ package com.example.todoapp.ui.stateholders
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.data.repository.ItemsRepository
+import com.example.todoapp.data.repository.RepositoryImpl
 import com.example.todoapp.domain.model.TodoItem
-import com.example.todoapp.utils.NetworkState
-import com.example.todoapp.utils.UiState
+import com.example.todoapp.domain.model.UiState
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,12 +16,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 
 class MainViewModel(
-    private val repository: ItemsRepository,
+    private val repository: RepositoryImpl,
     private val connection: NetworkConnectivityObserver
 ) : ViewModel() {
 

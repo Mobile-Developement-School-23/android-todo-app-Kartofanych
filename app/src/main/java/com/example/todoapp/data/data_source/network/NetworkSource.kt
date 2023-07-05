@@ -1,12 +1,13 @@
 package com.example.todoapp.data.data_source.network
 
 import android.util.Log
-import com.example.todoapp.data.data_source.network.responses.PatchListApiRequest
-import com.example.todoapp.data.data_source.network.responses.PostItemApiRequest
-import com.example.todoapp.data.data_source.network.responses.TodoItemResponse
+import com.example.todoapp.data.data_source.network.dto.requests.PatchListApiRequest
+import com.example.todoapp.data.data_source.network.dto.requests.PostItemApiRequest
+import com.example.todoapp.data.data_source.network.dto.responses.TodoItemResponse
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.ioc.SharedPreferencesHelper
-import com.example.todoapp.utils.DataState
+import com.example.todoapp.domain.model.DataState
+import com.example.todoapp.utils.Common
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.example.todoapp.data.data_source.network.NetworkSource
 import com.example.todoapp.data.data_source.room.TodoListDatabase
-import com.example.todoapp.data.repository.ItemsRepository
+import com.example.todoapp.data.repository.RepositoryImpl
 import com.example.todoapp.ioc.SharedPreferencesHelper
 import com.example.todoapp.utils.ServiceLocator
 import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
@@ -21,7 +21,7 @@ class App : Application() {
         ServiceLocator.register(SharedPreferencesHelper(this))
         ServiceLocator.register(TodoListDatabase.create(locale()))
         ServiceLocator.register(NetworkSource(locale()))
-        ServiceLocator.register(ItemsRepository(locale(), locale()))
+        ServiceLocator.register(RepositoryImpl(locale(), locale()))
         ServiceLocator.register(NetworkConnectivityObserver(this))
 
     }

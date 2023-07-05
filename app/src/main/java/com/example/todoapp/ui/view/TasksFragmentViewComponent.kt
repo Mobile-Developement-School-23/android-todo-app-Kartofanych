@@ -17,10 +17,9 @@ import com.example.todoapp.ui.view.list_adapter.DealsAdapter
 import com.example.todoapp.ui.view.list_adapter.OnItemListener
 import com.example.todoapp.ui.view.list_adapter.SwipeCallbackInterface
 import com.example.todoapp.ui.view.list_adapter.SwipeHelper
-import com.example.todoapp.utils.UiState
+import com.example.todoapp.domain.model.UiState
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.example.todoapp.utils
+package com.example.todoapp.domain.model
 
 sealed class UiState<out T> {
     object Start : UiState<Nothing>()

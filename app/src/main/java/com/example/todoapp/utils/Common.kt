@@ -1,4 +1,7 @@
-package com.example.todoapp.data.data_source.network
+package com.example.todoapp.utils
+
+import com.example.todoapp.data.data_source.network.RetrofitClient
+import com.example.todoapp.data.data_source.network.api.RetrofitService
 
 object Common {
 

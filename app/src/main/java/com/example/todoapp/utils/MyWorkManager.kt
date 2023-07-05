@@ -3,10 +3,7 @@ package com.example.todoapp.utils
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.todoapp.data.repository.ItemsRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
+import com.example.todoapp.data.repository.RepositoryImpl
 import kotlinx.coroutines.runBlocking
 
 class MyWorkManager(
@@ -14,7 +11,7 @@ class MyWorkManager(
     workerParameters: WorkerParameters,
 ) : Worker(context, workerParameters) {
 
-    private val repository: ItemsRepository by localeLazy()
+    private val repository: RepositoryImpl by localeLazy()
 
     override fun doWork(): Result {
         mergeData()

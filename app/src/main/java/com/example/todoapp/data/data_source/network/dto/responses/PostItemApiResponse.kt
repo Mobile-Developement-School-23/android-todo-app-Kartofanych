@@ -1,17 +1,16 @@
-package com.example.todoapp.data.data_source.network.responses
+package com.example.todoapp.data.data_source.network.dto.responses
 
 import com.google.gson.annotations.SerializedName
 
-data class GetListApiResponse(
+data class PostItemApiResponse(
     @SerializedName("status")
     val status: String,
 
-    @SerializedName("list")
-    val list: List<TodoItemResponse>,
+    @SerializedName("element")
+    val item: TodoItemResponse,
 
 
     @SerializedName("revision")
     val revision: Int
 
 )
-

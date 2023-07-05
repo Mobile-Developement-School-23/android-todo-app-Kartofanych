@@ -1,4 +1,4 @@
-package com.example.todoapp.utils
+package com.example.todoapp.domain.model
 
 sealed class DataState<out T> {
     object Initial : DataState<Nothing>()
