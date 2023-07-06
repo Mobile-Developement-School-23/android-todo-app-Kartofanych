@@ -1,6 +1,5 @@
 package com.example.todoapp.data.data_source.network.dto.responses
 
-import com.example.todoapp.utils.Common
 import com.example.todoapp.domain.model.Importance
 import com.example.todoapp.domain.model.TodoItem
 import com.google.gson.annotations.SerializedName
@@ -61,7 +60,7 @@ data class TodoItemResponse(
                         toDoItem.dateChanged!!.time
                     }
                 },
-                updated_by = Common.phoneID
+                updated_by = "iddd"
             )
         }
     }

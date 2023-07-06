@@ -12,12 +12,11 @@ import javax.inject.Singleton
 class DatabaseModule {
     @Provides
     @Singleton
-    fun provideDatabase(context: Context): TodoListDatabase = Room
-        .databaseBuilder(
-            context,
-            TodoListDatabase::class.java,
-            "todolist_database"
-        ).build()
+    fun provideDatabase(context: Context) = Room.databaseBuilder(
+        context,
+        TodoListDatabase::class.java,
+        "todolist_database"
+    ).fallbackToDestructiveMigration().build()
 
     @Provides
     @Singleton

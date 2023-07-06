@@ -15,29 +15,32 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
+import com.example.todoapp.App
 import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.domain.model.Importance
 import com.example.todoapp.domain.model.TodoItem
-import com.example.todoapp.ioc.factory
+import com.example.todoapp.ioc.ViewModelFactory
 import com.example.todoapp.ui.stateholders.MainViewModel
+import com.example.todoapp.utils.getAppComponent
 import com.example.todoapp.utils.internet_connection.ConnectivityObserver
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Calendar
 import java.util.UUID
+import javax.inject.Inject
 
 
 class ManageTaskFragment : Fragment() {
 
-
-    private val model: MainViewModel by activityViewModels { factory() }
+    private val model: MainViewModel by activityViewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
 
     private var todoItem = TodoItem()
 
@@ -59,6 +62,7 @@ class ManageTaskFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireContext().applicationContext as App).appComponent.inject(this)
 
         val id = args.id
         if (id != null && savedInstanceState == null) {

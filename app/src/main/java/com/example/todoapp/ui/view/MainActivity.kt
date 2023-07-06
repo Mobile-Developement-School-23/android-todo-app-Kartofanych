@@ -9,10 +9,12 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.example.todoapp.App
 import com.example.todoapp.R
-import com.example.todoapp.data.data_source.network.RetrofitClient
 import com.example.todoapp.utils.MyWorkManager
+import com.example.todoapp.utils.SharedPreferencesHelper
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,9 +22,14 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var controller: NavController
 
+    @Inject
+    lateinit var sharedPreferencesHelper: SharedPreferencesHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        (applicationContext as App).appComponent.inject(this)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container)
@@ -33,7 +40,7 @@ class MainActivity : AppCompatActivity() {
         val navGraph = graphInflater.inflate(R.navigation.tasks_navigation)
         controller = navHostFragment.navController
 
-        val destination = if (RetrofitClient.token == "no_token"
+        val destination = if (sharedPreferencesHelper.getToken() == "no_token"
         ) R.id.loginFragment else R.id.tasks_fragment
         navGraph.setStartDestination(destination)
         controller.graph = navGraph

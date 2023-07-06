@@ -1,27 +1,23 @@
 package com.example.todoapp.ui.view
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.todoapp.App
 import com.example.todoapp.databinding.FragmentTasksBinding
-import com.example.todoapp.ioc.factory
 import com.example.todoapp.ui.stateholders.MainViewModel
-import com.example.todoapp.ui.stateholders.NewMainViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-
+import com.example.todoapp.utils.getAppComponent
 
 class TasksFragment : Fragment() {
 
 
-    private val viewModel: MainViewModel by activityViewModels { factory() }
+    private val viewModel: MainViewModel by activityViewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
+
 
     private var fragmentViewComponent: TasksFragmentViewComponent? = null
 
@@ -29,6 +25,7 @@ class TasksFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentTasksBinding.inflate(LayoutInflater.from(context))
+        (requireContext().applicationContext as App).appComponent.inject(this)
     }
 
     override fun onCreateView(

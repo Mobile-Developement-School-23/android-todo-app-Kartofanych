@@ -3,6 +3,7 @@ package com.example.todoapp.data.repository
 import com.example.todoapp.data.data_source.network.NetworkSource
 import com.example.todoapp.data.data_source.network.dto.responses.TodoItemResponse
 import com.example.todoapp.data.data_source.room.ToDoItemEntity
+import com.example.todoapp.data.data_source.room.TodoListDao
 import com.example.todoapp.data.data_source.room.TodoListDatabase
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.repository.Repository
@@ -10,14 +11,14 @@ import com.example.todoapp.domain.model.DataState
 import com.example.todoapp.domain.model.UiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class RepositoryImpl(
-    db: TodoListDatabase,
+class RepositoryImpl @Inject constructor(
+    private val dao: TodoListDao,
     private val networkSource: NetworkSource
 ): Repository {
-
-    private val dao = db.listDao
 
     override fun getAllData(): Flow<UiState<List<TodoItem>>> = flow {
         emit(UiState.Start)

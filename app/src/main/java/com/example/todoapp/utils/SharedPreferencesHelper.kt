@@ -1,12 +1,16 @@
-package com.example.todoapp.ioc
+package com.example.todoapp.utils
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
-import com.example.todoapp.utils.Common
 import java.util.UUID
+import javax.inject.Inject
 
-class SharedPreferencesHelper(context: Context) {
+
+class SharedPreferencesHelper @Inject constructor(
+    context: Context
+) {
+
     private val sharedPreferences: SharedPreferences
     private val editor: Editor
 
@@ -21,10 +25,6 @@ class SharedPreferencesHelper(context: Context) {
         if (!sharedPreferences.contains("token")) {
             putToken("no_token")
         }
-
-        Common.phoneID = sharedPreferences.getString("UID", "-1").toString()
-        Common.token = sharedPreferences.getString("token", "no_token").toString()
-
     }
 
     fun putRevision(revision: Int) {
@@ -36,9 +36,9 @@ class SharedPreferencesHelper(context: Context) {
         return sharedPreferences.getString("token", "unaffordable")!!
     }
 
+    fun getPhoneID():String = sharedPreferences.getString("UID", "uid").toString()
     fun putToken(token: String) {
         editor.putString("token", token)
-        Common.token = token
         editor.apply()
     }
 

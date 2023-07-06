@@ -8,25 +8,29 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.todoapp.App
 import com.example.todoapp.databinding.FragmentLoginBinding
-import com.example.todoapp.ioc.SharedPreferencesHelper
-import com.example.todoapp.ioc.factory
+import com.example.todoapp.ioc.ViewModelFactory
+import com.example.todoapp.utils.SharedPreferencesHelper
 import com.example.todoapp.ui.stateholders.MainViewModel
-import com.example.todoapp.utils.localeLazy
+import com.example.todoapp.utils.getAppComponent
 import com.yandex.authsdk.YandexAuthException
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
 import com.yandex.authsdk.internal.strategy.LoginType
+import javax.inject.Inject
 
 
 class LoginFragment : Fragment() {
 
 
-    private val sharedPreferencesHelper: SharedPreferencesHelper by localeLazy()
+    @Inject
+    lateinit var sharedPreferencesHelper: SharedPreferencesHelper
 
-    private val viewModel: MainViewModel by activityViewModels { factory() }
+    private val viewModel: MainViewModel by activityViewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
 
     private var binding: FragmentLoginBinding? = null
 
@@ -39,6 +43,7 @@ class LoginFragment : Fragment() {
     private lateinit var sdk: YandexAuthSdk
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireContext().applicationContext as App).appComponent.inject(this)
 
         sdk = YandexAuthSdk(
             requireContext(), YandexAuthOptions(requireContext(), true)

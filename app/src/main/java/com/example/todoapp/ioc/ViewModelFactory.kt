@@ -4,22 +4,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.App
+import com.example.todoapp.data.repository.RepositoryImpl
 import com.example.todoapp.ui.stateholders.MainViewModel
-import com.example.todoapp.ui.stateholders.NewMainViewModel
-import com.example.todoapp.utils.locale
+import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
+import javax.inject.Inject
 
-class ViewModelFactory(
-    private val app: App
+class ViewModelFactory @Inject constructor(
+    private val repositoryImpl: RepositoryImpl,
+    private val connectivityObserver: NetworkConnectivityObserver
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel = when (modelClass) {
             MainViewModel::class.java -> {
-                MainViewModel(locale(), locale())
-            }
-            NewMainViewModel::class.java->{
-                NewMainViewModel(locale(), locale())
+                MainViewModel(repositoryImpl, connectivityObserver)
             }
 
             else -> {
@@ -30,5 +29,3 @@ class ViewModelFactory(
     }
 
 }
-
-fun Fragment.factory() = ViewModelFactory(requireContext().applicationContext as App)

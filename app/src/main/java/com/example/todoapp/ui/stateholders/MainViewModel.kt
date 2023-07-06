@@ -17,9 +17,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class MainViewModel(
+class MainViewModel @Inject constructor(
     private val repository: RepositoryImpl,
     private val connection: NetworkConnectivityObserver
 ) : ViewModel() {

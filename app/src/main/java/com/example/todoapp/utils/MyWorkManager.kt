@@ -5,13 +5,15 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.todoapp.data.repository.RepositoryImpl
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 class MyWorkManager(
     context: Context,
     workerParameters: WorkerParameters,
 ) : Worker(context, workerParameters) {
 
-    private val repository: RepositoryImpl by localeLazy()
+    @Inject
+    lateinit var repository: RepositoryImpl
 
     override fun doWork(): Result {
         mergeData()
