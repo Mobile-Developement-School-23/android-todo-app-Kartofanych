@@ -8,14 +8,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.App
 import com.example.todoapp.databinding.FragmentLoginBinding
-import com.example.todoapp.ioc.ViewModelFactory
+import com.example.todoapp.ui.stateholders.LoginViewModel
 import com.example.todoapp.utils.SharedPreferencesHelper
 import com.example.todoapp.ui.stateholders.MainViewModel
-import com.example.todoapp.utils.getAppComponent
 import com.yandex.authsdk.YandexAuthException
 import com.yandex.authsdk.YandexAuthLoginOptions
 import com.yandex.authsdk.YandexAuthOptions
@@ -30,7 +29,7 @@ class LoginFragment : Fragment() {
     @Inject
     lateinit var sharedPreferencesHelper: SharedPreferencesHelper
 
-    private val viewModel: MainViewModel by activityViewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
+    private val viewModel: LoginViewModel by viewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
 
     private var binding: FragmentLoginBinding? = null
 
@@ -61,7 +60,7 @@ class LoginFragment : Fragment() {
                 if(sharedPreferencesHelper.getToken() != "unaffordable") {
                     sharedPreferencesHelper.putToken("unaffordable")
                     sharedPreferencesHelper.putRevision(0)
-                    viewModel.deleteAll()
+                    viewModel.deleteCurrentItems()
                 }
                 moveToTasks()
             }
@@ -83,7 +82,7 @@ class LoginFragment : Fragment() {
                     if(curToken != sharedPreferencesHelper.getToken()) {
                         sharedPreferencesHelper.putToken(yandexAuthToken.value)
                         sharedPreferencesHelper.putRevision(0)
-                        viewModel.deleteAll()
+                        viewModel.deleteCurrentItems()
                     }
                     moveToTasks()
                 }

@@ -52,20 +52,7 @@ class TasksFragmentViewComponent(
                 }
 
                 override fun onCheckClick(todoItem: TodoItem) {
-                    if (internetState == ConnectivityObserver.Status.Available) {
-                        viewModel.updateNetworkItem(
-                            todoItem.copy(
-                                done = !todoItem.done
-                            )
-                        )
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "No internet connection, will upload with later. Continue offline.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    viewModel.setTask(
+                    viewModel.updateItem(
                         todoItem.copy(
                             done = !todoItem.done
                         )
@@ -74,33 +61,11 @@ class TasksFragmentViewComponent(
             })
             val helper = SwipeHelper(object : SwipeCallbackInterface {
                 override fun onDelete(todoItem: TodoItem) {
-                    if (internetState == ConnectivityObserver.Status.Available) {
-                        viewModel.deleteNetworkItem(todoItem.id)
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "No internet connection, will upload later. Continue offline.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
                     viewModel.deleteItem(todoItem)
                 }
 
                 override fun onChangeDone(todoItem: TodoItem) {
-                    if (internetState == ConnectivityObserver.Status.Available) {
-                        viewModel.updateNetworkItem(
-                            todoItem.copy(
-                                done = !todoItem.done
-                            )
-                        )
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "No internet connection, will upload later. Continue offline.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    viewModel.setTask(
+                    viewModel.updateItem(
                         todoItem.copy(
                             done = !todoItem.done
                         )

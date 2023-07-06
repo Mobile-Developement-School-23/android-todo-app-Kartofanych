@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tasks_navigation"
-    app:startDestination="@id/splash_fragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/tasks_fragment"
         android:name="com.example.todoapp.ui.view.TasksFragment"

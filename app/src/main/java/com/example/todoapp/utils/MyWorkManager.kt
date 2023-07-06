@@ -12,16 +12,13 @@ class MyWorkManager(
     workerParameters: WorkerParameters,
 ) : Worker(context, workerParameters) {
 
-    @Inject
-    lateinit var repository: RepositoryImpl
 
     override fun doWork(): Result {
-        mergeData()
         return Result.success()
     }
 
-    private fun mergeData() = runBlocking {
+    /*private fun mergeData() = runBlocking {
         return@runBlocking repository.getNetworkTasks()
-    }
+    }*/
 
 }

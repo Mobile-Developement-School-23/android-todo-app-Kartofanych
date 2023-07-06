@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.App
@@ -16,7 +17,7 @@ import com.example.todoapp.utils.getAppComponent
 class TasksFragment : Fragment() {
 
 
-    private val viewModel: MainViewModel by activityViewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
+    private val viewModel: MainViewModel by viewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
 
 
     private var fragmentViewComponent: TasksFragmentViewComponent? = null

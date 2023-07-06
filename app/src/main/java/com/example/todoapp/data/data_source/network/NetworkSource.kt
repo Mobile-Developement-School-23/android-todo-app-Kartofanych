@@ -8,6 +8,7 @@ import com.example.todoapp.data.data_source.network.dto.responses.TodoItemRespon
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.utils.SharedPreferencesHelper
 import com.example.todoapp.domain.model.DataState
+import com.example.todoapp.domain.model.ResponseState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -18,8 +19,6 @@ class NetworkSource @Inject constructor(
     private val sharedPreferencesHelper: SharedPreferencesHelper,
     private val service: RetrofitService
 ) {
-
-
 
     suspend fun getMergedList(currentList: List<TodoItemResponse>): Flow<DataState<List<TodoItem>>> =
         flow {
@@ -60,16 +59,17 @@ class NetworkSource @Inject constructor(
             }
         }
 
-    suspend fun postElement(item: TodoItem) {
+    suspend fun postElement(item: TodoItem):Flow<ResponseState> = flow {
+        emit(ResponseState.Loading)
         try {
             val postResponse = service.postElement(
                 sharedPreferencesHelper.getLastRevision(),
                 PostItemApiRequest(TodoItemResponse.fromItem(item))
             )
-
             sharedPreferencesHelper.putRevision(postResponse.revision)
+            emit(ResponseState.Success)
         } catch (err: Exception) {
-            Log.d("1", err.message.toString())
+            emit(ResponseState.Exception(err))
         }
     }
 

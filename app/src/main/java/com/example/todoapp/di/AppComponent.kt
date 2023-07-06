@@ -1,6 +1,6 @@
 package com.example.todoapp.di
 
-import com.example.todoapp.ioc.ViewModelFactory
+import com.example.todoapp.utils.ViewModelFactory
 import com.example.todoapp.ui.view.LoginFragment
 import com.example.todoapp.ui.view.MainActivity
 import com.example.todoapp.ui.view.ManageTaskFragment

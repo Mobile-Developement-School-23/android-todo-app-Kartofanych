@@ -13,10 +13,12 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.widget.TextViewCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.daimajia.androidanimations.library.Techniques
@@ -26,23 +28,19 @@ import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentNewTaskBinding
 import com.example.todoapp.domain.model.Importance
 import com.example.todoapp.domain.model.TodoItem
-import com.example.todoapp.ioc.ViewModelFactory
-import com.example.todoapp.ui.stateholders.MainViewModel
-import com.example.todoapp.utils.getAppComponent
-import com.example.todoapp.utils.internet_connection.ConnectivityObserver
-import com.google.gson.Gson
+import com.example.todoapp.domain.model.UiState
+import com.example.todoapp.ui.stateholders.ManageTaskViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Calendar
 import java.util.UUID
-import javax.inject.Inject
 
 
 class ManageTaskFragment : Fragment() {
 
-    private val model: MainViewModel by activityViewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
+    private val model: ManageTaskViewModel by viewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
 
-    private var todoItem = TodoItem()
 
     private lateinit var popupMenu: PopupMenu
     private lateinit var timePickerDialog: DatePickerDialog
@@ -65,35 +63,49 @@ class ManageTaskFragment : Fragment() {
         (requireContext().applicationContext as App).appComponent.inject(this)
 
         val id = args.id
-        if (id != null && savedInstanceState == null) {
+        if (id != null) {
             model.getItem(id)
+
             lifecycleScope.launch {
-                model.item.collect {
-                    todoItem = it
-                    if (todoItem.id != "-1") {
-                        updateViewsInfo()
-                        setUpViews()
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    model.todoItem.collect { state ->
+                        when (state) {
+                            is UiState.Success -> {
+                                updateViewsInfo(state.data)
+                                setUpViews(state.data)
+                                createPopupMenu(state.data)
+                            }
+
+                            else -> {}
+                        }
                     }
                 }
             }
-        } else if (savedInstanceState == null) {
-            setUpViews()
+        }else{
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    model.todoItem.collect { state ->
+                        when (state) {
+                            is UiState.Success -> {
+                                updateViewsInfo(state.data)
+                                setUpViews(state.data)
+                                createPopupMenu(state.data)
+                            }
+
+                            else -> {
+                                setUpViews(TodoItem())
+                                createPopupMenu(TodoItem())
+                            }
+                        }
+                    }
+                }
+            }
         }
-
-        if (savedInstanceState != null) {
-            val gson = Gson()
-            todoItem = gson.fromJson(savedInstanceState.getString("todoItem"), TodoItem::class.java)
-            updateViewsInfo()
-            setUpViews()
-        }
-
-
-        createPopupMenu()
 
     }
 
 
-    private fun updateViewsInfo() {
+    private fun updateViewsInfo(todoItem: TodoItem) {
         binding.editTodo.setText(todoItem.text)
 
         when (todoItem.importance) {
@@ -140,7 +152,7 @@ class ManageTaskFragment : Fragment() {
 
     }
 
-    private fun createPopupMenu() {
+    private fun createPopupMenu(todoItem: TodoItem) {
         popupMenu = PopupMenu(context, binding.importanceText)
         popupMenu.menuInflater.inflate(R.menu.popup_importance_menu, popupMenu.menu)
 
@@ -197,7 +209,7 @@ class ManageTaskFragment : Fragment() {
     }
 
 
-    private fun setUpViews() {
+    private fun setUpViews(todoItem: TodoItem) {
 
         val myCalendar = Calendar.getInstance()
         if (todoItem.deadline != null) {
@@ -247,21 +259,14 @@ class ManageTaskFragment : Fragment() {
 
         binding.delete.setOnClickListener {
             if (args.id != null) {
-
-                if (model.status.value == ConnectivityObserver.Status.Available) {
-                    model.deleteNetworkItem(todoItem.id)
-                } else {
-                    Toast.makeText(
-                        context,
-                        "No network, will delete later. Continue offline.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
                 model.deleteItem(todoItem)
-                model.nullItem()
                 findNavController().popBackStack()
 
             }
+        }
+
+        binding.editTodo.doAfterTextChanged {
+            todoItem.text = binding.editTodo.text.toString()
         }
 
         binding.close.setOnClickListener {
@@ -269,23 +274,22 @@ class ManageTaskFragment : Fragment() {
                 .duration(200)
                 .playOn(binding.close)
 
-            model.nullItem()
             findNavController().popBackStack()
         }
 
 
         binding.save.setOnClickListener {
             if (args.id == null) {
-                saveNewTask()
+                saveNewTask(todoItem)
             } else {
-                updateTask()
+                updateTask(todoItem)
             }
 
         }
     }
 
 
-    private fun saveNewTask() {
+    private fun saveNewTask(todoItem: TodoItem) {
         todoItem.id = UUID.randomUUID().toString()
         todoItem.text = binding.editTodo.text.toString()
         todoItem.dateCreation = Date(System.currentTimeMillis())
@@ -295,23 +299,12 @@ class ManageTaskFragment : Fragment() {
             return
         }
 
-
-        if (model.status.value == ConnectivityObserver.Status.Available) {
-            model.uploadNetworkItem(todoItem)
-        } else {
-            Toast.makeText(
-                context,
-                "No network, will upload later. Continue offline.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
         model.addItem(todoItem)
-        model.nullItem()
         findNavController().popBackStack()
 
     }
 
-    private fun updateTask() {
+    private fun updateTask(todoItem: TodoItem) {
         todoItem.text = binding.editTodo.text.toString()
         todoItem.dateChanged = Date(System.currentTimeMillis())
         if (todoItem.text.isEmpty()) {
@@ -320,17 +313,8 @@ class ManageTaskFragment : Fragment() {
             return
         }
 
-        if (model.status.value == ConnectivityObserver.Status.Available) {
-            model.updateNetworkItem(todoItem)
-        } else {
-            Toast.makeText(
-                context,
-                "No network, will update later. Continue offline.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-        model.setTask(todoItem)
-        model.nullItem()
+
+        model.updateItem(todoItem)
         findNavController().popBackStack()
     }
 
@@ -339,29 +323,6 @@ class ManageTaskFragment : Fragment() {
         timePickerDialog.show()
     }
 
-    private fun saveStates() {
-        todoItem.text = binding.editTodo.text.toString()
-        when (binding.importanceText.text) {
-            "!!Высокая" -> {
-                todoItem.importance = Importance.URGENT
-            }
-
-            "Нет" -> {
-                todoItem.importance = Importance.REGULAR
-            }
-
-            "Низкая" -> {
-                todoItem.importance = Importance.LOW
-            }
-        }
-
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        saveStates()
-        outState.putString("todoItem", todoItem.toString())
-    }
 
 
 }

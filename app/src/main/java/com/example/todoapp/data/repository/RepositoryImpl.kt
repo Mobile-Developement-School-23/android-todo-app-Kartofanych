@@ -4,21 +4,21 @@ import com.example.todoapp.data.data_source.network.NetworkSource
 import com.example.todoapp.data.data_source.network.dto.responses.TodoItemResponse
 import com.example.todoapp.data.data_source.room.ToDoItemEntity
 import com.example.todoapp.data.data_source.room.TodoListDao
-import com.example.todoapp.data.data_source.room.TodoListDatabase
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.repository.Repository
 import com.example.todoapp.domain.model.DataState
+import com.example.todoapp.domain.model.ResponseState
 import com.example.todoapp.domain.model.UiState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import javax.inject.Singleton
 
 
 class RepositoryImpl @Inject constructor(
     private val dao: TodoListDao,
     private val networkSource: NetworkSource
-): Repository {
+) : Repository {
 
     override fun getAllData(): Flow<UiState<List<TodoItem>>> = flow {
         emit(UiState.Start)
@@ -27,21 +27,33 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getItem(itemId: String): TodoItem = dao.getItem(itemId).toItem()
-
-    override suspend fun addItem(todoItem: TodoItem) {
+    override suspend fun addItem(todoItem: TodoItem): Flow<ResponseState> = flow {
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
-        return dao.add(toDoItemEntity)
+        dao.add(toDoItemEntity)
+
+        networkSource.postElement(todoItem).collect{
+            emit(it)
+        }
     }
 
     override suspend fun deleteItem(todoItem: TodoItem) {
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
-        return dao.delete(toDoItemEntity)
+        dao.delete(toDoItemEntity)
+        try {
+            networkSource.deleteElement(todoItem.id)
+        } catch (exception: Exception) {
+            //exception
+        }
     }
 
-    override suspend fun changeItem(todoItem: TodoItem) {
+    override suspend fun changeItem(todoItem: TodoItem){
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
-        return dao.updateItem(toDoItemEntity)
+        dao.updateItem(toDoItemEntity)
+        try {
+            networkSource.updateElement(todoItem)
+        } catch (exception: Exception) {
+            //exception
+        }
     }
 
 
@@ -53,36 +65,18 @@ class RepositoryImpl @Inject constructor(
                     DataState.Initial -> emit(UiState.Start)
                     is DataState.Exception -> emit(UiState.Error(state.cause.message.toString()))
                     is DataState.Result -> {
-                        updateRoom(state.data)
+                        dao.addList(state.data.map { ToDoItemEntity.fromItem(it) })
                         emit(UiState.Success(state.data))
                     }
                 }
             }
     }
 
-    private suspend fun updateRoom(mergedList: List<TodoItem>) {
-        dao.addList(mergedList.map { ToDoItemEntity.fromItem(it) })
-    }
 
-    override suspend fun postNetworkItem(
-        newItem: TodoItem
-    ) {
-        networkSource.postElement(newItem)
-    }
+    override fun getItem(itemId: String): TodoItem = dao.getItem(itemId).toItem()
 
-    override suspend fun deleteNetworkItem(
-        id: String
-    ) {
-        networkSource.deleteElement(id)
-    }
 
-    override suspend fun updateNetworkItem(
-        item: TodoItem
-    ) {
-        networkSource.updateElement(item)
-    }
-
-    override suspend fun deleteAll() {
+    override suspend fun deleteCurrentItems() {
         dao.deleteAll()
     }
 
