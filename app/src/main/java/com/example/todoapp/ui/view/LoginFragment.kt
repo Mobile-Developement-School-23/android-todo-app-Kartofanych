@@ -49,7 +49,7 @@ class LoginFragment : Fragment() {
         )
         val sdk = YandexAuthSdk(requireContext(), YandexAuthOptions(requireContext(), true))
 
-        val loginOptionsBuilder = YandexAuthLoginOptions.Builder().setLoginType(LoginType.NATIVE)
+        val loginOptionsBuilder = YandexAuthLoginOptions.Builder()
         val intent = sdk.createLoginIntent(loginOptionsBuilder.build())
 
         views {

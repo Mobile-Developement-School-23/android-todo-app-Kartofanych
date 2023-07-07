@@ -27,33 +27,22 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addItem(todoItem: TodoItem): Flow<ResponseState> = flow {
+    override suspend fun addItem(todoItem: TodoItem){
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
         dao.add(toDoItemEntity)
-
-        networkSource.postElement(todoItem).collect{
-            emit(it)
-        }
+        networkSource.postElement(todoItem)
     }
 
     override suspend fun deleteItem(todoItem: TodoItem) {
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
         dao.delete(toDoItemEntity)
-        try {
-            networkSource.deleteElement(todoItem.id)
-        } catch (exception: Exception) {
-            //exception
-        }
+        networkSource.deleteElement(todoItem.id)
     }
 
     override suspend fun changeItem(todoItem: TodoItem){
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
         dao.updateItem(toDoItemEntity)
-        try {
-            networkSource.updateElement(todoItem)
-        } catch (exception: Exception) {
-            //exception
-        }
+        networkSource.updateElement(todoItem)
     }
 
 

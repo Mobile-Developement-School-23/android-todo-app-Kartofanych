@@ -59,17 +59,15 @@ class NetworkSource @Inject constructor(
             }
         }
 
-    suspend fun postElement(item: TodoItem):Flow<ResponseState> = flow {
-        emit(ResponseState.Loading)
+    suspend fun postElement(item: TodoItem){
         try {
             val postResponse = service.postElement(
                 sharedPreferencesHelper.getLastRevision(),
                 PostItemApiRequest(TodoItemResponse.fromItem(item))
             )
             sharedPreferencesHelper.putRevision(postResponse.revision)
-            emit(ResponseState.Success)
         } catch (err: Exception) {
-            emit(ResponseState.Exception(err))
+            //err
         }
     }
 

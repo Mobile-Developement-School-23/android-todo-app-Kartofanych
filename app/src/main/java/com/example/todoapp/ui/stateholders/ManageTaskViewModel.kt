@@ -35,8 +35,10 @@ class ManageTaskViewModel @Inject constructor(
         }
     }
 
-    fun addItem(todoItem: TodoItem): Flow<ResponseState> = flow {
-        emitAll(repository.addItem(todoItem))
+    fun addItem(todoItem: TodoItem){
+        coroutineScope.launch(Dispatchers.IO) {
+            repository.addItem(todoItem)
+        }
     }
 
     fun deleteItem(todoItem: TodoItem) {
