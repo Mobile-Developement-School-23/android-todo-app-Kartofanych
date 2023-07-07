@@ -18,7 +18,7 @@ class TasksFragment : Fragment() {
         (requireContext().applicationContext as App).appComponent.viewModelsFactory()
     }
 
-    private var fragmentViewComponent: TasksFragmentViewController? = null
+    private var fragmentViewController: TasksFragmentViewController? = null
 
     private lateinit var binding:FragmentTasksBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ class TasksFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val root = binding.root
-        fragmentViewComponent = TasksFragmentViewController(
+        fragmentViewController = TasksFragmentViewController(
             requireContext(),
             findNavController(),
             binding,
@@ -47,7 +47,7 @@ class TasksFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        fragmentViewComponent = null
+        fragmentViewController = null
     }
 
 }
