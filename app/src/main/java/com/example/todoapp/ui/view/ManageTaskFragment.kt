@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -66,37 +67,19 @@ class ManageTaskFragment : Fragment() {
         val id = args.id
         if (id != null) {
             model.getItem(id)
-
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    model.todoItem.collect { state ->
-                        when (state) {
-                            is UiState.Success -> {
-                                updateViewsInfo(state.data)
-                                setUpViews(state.data)
-                                createPopupMenu(state.data)
-                            }
-                            else ->{ /*wtf?*/ }
-                        }
-                    }
-                }
-            }
         } else {
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    model.todoItem.collect { state ->
-                        when (state) {
-                            is UiState.Success -> {
-                                updateViewsInfo(state.data)
-                                setUpViews(state.data)
-                                createPopupMenu(state.data)
-                            }
-
-                            else -> {
-                                setUpViews(TodoItem())
-                                createPopupMenu(TodoItem())
-                            }
+            model.setItem()
+        }
+        lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                model.todoItem.collect { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            updateViewsInfo(state.data)
+                            setUpViews(state.data)
+                            createPopupMenu(state.data)
                         }
+                        else ->{ /*wtf?*/ }
                     }
                 }
             }

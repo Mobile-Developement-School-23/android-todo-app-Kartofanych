@@ -28,6 +28,11 @@ class ManageTaskViewModel @Inject constructor(
             }
         }
     }
+    fun setItem() {
+        if(todoItem.value == UiState.Start) {
+            _todoItem.value = UiState.Success(TodoItem())
+        }
+    }
 
     fun addItem(todoItem: TodoItem){
         coroutineScope.launch(Dispatchers.IO) {
