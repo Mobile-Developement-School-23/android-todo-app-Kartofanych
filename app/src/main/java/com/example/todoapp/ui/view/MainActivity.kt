@@ -4,18 +4,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
-import androidx.work.WorkRequest
 import com.example.todoapp.App
 import com.example.todoapp.R
-import com.example.todoapp.utils.Constants.HOURS_FOR_UPDATE
-import com.example.todoapp.utils.MyWorkManager
 import com.example.todoapp.utils.SharedPreferencesHelper
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -26,7 +17,6 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var sharedPreferencesHelper: SharedPreferencesHelper
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
