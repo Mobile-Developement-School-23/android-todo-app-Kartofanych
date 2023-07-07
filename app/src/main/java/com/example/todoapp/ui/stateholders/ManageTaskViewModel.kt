@@ -1,25 +1,19 @@
 package com.example.todoapp.ui.stateholders
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.todoapp.data.repository.RepositoryImpl
-import com.example.todoapp.domain.model.ResponseState
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.model.UiState
-import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
+import com.example.todoapp.utils.internetConnection.NetworkConnectivityObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ManageTaskViewModel @Inject constructor(
     private val repository: RepositoryImpl,
-    private val connection: NetworkConnectivityObserver,
     private val coroutineScope: CoroutineScope
 ) : ViewModel() {
 

@@ -1,6 +1,5 @@
 package com.example.todoapp.domain.repository
 
-import com.example.todoapp.domain.model.ResponseState
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.model.UiState
 import kotlinx.coroutines.flow.Flow

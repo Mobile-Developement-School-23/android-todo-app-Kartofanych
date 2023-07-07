@@ -46,11 +46,5 @@
             />
     </fragment>
 
-    <fragment
-        android:id="@+id/splash_fragment"
-        android:name="com.example.todoapp.ui.view.Splashscreen"
-        android:label="splashFragment"
-        tools:layout="@layout/fragment_splashragment" >
-    </fragment>
 
 </navigation>

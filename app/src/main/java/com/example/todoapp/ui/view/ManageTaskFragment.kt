@@ -30,7 +30,7 @@ import com.example.todoapp.domain.model.Importance
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.model.UiState
 import com.example.todoapp.ui.stateholders.ManageTaskViewModel
-import kotlinx.coroutines.flow.collectLatest
+import com.example.todoapp.utils.Constants.ANIMATION_DURATION
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Calendar
@@ -39,7 +39,9 @@ import java.util.UUID
 
 class ManageTaskFragment : Fragment() {
 
-    private val model: ManageTaskViewModel by viewModels { (requireContext().applicationContext as App).appComponent.viewModelsFactory() }
+    private val model: ManageTaskViewModel by viewModels {
+        (requireContext().applicationContext as App).appComponent.viewModelsFactory()
+    }
 
 
     private lateinit var popupMenu: PopupMenu
@@ -60,7 +62,6 @@ class ManageTaskFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireContext().applicationContext as App).appComponent.inject(this)
 
         val id = args.id
         if (id != null) {
@@ -75,13 +76,12 @@ class ManageTaskFragment : Fragment() {
                                 setUpViews(state.data)
                                 createPopupMenu(state.data)
                             }
-
-                            else -> {}
+                            else ->{ /*wtf?*/ }
                         }
                     }
                 }
             }
-        }else{
+        } else {
             lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     model.todoItem.collect { state ->
@@ -210,34 +210,7 @@ class ManageTaskFragment : Fragment() {
 
 
     private fun setUpViews(todoItem: TodoItem) {
-
-        val myCalendar = Calendar.getInstance()
-        if (todoItem.deadline != null) {
-            myCalendar.time = todoItem.deadline!!
-        }
-
-        timePickerDialog = DatePickerDialog(
-            requireContext(),
-            R.style.DatePickerStyle,
-            { view, year, month, day ->
-                binding.date.visibility = View.VISIBLE
-                myCalendar.set(Calendar.YEAR, year)
-                myCalendar.set(Calendar.MONTH, month)
-                myCalendar.set(Calendar.DAY_OF_MONTH, day)
-                todoItem.deadline = Date(myCalendar.timeInMillis)
-                binding.date.text = todoItem.deadlineToString()
-            },
-            myCalendar.get(Calendar.YEAR),
-            myCalendar.get(Calendar.MONTH),
-            myCalendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        timePickerDialog.setOnCancelListener {
-            if (binding.date.visibility == View.INVISIBLE) {
-                binding.switchCompat.isChecked = false
-            }
-        }
-
+        setUpDatePicker(todoItem)
 
         binding.switchCompat.setOnCheckedChangeListener { _, checked ->
             if (checked) {
@@ -256,27 +229,21 @@ class ManageTaskFragment : Fragment() {
             openDatePicker()
         }
 
-
         binding.delete.setOnClickListener {
             if (args.id != null) {
                 model.deleteItem(todoItem)
                 findNavController().popBackStack()
-
             }
         }
-
         binding.editTodo.doAfterTextChanged {
             todoItem.text = binding.editTodo.text.toString()
         }
-
         binding.close.setOnClickListener {
             YoYo.with(Techniques.BounceIn)
-                .duration(200)
+                .duration(ANIMATION_DURATION)
                 .playOn(binding.close)
-
             findNavController().popBackStack()
         }
-
 
         binding.save.setOnClickListener {
             if (args.id == null) {
@@ -284,7 +251,34 @@ class ManageTaskFragment : Fragment() {
             } else {
                 updateTask(todoItem)
             }
+        }
+    }
 
+    private fun setUpDatePicker(todoItem: TodoItem) {
+        val myCalendar = Calendar.getInstance()
+        if (todoItem.deadline != null) {
+            myCalendar.time = todoItem.deadline!!
+        }
+        timePickerDialog = DatePickerDialog(
+            requireContext(),
+            R.style.DatePickerStyle,
+            { _, year, month, day ->
+                binding.date.visibility = View.VISIBLE
+                myCalendar.set(Calendar.YEAR, year)
+                myCalendar.set(Calendar.MONTH, month)
+                myCalendar.set(Calendar.DAY_OF_MONTH, day)
+                todoItem.deadline = Date(myCalendar.timeInMillis)
+                binding.date.text = todoItem.deadlineToString()
+            },
+            myCalendar.get(Calendar.YEAR),
+            myCalendar.get(Calendar.MONTH),
+            myCalendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        timePickerDialog.setOnCancelListener {
+            if (binding.date.visibility == View.INVISIBLE) {
+                binding.switchCompat.isChecked = false
+            }
         }
     }
 
@@ -322,7 +316,6 @@ class ManageTaskFragment : Fragment() {
         binding.switchCompat.isChecked = true
         timePickerDialog.show()
     }
-
 
 
 }

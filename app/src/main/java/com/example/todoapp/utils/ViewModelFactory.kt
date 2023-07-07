@@ -6,7 +6,7 @@ import com.example.todoapp.data.repository.RepositoryImpl
 import com.example.todoapp.ui.stateholders.LoginViewModel
 import com.example.todoapp.ui.stateholders.MainViewModel
 import com.example.todoapp.ui.stateholders.ManageTaskViewModel
-import com.example.todoapp.utils.internet_connection.NetworkConnectivityObserver
+import com.example.todoapp.utils.internetConnection.NetworkConnectivityObserver
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
@@ -27,11 +27,11 @@ class ViewModelFactory @Inject constructor(
             }
 
             ManageTaskViewModel::class.java -> {
-                ManageTaskViewModel(repositoryImpl, connectivityObserver, coroutineScope)
+                ManageTaskViewModel(repositoryImpl, coroutineScope)
             }
 
             else -> {
-                throw IllegalStateException("Unknown view model class")
+                error("Unknown view model class")
             }
         }
         return viewModel as T

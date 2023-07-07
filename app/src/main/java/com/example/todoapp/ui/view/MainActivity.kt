@@ -1,18 +1,18 @@
 package com.example.todoapp.ui.view
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.example.todoapp.App
 import com.example.todoapp.R
+import com.example.todoapp.utils.Constants.HOURS_FOR_UPDATE
 import com.example.todoapp.utils.MyWorkManager
 import com.example.todoapp.utils.SharedPreferencesHelper
 import java.util.concurrent.TimeUnit
@@ -24,9 +24,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var controller: NavController
 
-
     @Inject
     lateinit var sharedPreferencesHelper: SharedPreferencesHelper
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,38 +59,12 @@ class MainActivity : AppCompatActivity() {
         return navHost.navController
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        periodicUpdate()
-    }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBundle("state",controller.saveState())
+        outState.putBundle("state", controller.saveState())
     }
 
-    private fun periodicUpdate() {
-        val constraints: Constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
-
-
-        val myWorkRequest = PeriodicWorkRequest.Builder(
-            MyWorkManager::class.java,
-            8,
-            TimeUnit.HOURS
-        )
-            .setConstraints(constraints)
-            .addTag("update_data")
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "update_data",
-            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-            myWorkRequest
-        )
-    }
 
 
 }

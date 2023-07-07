@@ -1,16 +1,14 @@
 package com.example.todoapp.data.repository
 
-import com.example.todoapp.data.data_source.network.NetworkSource
-import com.example.todoapp.data.data_source.network.dto.responses.TodoItemResponse
-import com.example.todoapp.data.data_source.room.ToDoItemEntity
-import com.example.todoapp.data.data_source.room.TodoListDao
+import com.example.todoapp.data.dataSource.network.NetworkSource
+import com.example.todoapp.data.dataSource.network.dto.responses.TodoItemResponse
+import com.example.todoapp.data.dataSource.room.ToDoItemEntity
+import com.example.todoapp.data.dataSource.room.TodoListDao
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.repository.Repository
 import com.example.todoapp.domain.model.DataState
-import com.example.todoapp.domain.model.ResponseState
 import com.example.todoapp.domain.model.UiState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
