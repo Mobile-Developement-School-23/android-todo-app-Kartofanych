@@ -25,6 +25,7 @@ class SharedPreferencesHelper @Inject constructor(
         if (!sharedPreferences.contains("token")) {
             putToken("no_token")
         }
+        Constants.phoneId = getPhoneID()
     }
 
     fun putRevision(revision: Int) {

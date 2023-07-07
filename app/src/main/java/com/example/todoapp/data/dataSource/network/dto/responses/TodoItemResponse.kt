@@ -2,6 +2,7 @@ package com.example.todoapp.data.dataSource.network.dto.responses
 
 import com.example.todoapp.domain.model.Importance
 import com.example.todoapp.domain.model.TodoItem
+import com.example.todoapp.utils.Constants
 import com.google.gson.annotations.SerializedName
 import java.sql.Date
 
@@ -60,7 +61,7 @@ data class TodoItemResponse(
                         toDoItem.dateChanged!!.time
                     }
                 },
-                updatedBy = "iddd"
+                updatedBy = Constants.phoneId
             )
         }
     }

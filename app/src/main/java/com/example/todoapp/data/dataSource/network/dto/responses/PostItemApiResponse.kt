@@ -9,7 +9,6 @@ data class PostItemApiResponse(
     @SerializedName("element")
     val item: TodoItemResponse,
 
-
     @SerializedName("revision")
     val revision: Int
 
