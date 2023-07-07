@@ -63,7 +63,7 @@ class NetworkModule {
     ): NetworkSource = NetworkSource(sharedPreferencesHelper, retrofitService)
 
     @Provides
-    @Singleton
+    @Reusable
     fun provideConnectivityObserver(context: Context): NetworkConnectivityObserver =
         NetworkConnectivityObserver(context)
 

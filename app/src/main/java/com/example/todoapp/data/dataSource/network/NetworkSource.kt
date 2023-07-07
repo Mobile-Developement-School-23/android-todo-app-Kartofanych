@@ -1,14 +1,13 @@
 package com.example.todoapp.data.dataSource.network
 
-import android.accounts.NetworkErrorException
 import android.util.Log
 import com.example.todoapp.data.dataSource.network.api.RetrofitService
 import com.example.todoapp.data.dataSource.network.dto.requests.PatchListApiRequest
 import com.example.todoapp.data.dataSource.network.dto.requests.PostItemApiRequest
 import com.example.todoapp.data.dataSource.network.dto.responses.TodoItemResponse
+import com.example.todoapp.domain.model.DataState
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.utils.SharedPreferencesHelper
-import com.example.todoapp.domain.model.DataState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -64,6 +63,8 @@ class NetworkSource @Inject constructor(
                 emit(DataState.Exception(exception))
             } catch (exception: HttpException){
                 emit(DataState.Exception(exception))
+            } catch (other:Exception){
+                emit(DataState.Exception(other))
             }
         }
 
@@ -81,6 +82,8 @@ class NetworkSource @Inject constructor(
             Log.d("1", exception.toString())
         } catch (exception: HttpException){
             Log.d("1", exception.toString())
+        } catch (other:Exception){
+            Log.d("1", other.toString())
         }
     }
 
@@ -99,6 +102,8 @@ class NetworkSource @Inject constructor(
             Log.d("1", exception.toString())
         } catch (exception: HttpException){
             Log.d("1", exception.toString())
+        } catch (other:Exception){
+            Log.d("1", other.toString())
         }
     }
 
@@ -119,6 +124,8 @@ class NetworkSource @Inject constructor(
             Log.d("1", exception.toString())
         } catch (exception: HttpException){
             Log.d("1", exception.toString())
+        } catch (other:Exception){
+            Log.d("1", other.toString())
         }
     }
 }

@@ -33,7 +33,6 @@ class MainViewModel @Inject constructor(
     private val _data = MutableStateFlow<UiState<List<TodoItem>>>(UiState.Start)
     val data: StateFlow<UiState<List<TodoItem>>> = _data.asStateFlow()
 
-
     val countComplete = _data.map{ state->
         when(state){
             is UiState.Success->{
@@ -54,7 +53,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun observeNetwork() {
-        coroutineScope.launch {
+        coroutineScope.launch(Dispatchers.IO) {
             connection.observe().collectLatest {
                 _status.emit(it)
             }
