@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.view.listAdapter
+package com.example.todoapp.ui.view.taskList.listAdapter
 
 import android.graphics.Paint
 import android.view.LayoutInflater

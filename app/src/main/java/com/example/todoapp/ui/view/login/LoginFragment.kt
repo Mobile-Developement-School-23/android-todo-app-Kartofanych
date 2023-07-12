@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.view
+package com.example.todoapp.ui.view.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,19 +9,15 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.App
 import com.example.todoapp.databinding.FragmentLoginBinding
 import com.example.todoapp.ui.stateholders.LoginViewModel
 import com.example.todoapp.utils.SharedPreferencesHelper
-import com.example.todoapp.ui.stateholders.MainViewModel
 import com.yandex.authsdk.YandexAuthException
 import com.yandex.authsdk.YandexAuthLoginOptions
-import com.yandex.authsdk.YandexAuthOptions
 import com.yandex.authsdk.YandexAuthSdk
-import com.yandex.authsdk.internal.strategy.LoginType
 import javax.inject.Inject
 
 

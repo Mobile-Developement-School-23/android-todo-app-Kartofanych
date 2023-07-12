@@ -40,11 +40,9 @@
             android:layout_marginStart="6dp"
             android:layout_marginEnd="15dp"
             android:ellipsize="end"
-            android:fontFamily="@font/regular"
             android:maxLines="3"
             android:text="Купить что-то"
-            android:textColor="@color/primary"
-            android:textSize="16sp"
+            style="@style/H1"
             app:layout_constraintEnd_toStartOf="@+id/info"
             app:layout_constraintStart_toEndOf="@id/importance"
             app:layout_constraintTop_toTopOf="parent" />
@@ -56,12 +54,9 @@
             android:layout_marginStart="6dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/regular"
-            android:maxLines="3"
             android:text="Сделать до 2 июня"
             android:textColor="@color/tertiary"
-            android:textSize="16sp"
+            style="@style/Body"
             android:visibility="gone" />
     </LinearLayout>
 

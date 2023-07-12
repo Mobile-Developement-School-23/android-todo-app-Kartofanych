@@ -1,4 +1,4 @@
-package com.example.todoapp.ui.view
+package com.example.todoapp.ui.view.manageTask
 
 import android.app.DatePickerDialog
 import android.content.Context

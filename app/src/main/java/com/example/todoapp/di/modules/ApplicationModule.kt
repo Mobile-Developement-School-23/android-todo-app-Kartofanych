@@ -1,6 +1,5 @@
 package com.example.todoapp.di.modules
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope

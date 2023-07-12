@@ -8,6 +8,8 @@ import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.repository.Repository
 import com.example.todoapp.domain.model.DataState
 import com.example.todoapp.domain.model.UiState
+import com.example.todoapp.utils.notifications.NotificationsScheduler
+import com.example.todoapp.utils.notifications.NotificationsSchedulerImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(
     private val dao: TodoListDao,
-    private val networkSource: NetworkSource
+    private val networkSource: NetworkSource,
+    private val notificationsScheduler: NotificationsSchedulerImpl
 ) : Repository {
 
     override fun getAllData(): Flow<UiState<List<TodoItem>>> = flow {
@@ -29,18 +32,22 @@ class RepositoryImpl @Inject constructor(
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
         dao.add(toDoItemEntity)
         networkSource.postElement(todoItem)
+        notificationsScheduler.schedule(todoItem)
     }
 
     override suspend fun deleteItem(todoItem: TodoItem) {
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
         dao.delete(toDoItemEntity)
         networkSource.deleteElement(todoItem.id)
+        notificationsScheduler.cancel(todoItem)
     }
 
     override suspend fun changeItem(todoItem: TodoItem){
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
         dao.updateItem(toDoItemEntity)
         networkSource.updateElement(todoItem)
+        notificationsScheduler.schedule(todoItem)
+
     }
 
 
@@ -52,11 +59,18 @@ class RepositoryImpl @Inject constructor(
                     DataState.Initial -> emit(UiState.Start)
                     is DataState.Exception -> emit(UiState.Error(state.cause.message.toString()))
                     is DataState.Result -> {
+                        updateNotifications(state.data)
                         dao.addList(state.data.map { ToDoItemEntity.fromItem(it) })
                         emit(UiState.Success(state.data))
                     }
                 }
             }
+    }
+
+    private fun updateNotifications(items: List<TodoItem>) {
+        for (item in items){
+            notificationsScheduler.schedule(item)
+        }
     }
 
 

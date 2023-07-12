@@ -3,6 +3,8 @@ package com.example.todoapp.utils
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
+import androidx.appcompat.app.AppCompatDelegate
+import com.example.todoapp.domain.model.Mode
 import java.util.UUID
 import javax.inject.Inject
 
@@ -25,6 +27,13 @@ class SharedPreferencesHelper @Inject constructor(
         if (!sharedPreferences.contains("token")) {
             putToken("no_token")
         }
+
+        if(!sharedPreferences.contains("mode")){
+            editor.putString("mode", "system")
+            editor.apply()
+        }
+
+
         Constants.phoneId = getPhoneID()
     }
 
@@ -45,7 +54,33 @@ class SharedPreferencesHelper @Inject constructor(
         }
     }
 
-    fun getPhoneID():String = sharedPreferences.getString("UID", "uid").toString()
+    fun getMode(): Mode {
+        return when(sharedPreferences.getString("mode", "system")){
+            "dark" -> Mode.NIGHT
+            "light" -> Mode.LIGHT
+            else -> Mode.SYSTEM
+        }
+    }
+
+    fun setMode(mode:Mode) {
+        when(mode){
+            Mode.NIGHT -> {
+                editor.putString("mode", "dark")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+            Mode.LIGHT -> {
+                editor.putString("mode", "light")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            Mode.SYSTEM -> {
+                editor.putString("mode", "system")
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+        }
+        editor.apply()
+    }
+
+    private fun getPhoneID():String = sharedPreferences.getString("UID", "uid").toString()
     fun putToken(token: String) {
         editor.putString("token", token)
         editor.apply()

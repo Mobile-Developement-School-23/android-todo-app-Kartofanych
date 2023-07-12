@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/back_primary"
     android:id="@+id/newTaskFragment"
-    tools:context=".ui.view.ManageTaskFragment"
+    tools:context=".ui.view.manageTask.ManageTaskFragment"
     >
 
     <com.google.android.material.appbar.AppBarLayout
@@ -75,9 +75,8 @@
                 android:layout_marginHorizontal="16dp"
                 android:textSize="16sp"
                 android:hint="Что надо сделать..."
+                style="@style/H1"
                 android:textColorHint="@color/tertiary"
-                android:textColor="@color/primary"
-                android:fontFamily="@font/regular"
                 android:gravity="top|start"
                 android:padding="16dp"
                 android:layout_marginTop="20dp"
@@ -190,7 +189,7 @@
                 android:fontFamily="@font/regular"
                 android:text="Удалить"
                 android:textColor="@color/disable"
-                android:textSize="16sp"
+                style="@style/H2Button"
                 android:layout_gravity="center_vertical"
                 app:drawableStartCompat="@drawable/ic_delete_24dp"
                 app:drawableTint="@color/disable"

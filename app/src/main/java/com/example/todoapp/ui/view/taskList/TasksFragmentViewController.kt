@@ -1,11 +1,10 @@
-package com.example.todoapp.ui.view
+package com.example.todoapp.ui.view.taskList
 
 import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.view.ContextThemeWrapper
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -15,13 +14,12 @@ import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentTasksBinding
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.ui.stateholders.MainViewModel
-import com.example.todoapp.ui.view.listAdapter.DealsAdapter
-import com.example.todoapp.ui.view.listAdapter.OnItemListener
-import com.example.todoapp.ui.view.listAdapter.SwipeCallbackInterface
-import com.example.todoapp.ui.view.listAdapter.SwipeHelper
+import com.example.todoapp.ui.view.taskList.listAdapter.DealsAdapter
+import com.example.todoapp.ui.view.taskList.listAdapter.OnItemListener
+import com.example.todoapp.ui.view.taskList.listAdapter.SwipeCallbackInterface
+import com.example.todoapp.ui.view.taskList.listAdapter.SwipeHelper
 import com.example.todoapp.domain.model.UiState
 import com.example.todoapp.utils.internetConnection.ConnectivityObserver
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -98,29 +96,9 @@ class TasksFragmentViewController(
                 refresher.isRefreshing = false
             }
 
-            floatingLogOut.setOnClickListener {
-                val builder = MaterialAlertDialogBuilder(
-                    ContextThemeWrapper(
-                        context,
-                        R.style.AlertDialogCustom
-                    )
-                )
-                builder.apply {
-                    val title = if (internetState == ConnectivityObserver.Status.Available) {
-                        "Вы уверены, что хотите выйти?"
-                    } else {
-                        "Вы уверены, что хотите выйти? Возможна потеря данных оффлайн режима."
-                    }
-                    setMessage(title)
-                    setPositiveButton(
-                        "Выйти"
-                    ) { _, _ ->
-                        val action = TasksFragmentDirections.logOut()
-                        navController.navigate(action)
-                    }
-                }
-                builder.show()
-                    .create()
+            floatingSettings.setOnClickListener {
+                val action = TasksFragmentDirections.actionSetting()
+                navController.navigate(action)
             }
         }
     }
@@ -156,9 +134,9 @@ class TasksFragmentViewController(
             when (uiState) {
                 is UiState.Success -> {
                     if (visibilityState) {
-                        adapter.submitList(uiState.data)
+                        adapter.submitList(uiState.data.sortedBy { it.dateCreation.time })
                     } else {
-                        adapter.submitList(uiState.data.filter { !it.done })
+                        adapter.submitList(uiState.data.filter { !it.done }.sortedBy { it.dateCreation.time })
                     }
                     views {
                         recycler.visibility = View.VISIBLE

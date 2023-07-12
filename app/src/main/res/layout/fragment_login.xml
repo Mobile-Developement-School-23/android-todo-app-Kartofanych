@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.view.LoginFragment"
+    tools:context=".ui.view.login.LoginFragment"
     android:background="@color/back_primary"
     >
 
@@ -17,9 +17,7 @@
         app:layout_constraintVertical_bias="0.25"
         android:layout_marginHorizontal="30dp"
         android:text="Добро пожаловать!"
-        android:textSize="30sp"
-        android:textColor="@color/primary"
-        android:fontFamily="@font/medium"
+        style="@style/BigTitle"
         />
     <TextView
         android:id="@+id/title_"
@@ -28,13 +26,11 @@
         app:layout_constraintBottom_toTopOf="@+id/login_block"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.2"
-        android:text="Войдите через Яндекс ID или\nвоспользуйтесь гостевым аккаунтом"
+        android:text="@string/hint_log_in"
         android:layout_marginStart="30dp"
         android:paddingTop="3dp"
-        android:textSize="14sp"
-        android:textColor="@color/tertiary"
-        android:fontFamily="@font/regular"
         android:layout_marginBottom="40dp"
+        style="@style/Hint"
         />
 
 

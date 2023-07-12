@@ -13,6 +13,7 @@
     <color name="gray">#8D8D92</color>
     <color name="gray_light">#48484A</color>
     <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
     <color name="back_primary">#161618</color>
     <color name="back_secondary">#252528</color>
     <color name="back_elevated">#3C3C3F</color>

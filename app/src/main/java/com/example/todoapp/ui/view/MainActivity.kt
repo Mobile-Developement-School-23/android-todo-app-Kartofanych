@@ -18,12 +18,12 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var sharedPreferencesHelper: SharedPreferencesHelper
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         (applicationContext as App).appComponent.inject(this)
         controller = getRootNavController()
-
 
         if (savedInstanceState != null) {
             controller.restoreState(savedInstanceState.getBundle("state"))
@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity() {
         val navHost = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         return navHost.navController
     }
+
+
 
 
     override fun onSaveInstanceState(outState: Bundle) {

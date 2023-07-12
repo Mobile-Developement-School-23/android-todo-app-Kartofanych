@@ -23,7 +23,7 @@ class WorkManagerModule {
 
     @Singleton
     @Provides
-    fun provideWorkManager(
+    fun providePeriodicWorkManagerRequest(
         constraints:Constraints
     ):PeriodicWorkRequest = PeriodicWorkRequest.Builder(
         MyWorkManager::class.java,

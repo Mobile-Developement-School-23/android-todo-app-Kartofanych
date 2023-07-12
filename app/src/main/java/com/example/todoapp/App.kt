@@ -11,6 +11,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.todoapp.di.components.AppComponent
 import com.example.todoapp.di.components.DaggerAppComponent
+import com.example.todoapp.utils.SharedPreferencesHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -26,6 +27,9 @@ class App : Application() {
     lateinit var myWorkRequest: PeriodicWorkRequest
 
     @Inject
+    lateinit var sharedPreferencesHelper:SharedPreferencesHelper
+
+    @Inject
     lateinit var coroutineScope: CoroutineScope
 
 
@@ -35,6 +39,7 @@ class App : Application() {
         appComponent = DaggerAppComponent.factory().create(this)
         appComponent.inject(this)
 
+        sharedPreferencesHelper.setMode(sharedPreferencesHelper.getMode())
         periodicUpdate()
     }
 
