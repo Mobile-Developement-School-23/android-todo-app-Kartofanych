@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/back_primary"
     android:id="@+id/tasksFragment"
-    tools:context=".ui.TasksFragment">
+    tools:context=".ui.view.taskList.TasksFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -36,11 +36,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_marginStart="60dp"
-                    android:fontFamily="@font/regular"
                     android:layout_gravity="bottom"
                     android:text="Выполнено - 0"
-                    android:textColor="@color/tertiary"
-                    android:textSize="16sp"
+                    style="@style/Hint"
                     />
             </FrameLayout>
             <ImageView
@@ -126,12 +124,12 @@
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_log_out"
+        android:id="@+id/floating_settings"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="86dp"
-        android:src="@drawable/ic_log_out"
+        android:src="@drawable/ic_settings"
         app:backgroundTint="@color/back_secondary"
         app:elevation="2dp"
         android:layout_gravity="bottom|end"

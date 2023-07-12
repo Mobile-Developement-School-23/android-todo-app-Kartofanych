@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.login_fragment.LoginFragment"
+    tools:context=".ui.view.login.LoginFragment"
     android:background="@color/back_primary"
     >
 
@@ -12,33 +12,30 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/title_"
         app:layout_constraintVertical_bias="0.25"
         android:layout_marginHorizontal="30dp"
         android:text="Добро пожаловать!"
-        android:textSize="30sp"
-        android:textColor="@color/primary"
-        android:fontFamily="@font/medium"
+        style="@style/BigTitle"
         />
     <TextView
         android:id="@+id/title_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:layout_constraintBottom_toTopOf="@+id/login_block"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_bias="0.2"
-        android:text="Войдите через Яндекс ID или\nвоспользуйтесь гостевым аккаунтом"
-        android:paddingStart="30dp"
+        android:text="@string/hint_log_in"
+        android:layout_marginStart="30dp"
         android:paddingTop="3dp"
-        android:textSize="14sp"
-        android:textColor="@color/tertiary"
-        android:fontFamily="@font/regular"
+        android:layout_marginBottom="40dp"
+        style="@style/Hint"
         />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/login_block"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +54,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/or"
             android:layout_marginHorizontal="30dp"
-            android:src="@drawable/ic_login"
+            android:src="@drawable/login_guest_button"
             />
         <ImageView
             android:id="@+id/or"
@@ -80,7 +77,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/or"
             android:layout_marginHorizontal="30dp"
-            android:src="@drawable/block"
+            android:src="@drawable/login_ya_button"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

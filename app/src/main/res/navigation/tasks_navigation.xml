@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tasks_navigation"
-    app:startDestination="@id/splash_fragment">
+    app:startDestination="@id/loginFragment">
     <fragment
         android:id="@+id/tasks_fragment"
-        android:name="com.example.todoapp.ui.TasksFragment"
+        android:name="com.example.todoapp.ui.view.taskList.TasksFragment"
         android:label="tasksFragment"
         tools:layout="@layout/fragment_tasks" >
         <action
@@ -14,14 +14,14 @@
             app:destination="@+id/newTaskFragment"
             />
         <action
-            android:id="@+id/log_out"
-            app:destination="@+id/loginFragment"
+            android:id="@+id/action_setting"
+            app:destination="@+id/settingsFragment"
             />
     </fragment>
 
     <fragment
         android:id="@+id/newTaskFragment"
-        android:name="com.example.todoapp.ui.manage_task_fragment.ManageTaskFragment"
+        android:name="com.example.todoapp.ui.view.manageTask.ManageTaskFragment"
         android:label="manageTaskFragment"
         tools:layout="@layout/fragment_new_task" >
         <argument
@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.todoapp.ui.login_fragment.LoginFragment"
+        android:name="com.example.todoapp.ui.view.login.LoginFragment"
         android:label="loginFragment"
         tools:layout="@layout/fragment_login" >
         <action
@@ -47,10 +47,15 @@
     </fragment>
 
     <fragment
-        android:id="@+id/splash_fragment"
-        android:name="com.example.todoapp.ui.Splashscreen"
-        android:label="splashFragment"
-        tools:layout="@layout/fragment_splashragment" >
+        android:id="@+id/settingsFragment"
+        android:name="com.example.todoapp.ui.view.settings.SettingsFragment"
+        android:label="settingsFragment"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_log_out"
+            app:destination="@+id/loginFragment"
+            />
     </fragment>
+
 
 </navigation>
