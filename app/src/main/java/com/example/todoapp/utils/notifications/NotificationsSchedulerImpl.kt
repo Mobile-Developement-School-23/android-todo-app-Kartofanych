@@ -16,7 +16,7 @@ class NotificationsSchedulerImpl @Inject constructor(
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     override fun schedule(item: TodoItem) {
-        if (item.deadline != null) {
+        if (item.deadline != null && item.deadline!!.time >= System.currentTimeMillis()+3600000) {
             val intent = Intent(context, NotificationsReceiver::class.java).apply {
                 putExtra("item", item.toString())
             }
@@ -30,6 +30,8 @@ class NotificationsSchedulerImpl @Inject constructor(
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
+        }else{
+            cancel(item)
         }
     }
 

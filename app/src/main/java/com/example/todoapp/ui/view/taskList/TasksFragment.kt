@@ -36,7 +36,8 @@ class TasksFragment : Fragment() {
             findNavController(),
             binding,
             viewLifecycleOwner,
-            viewModel
+            viewModel,
+            layoutInflater
         ).apply {
             setUpViews()
         }

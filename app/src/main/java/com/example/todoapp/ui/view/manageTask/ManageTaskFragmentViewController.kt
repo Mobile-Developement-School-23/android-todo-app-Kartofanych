@@ -99,14 +99,14 @@ class ManageTaskFragmentViewController(
 
 
         if (todoItem.id != "-1") {
-            binding.delete.setTextColor(
+            binding.cancel.setTextColor(
                 AppCompatResources.getColorStateList(
                     context,
                     R.color.red
                 )
             )
             TextViewCompat.setCompoundDrawableTintList(
-                binding.delete, AppCompatResources.getColorStateList(
+                binding.cancel, AppCompatResources.getColorStateList(
                     context,
                     R.color.red
                 )
@@ -192,7 +192,7 @@ class ManageTaskFragmentViewController(
             openDatePicker()
         }
 
-        binding.delete.setOnClickListener {
+        binding.cancel.setOnClickListener {
             if (args.id != null) {
                 model.deleteItem(todoItem)
                 navController.popBackStack()

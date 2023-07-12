@@ -2,10 +2,13 @@ package com.example.todoapp.ui.view.taskList.listAdapter
 
 import android.content.Context
 import android.graphics.Canvas
+import android.view.View
+import android.view.View.OnClickListener
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
+import com.google.android.material.snackbar.Snackbar
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 class SwipeCallback(

@@ -28,7 +28,6 @@
         android:orientation="vertical"
         android:background="@drawable/element_corners_top"
         android:paddingTop="10dp"
-        android:paddingHorizontal="15dp"
         >
 
         <RadioGroup
@@ -45,10 +44,12 @@
                 android:layout_gravity="start"
                 android:button="@null"
                 android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                android:background="?android:attr/selectableItemBackground"
                 android:drawableTint="@color/blue"
                 android:textAlignment="textStart"
                 android:text="Светлая"
                 style="@style/H1"
+                android:paddingHorizontal="15dp"
 
                 />
             <com.google.android.material.radiobutton.MaterialRadioButton
@@ -58,10 +59,12 @@
                 android:layout_gravity="start"
                 android:button="@null"
                 android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                android:background="?android:attr/selectableItemBackground"
                 android:drawableTint="@color/blue"
                 android:textAlignment="textStart"
                 android:text="Тёмная"
                 style="@style/H1"
+                android:paddingHorizontal="15dp"
 
                 />
             <com.google.android.material.radiobutton.MaterialRadioButton
@@ -71,10 +74,12 @@
                 android:layout_gravity="start"
                 android:button="@null"
                 android:drawableEnd="?android:attr/listChoiceIndicatorSingle"
+                android:background="?android:attr/selectableItemBackground"
                 android:drawableTint="@color/blue"
                 android:textAlignment="textStart"
                 android:text="Из настроек системы"
                 style="@style/H1"
+                android:paddingHorizontal="15dp"
 
                 />
         </RadioGroup>
