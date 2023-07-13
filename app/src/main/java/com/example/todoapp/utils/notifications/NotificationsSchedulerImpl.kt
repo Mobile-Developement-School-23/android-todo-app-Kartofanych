@@ -8,6 +8,8 @@ import android.util.Log
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.sheduler.NotificationsScheduler
 import com.example.todoapp.utils.SharedPreferencesHelper
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -54,14 +56,15 @@ class NotificationsSchedulerImpl @Inject constructor(
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
             )
-            sharedPreferencesHelper.removeNotification(id.hashCode().toString())
+            sharedPreferencesHelper.removeNotification(id)
         }catch (err:Exception){
             Log.d("1", err.message.toString())
         }
     }
 
 
-    override fun cancelAll(){
+    override fun cancelAll() {
+        Log.d("1", sharedPreferencesHelper.getNotificationsId())
         val notifications = sharedPreferencesHelper.getNotificationsId().split(" ")
 
         for(notification in notifications){

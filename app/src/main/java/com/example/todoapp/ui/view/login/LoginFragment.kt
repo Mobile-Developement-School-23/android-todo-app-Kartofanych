@@ -9,14 +9,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.view.ContextThemeWrapper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.todoapp.App
+import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentLoginBinding
 import com.example.todoapp.ui.stateholders.LoginViewModel
 import com.example.todoapp.utils.SharedPreferencesHelper
-import com.google.android.material.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yandex.authsdk.YandexAuthException
 import com.yandex.authsdk.YandexAuthLoginOptions
@@ -104,7 +105,12 @@ class LoginFragment : Fragment() {
 
 
     private fun showSettingDialog() {
-        MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_Material3)
+        MaterialAlertDialogBuilder(
+            ContextThemeWrapper(
+                context,
+                R.style.AlertDialogCustom
+            )
+        )
             .setTitle("Разрешение на показ уведомлений")
             .setMessage("Показывать уведомления о ближайших событиях?")
             .setPositiveButton("Да") { _, _ ->

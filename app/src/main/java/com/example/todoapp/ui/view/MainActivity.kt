@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
             controller.graph = navGraph
         }
 
-        Log.d("11", sharedPreferencesHelper.getToken())
     }
 
     private fun getRootNavController(): NavController {

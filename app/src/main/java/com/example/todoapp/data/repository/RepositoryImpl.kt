@@ -1,5 +1,6 @@
 package com.example.todoapp.data.repository
 
+import android.util.Log
 import com.example.todoapp.data.dataSource.network.NetworkSource
 import com.example.todoapp.data.dataSource.network.dto.responses.TodoItemResponse
 import com.example.todoapp.data.dataSource.room.ToDoItemEntity
@@ -58,9 +59,9 @@ class RepositoryImpl @Inject constructor(
                     DataState.Initial -> emit(UiState.Start)
                     is DataState.Exception -> emit(UiState.Error(state.cause.message.toString()))
                     is DataState.Result -> {
-                        updateNotifications(state.data)
                         dao.addList(state.data.map { ToDoItemEntity.fromItem(it) })
                         emit(UiState.Success(state.data))
+                        updateNotifications(state.data)
                     }
                 }
             }

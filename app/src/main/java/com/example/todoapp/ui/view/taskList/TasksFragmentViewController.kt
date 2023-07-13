@@ -91,15 +91,7 @@ class TasksFragmentViewController(
             }
 
             refresher.setOnRefreshListener {
-                if (internetState == ConnectivityObserver.Status.Available) {
-                    viewModel.loadNetworkList()
-                } else {
-                    Toast.makeText(
-                        context,
-                        "No internet connection, retry later(",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+                viewModel.loadNetworkList()
                 refresher.isRefreshing = false
             }
 

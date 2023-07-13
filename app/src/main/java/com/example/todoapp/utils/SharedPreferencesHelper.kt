@@ -21,7 +21,6 @@ class SharedPreferencesHelper @Inject constructor(
         editor = sharedPreferences.edit()
         if (!sharedPreferences.contains("UID")) {
             editor.putString("UID", UUID.randomUUID().toString())
-            editor.apply()
         }
 
         if (!sharedPreferences.contains("token")) {
@@ -30,18 +29,16 @@ class SharedPreferencesHelper @Inject constructor(
 
         if(!sharedPreferences.contains("mode")){
             editor.putString("mode", "system")
-            editor.apply()
         }
 
         if(!sharedPreferences.contains("notifications")){
             editor.putString("notifications", "hey")
-            editor.apply()
         }
 
         if(!sharedPreferences.contains("notification_permission")){
             editor.putString("notification_permission", "none")
-            editor.apply()
         }
+        editor.apply()
 
         Constants.phoneId = getPhoneID()
     }
@@ -91,6 +88,7 @@ class SharedPreferencesHelper @Inject constructor(
 
     fun addNotification(id:String):String{
         editor.putString("notifications", getNotificationsId()+" $id")
+        editor.apply()
         return sharedPreferences.getString("notifications", "").toString()
     }
     fun removeNotification(id:String){
@@ -101,6 +99,7 @@ class SharedPreferencesHelper @Inject constructor(
         }
         val res = arr.fold("") { previous, next -> "$previous $next" }
         editor.putString("notifications", res)
+        editor.apply()
     }
     fun getNotificationsId():String{
         return sharedPreferences.getString("notifications", "").toString()
@@ -111,6 +110,7 @@ class SharedPreferencesHelper @Inject constructor(
             true -> editor.putString("notifications_permission", "true")
             false -> editor.putString("notifications_permission", "false")
         }
+        editor.apply()
     }
     fun getNotificationPermission() : String {
        return sharedPreferences.getString("notifications_permission", "none").toString()
