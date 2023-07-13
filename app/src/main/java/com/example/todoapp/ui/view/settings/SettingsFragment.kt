@@ -66,6 +66,7 @@ class SettingsFragment : Fragment() {
                 setPositiveButton(
                     "Выйти"
                 ) { _, _ ->
+
                     val action = SettingsFragmentDirections.actionLogOut()
                     findNavController().navigate(action)
                 }

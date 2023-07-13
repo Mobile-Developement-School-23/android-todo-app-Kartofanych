@@ -1,10 +1,8 @@
 package com.example.todoapp.ui.view.login
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,15 +31,13 @@ class LoginFragment : Fragment() {
     lateinit var sharedPreferencesHelper: SharedPreferencesHelper
 
     @Inject
-    lateinit var sdk : YandexAuthSdk
+    lateinit var sdk: YandexAuthSdk
 
     private val viewModel: LoginViewModel by viewModels {
         (requireContext().applicationContext as App).appComponent.viewModelsFactory()
     }
 
     private var binding: FragmentLoginBinding? = null
-
-    var hasNotificationPermissionGranted = false
 
 
     override fun onCreateView(
@@ -51,15 +47,20 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireContext().applicationContext as App).appComponent.loginFragmentComponentBuilder().create().inject(this)
+        (requireContext().applicationContext as App).appComponent.loginFragmentComponentBuilder()
+            .create().inject(this)
 
-        if (Build.VERSION.SDK_INT >= 33) {
-            notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            hasNotificationPermissionGranted = true
+
+
+        if (sharedPreferencesHelper.getToken() == "no_token"
+            && sharedPreferencesHelper.getNotificationPermission() == "none"
+        ) {
+            if (Build.VERSION.SDK_INT >= 33) {
+                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                showSettingDialog()
+            }
         }
-
-
 
 
         val register: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -80,7 +81,8 @@ class LoginFragment : Fragment() {
                             moveToTasks()
                         }
                     } catch (exception: YandexAuthException) {
-                        Toast.makeText(context, exception.message.toString(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, exception.message.toString(), Toast.LENGTH_SHORT)
+                            .show()
                     }
                 }
             }
@@ -90,7 +92,7 @@ class LoginFragment : Fragment() {
                 register.launch(sdk.createLoginIntent(YandexAuthLoginOptions.Builder().build()))
             }
             loginButton.setOnClickListener {
-                if(sharedPreferencesHelper.getToken() != "unaffordable") {
+                if (sharedPreferencesHelper.getToken() != "unaffordable") {
                     sharedPreferencesHelper.putToken("unaffordable")
                     sharedPreferencesHelper.putRevision(0)
                     viewModel.deleteCurrentItems()
@@ -101,32 +103,24 @@ class LoginFragment : Fragment() {
     }
 
 
-    private val notificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            hasNotificationPermissionGranted = isGranted
-            if (!isGranted) {
-                if (shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS)) {
-                    showSettingDialog()
-                } else {
-                    showSettingDialog()
-                }
-            } else {
-                //granted
-            }
-        }
-
     private fun showSettingDialog() {
         MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialog_Material3)
-            .setTitle("Notification Permission")
-            .setMessage("Notification permission is required, Please allow notification permission from setting")
-            .setPositiveButton("Ok") { _, _ ->
-                val intent = Intent(ACTION_APPLICATION_DETAILS_SETTINGS)
-                intent.data = Uri.parse("package:${activity?.packageName}")
-                startActivity(intent)
+            .setTitle("Разрешение на показ уведомлений")
+            .setMessage("Показывать уведомления о ближайших событиях?")
+            .setPositiveButton("Да") { _, _ ->
+                sharedPreferencesHelper.putNotificationPermission(true)
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton("Нет") { _, _ ->
+                sharedPreferencesHelper.putNotificationPermission(false)
+            }
             .show()
     }
+
+
+    private val notificationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            sharedPreferencesHelper.putNotificationPermission(isGranted)
+        }
 
     private fun moveToTasks() {
         val action = LoginFragmentDirections.actionMainTasks()

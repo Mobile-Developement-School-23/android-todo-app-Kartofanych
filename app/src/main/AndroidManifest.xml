@@ -11,7 +11,7 @@
 
     <application
         android:name=".App"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:configChanges="screenSize|orientation"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,11 +21,6 @@
         android:theme="@style/Theme.ToDoApp"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".ManageItemFragmentCompose"
-            android:exported="false"
-            android:label="@string/title_activity_manage_item_fragment_compose"
-            android:theme="@style/Theme.ToDoApp" />
         <activity
             android:name=".ui.view.MainActivity"
             android:exported="true">

@@ -18,13 +18,12 @@ import javax.inject.Inject
 class NotificationPostponeReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var coroutineScope: CoroutineScope
-
-    @Inject
     lateinit var repository: Repository
-
+    @Inject
+    lateinit var coroutineScope: CoroutineScope
     override fun onReceive(context: Context, intent: Intent) {
         (context.applicationContext as App).appComponent.inject(this)
+
         val gson = Gson()
         val item = gson.fromJson(intent.getStringExtra("item"), TodoItem::class.java)
         val manager =

@@ -1,353 +1,290 @@
 package com.example.todoapp
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.compose.foundation.background
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Switch
-import androidx.compose.material.SwitchDefaults
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.fragment.app.Fragment
-import com.example.todoapp.theme.YandexTodoTheme
-import com.example.todoapp.theme.YandexTodoTheme.colors
-import com.example.todoapp.theme.blue
-import com.example.todoapp.theme.gray_light
-import com.example.todoapp.theme.tertiary
+import com.example.todoapp.theme.Typography
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class ManageItemFragmentCompose : Fragment() {
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val view = ComposeView(requireContext())
-        view.apply {
-            setContent {
-                FragmentPage()
-            }
-        }
-        return view
-    }
-}
-
-
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun ManageTaskScreen() {
+    @SuppressLint("SimpleDateFormat")
+    val dataFormat = SimpleDateFormat("d MMMM y")
 
-@Composable
-fun BottomShadow(alpha: Float = 0.1f, height: Dp = 8.dp) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(height)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Black.copy(alpha = alpha),
-                        Color.Transparent,
-                    )
-                )
-            )
-    )
-}
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var taskText by rememberSaveable { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(Date(1000000000)) }
+    var checkedDate: Boolean by remember { mutableStateOf(false) }
+    var deleteState: Boolean by remember { mutableStateOf(true) }
 
+    var openDialog = remember { mutableStateOf(false) }
+    val selectedImportance = remember { mutableStateOf("Нет") }
 
-@Preview(showBackground = true)
-@Composable
-fun FragmentPage() {
-    YandexTodoTheme {
+    // State for bottom sheet visibility
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
 
-        val openDialog = remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier.fillMaxWidth(),
+    val bottomSheetState = rememberModalBottomSheetState(true)
 
-            verticalArrangement = Arrangement.Top
-        ) {
-            Toolbar()
-            BottomShadow(alpha = 0.2f, height = 5.dp)
-            EditField()
-            ImportanceBlock()
-            DoUntilBlock(openDialog)
-            DeleteButton()
-
-        }
-        AlertDialogSample(openDialog)
-    }
-}
-
-@Composable
-fun Toolbar() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        IconButton(onClick = {}) {
-            Icon(
-                painter = painterResource(R.drawable.ic_close),
-                contentDescription = "Close page",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(40.dp)
-                    .padding(10.dp)
-            )
-        }
-        Text(
-            text = "СОХРАНИТЬ",
-            style = TextStyle(
-                color = blue,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-            ),
-            modifier = Modifier
-                .clickable {
-                    //save click
-                }
-                .align(Alignment.CenterVertically)
-                .padding(horizontal = 10.dp, vertical = 8.dp)
-        )
-    }
-}
-
-@Composable
-fun EditField() {
-    val state = remember { mutableStateOf("") }
-    OutlinedTextField(
-        value = state.value,
-        onValueChange = { state.value = it },
-        label = {
-            Text(
-                "Что надо сделать...",
-                style = TextStyle(
-                    color = tertiary
-                )
-            )
-        },
-        shape = RoundedCornerShape(10.dp),
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = gray_light,
-            unfocusedBorderColor = gray_light,
-            cursorColor = blue
-        ),
-        modifier = Modifier
-            .sizeIn(minHeight = 56.dp)
-            .fillMaxWidth()
-            .padding(top = 20.dp, start = 20.dp, end = 20.dp, bottom = 10.dp)
-    )
-}
-
-@Composable
-fun ImportanceBlock() {
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .clickable {
-                //click
-            }
-            .padding(start = 20.dp, end = 20.dp, top = 20.dp)
-    ) {
-        Text(
-            text = "Важность",
-            style = TextStyle(
-                fontSize = 16.sp,
-                color = colors.labelPrimary
-            )
-        )
-        Text(
-            text = "Нет",
-            style = TextStyle(
-                fontSize = 13.sp,
-                color = colors.labelTertiary
-            )
-        )
-        Box(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(
-                    color = tertiary
-                )
-        )
-    }
-}
-
-@Composable
-fun DoUntilBlock(openDialog: MutableState<Boolean>) {
-    val checkedState = remember { mutableStateOf(true) }
-    Column(
-        modifier = Modifier
-            .height(110.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    checkedState.value = !checkedState.value
-                }
-                .padding(vertical = 20.dp, horizontal = 20.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-
-        ) {
-            Column(
-                verticalArrangement = Arrangement.Top
-            ) {
-                Text(
-                    text = "Сделать до",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        color = colors.labelPrimary
-                    )
-                )
-
-                if (checkedState.value) {
-                    Text(
-                        text = "дата здесь",
-                        style = TextStyle(
-                            fontSize = 13.sp,
-                            color = colors.colorBlue
-                        ),
-                    )
-                }
-            }
-            Switch(
-                checked = checkedState.value,
-                onCheckedChange = {
-                    checkedState.value = it
-                    if (checkedState.value) {
-                        openDialog.value = true
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Manage fragment") },
+                navigationIcon = {
+                    IconButton(onClick = { /* Handle navigation click */ }) {
+                        Icon(Icons.Default.Close, contentDescription = null)
                     }
                 },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = colors.colorBlue,
-                    uncheckedThumbColor = colors.colorGray,
-                    uncheckedTrackColor = colors.colorGrayLight,
-                    checkedTrackColor = colors.colorGrayLight
+                actions = {
+                    // RowScope here, so these icons will be placed horizontally
+                    TextButton(onClick = { /* doSomething() */ }) {
+                        Text(text = "Сохранить")
+                    }
 
-                ),
+                }, scrollBehavior = scrollBehavior
             )
-
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(
-                    color = tertiary
+        },
+        content = {
+            Column(
+                modifier = Modifier
+                    .padding(it)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                // Content of the fragment goes here
+                OutlinedTextField(
+                    value = taskText,
+                    onValueChange = { taskText = it },
+                    label = { Text("Что надо сделать...") },
+                    singleLine = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                        .heightIn(min = 150.dp) // Adjust the maximum height as needed
+                        .padding(vertical = 8.dp, horizontal = 16.dp)
                 )
-        )
-    }
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { openBottomSheet = true }
+                        .padding(vertical = 20.dp, horizontal = 16.dp)
+                ) {
+                    Text(
+                        text = "Важность",
+                        modifier = Modifier.padding(bottom = 5.dp)
+                    )
+                    Text(
+                        text = selectedImportance.value.toLowerCase().capitalize(),
+                        modifier = Modifier.alpha(0.5f),
+                        color = if (selectedImportance.value == "Высокая") Color.Red else Color.Gray,
+                    )
+                }
+                if (openBottomSheet) {
+                    ModalBottomSheet(
+                        sheetState = bottomSheetState,
+                        onDismissRequest = { openBottomSheet = false },
+                    ) {
+                        ImportanceBottomSheetContent { importance ->
+                            selectedImportance.value = importance
+                            if (bottomSheetState.isVisible) {
+                                openBottomSheet = false
+                            }
+                        }
+                    }
+                }
+                Divider(
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(vertical = 20.dp, horizontal = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Сделать до",
+                            modifier = Modifier
+                                .weight(1f)
+                                .wrapContentWidth(Alignment.Start)
+                                .wrapContentHeight(Alignment.CenterVertically)
+                        )
+                        Switch(
+                            checked = checkedDate,
+                            onCheckedChange = { newChecked -> checkedDate = newChecked },
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                    }
+                    if (checkedDate) {
+//                        openDialog.value = true
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    openDialog.value = true
+                                },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                Icons.Default.CalendarMonth,
+                                contentDescription = null,
+                                tint = Color.Blue
+                            )
+                            Text(
+                                text = dataFormat.format(selectedDate),
+                                color = Color.Blue,
+                            )
+                        }
+                        if (openDialog.value) {
+                            DatePickerDialogSample(openDialog = openDialog
+                            ) { time ->
+                                selectedDate = time
+                            }
+                        }
+                    }
+                }
+                Divider()
+                // Delete Task button
+                DeleteButton(onClick = {
+
+                }, deleteState)
+            }
+        }
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeleteButton() {
-    Row(
-        modifier = Modifier
-            .padding(start = 20.dp, top = 10.dp)
-            .clickable(
-                interactionSource = MutableInteractionSource(),
-                indication = null,
-                onClick = {}
-            )
-            .padding(horizontal = 10.dp, vertical = 8.dp)
-    ) {
-
-        Icon(
-            painter = painterResource(id = R.drawable.ic_delete_24dp),
-            contentDescription = "Delete Icon",
-            tint = colors.labelTertiary
-        )
-        Text(
-            text = "Удалить",
-            color = colors.labelTertiary,
-            modifier = Modifier
-                .padding(start = 5.dp)
-        )
-    }
-}
-
-@Composable
-fun AlertDialogSample(value: MutableState<Boolean>) {
-
-    val openDialog = value
+fun DatePickerDialogSample(openDialog: MutableState<Boolean>, onTimeSelected: (Date) -> Unit) {
     if (openDialog.value) {
-
-        AlertDialog(
+        val datePickerState = rememberDatePickerState()
+        val confirmEnabled = datePickerState.selectedDateMillis != null
+        DatePickerDialog(
             onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onCloseRequest.
                 openDialog.value = false
             },
-            title = {
-                Text(text = "Dialog Title")
-            },
-            text = {
-                Text("Here is a text ")
-            },
             confirmButton = {
-                Button(
-
+                TextButton(
                     onClick = {
                         openDialog.value = false
-                    }) {
-                    Text("This is the Confirm Button")
+                        onTimeSelected(Date(datePickerState.selectedDateMillis!!))
+                    },
+                    enabled = confirmEnabled
+                ) {
+                    Text("OK")
                 }
             },
             dismissButton = {
-                Button(
-
+                TextButton(
                     onClick = {
                         openDialog.value = false
-                    }) {
-                    Text("This is the dismiss Button")
+                    }
+                ) {
+                    Text("Удалить")
                 }
             }
-        )
+        ) {
+            DatePicker(state = datePickerState)
+        }
     }
+}
 
+@Composable
+fun DeleteButton(onClick: () -> Unit, state: Boolean) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier.clickable(enabled = state, onClick = onClick),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+        elevation = ButtonDefaults.elevation(0.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Удалить",
+                tint = if (state) Color.Red else Color.Gray
+            )
+            Text(
+                text = "Удалить",
+                modifier = Modifier.padding(start = 4.dp),
+                color = if (state) Color.Red else Color.Gray
+            )
+        }
+    }
+}
+
+@Composable
+fun ImportanceBottomSheetContent(
+    onImportanceSelected: (String) -> Unit
+) {
+    val importanceValues = listOf("Низкая", "Обычная", "Высокая")
+
+    Column(modifier = Modifier.padding(bottom = 30.dp)) {
+        importanceValues.forEach { importance ->
+            Text(
+                text = importance,
+                color = if (importance == importanceValues[2]) Color.Red else Color.Gray,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onImportanceSelected(importance) }
+                    .padding(horizontal = 20.dp, vertical = 15.dp),
+                style = Typography.body1
+            )
+        }
+    }
 }
 

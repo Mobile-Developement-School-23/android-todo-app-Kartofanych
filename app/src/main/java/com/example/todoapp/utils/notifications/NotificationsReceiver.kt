@@ -25,10 +25,8 @@ class NotificationsReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var scheduler: NotificationsSchedulerImpl
-
     @Inject
     lateinit var coroutineScope: CoroutineScope
-
     private companion object {
         const val CHANNEL_ID = "deadlines"
         const val CHANNEL_NAME = "Deadline notification"
@@ -66,7 +64,7 @@ class NotificationsReceiver : BroadcastReceiver() {
                         )
                     )
                     .build()
-                scheduler.cancel(item)
+                scheduler.cancel(item.id)
                 manager.notify(item.id.hashCode(), notification)
             }
         } catch (err: Exception) {

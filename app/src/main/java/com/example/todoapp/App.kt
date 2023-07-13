@@ -29,9 +29,6 @@ class App : Application() {
     @Inject
     lateinit var sharedPreferencesHelper:SharedPreferencesHelper
 
-    @Inject
-    lateinit var coroutineScope: CoroutineScope
-
 
     lateinit var appComponent: AppComponent
     override fun onCreate() {
@@ -52,10 +49,6 @@ class App : Application() {
     }
 
 
-    override fun onTerminate() {
-        super.onTerminate()
-        coroutineScope.cancel()
-    }
 
 
 }

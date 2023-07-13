@@ -8,7 +8,6 @@ import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.repository.Repository
 import com.example.todoapp.domain.model.DataState
 import com.example.todoapp.domain.model.UiState
-import com.example.todoapp.utils.notifications.NotificationsScheduler
 import com.example.todoapp.utils.notifications.NotificationsSchedulerImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -39,7 +38,7 @@ class RepositoryImpl @Inject constructor(
         val toDoItemEntity = ToDoItemEntity.fromItem(todoItem)
         dao.delete(toDoItemEntity)
         networkSource.deleteElement(todoItem.id)
-        notificationsScheduler.cancel(todoItem)
+        notificationsScheduler.cancel(todoItem.id)
     }
 
     override suspend fun changeItem(todoItem: TodoItem){
@@ -68,6 +67,7 @@ class RepositoryImpl @Inject constructor(
     }
 
     private fun updateNotifications(items: List<TodoItem>) {
+        notificationsScheduler.cancelAll()
         for (item in items){
             notificationsScheduler.schedule(item)
         }
