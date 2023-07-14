@@ -111,7 +111,7 @@ fun ManageTaskScreen(
                         state = state
                     )
 
-                    Divider()
+                    Divider(color = YandexTodoTheme.colors.labelTertiary)
 
                     DoUntilField(
                         onCheckChange = {
@@ -130,7 +130,7 @@ fun ManageTaskScreen(
                         deadlineDate
                     )
 
-                    Divider()
+                    Divider(color = YandexTodoTheme.colors.labelTertiary)
 
                     DeleteButton(onClick = {
                         onEvent(FragmentUIEvents.DeleteTodo)
