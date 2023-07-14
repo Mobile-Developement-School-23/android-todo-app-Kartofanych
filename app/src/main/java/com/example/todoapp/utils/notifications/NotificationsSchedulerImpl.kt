@@ -7,6 +7,7 @@ import android.content.Intent
 import android.util.Log
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.sheduler.NotificationsScheduler
+import com.example.todoapp.utils.Constants.HOUR_IN_MILLIS
 import com.example.todoapp.utils.SharedPreferencesHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -22,16 +23,16 @@ class NotificationsSchedulerImpl @Inject constructor(
 
     override fun schedule(item: TodoItem) {
         if (item.deadline != null
-            && item.deadline!!.time >= System.currentTimeMillis()+3600000
+            && item.deadline!!.time >= System.currentTimeMillis()+HOUR_IN_MILLIS
             && !item.done
             && sharedPreferencesHelper.getNotificationPermission() == "true") {
             val intent = Intent(context, NotificationsReceiver::class.java).apply {
-                putExtra("item", item.toString())
+                putExtra("id", item.id)
             }
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                //item.deadline!!.time-3600000,
-                System.currentTimeMillis()+10000,
+                item.deadline!!.time-HOUR_IN_MILLIS,
+                //System.currentTimeMillis()+10000,
                 PendingIntent.getBroadcast(
                     context,
                     item.id.hashCode(),

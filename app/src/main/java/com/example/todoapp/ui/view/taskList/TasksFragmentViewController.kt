@@ -47,13 +47,13 @@ class TasksFragmentViewController(
     private fun setUpUI() {
         views {
             floatingNewTask.setOnClickListener {
-                val action = TasksFragmentDirections.actionManageTask(null)
+                val action = TasksFragmentDirections.actionManageComposeTask(null)
                 navController.navigate(action)
             }
 
             recycler.adapter = DealsAdapter(object : OnItemListener {
                 override fun onItemClick(id: String) {
-                    val action = TasksFragmentDirections.actionManageTask(id = id)
+                    val action = TasksFragmentDirections.actionManageComposeTask(id)
                     navController.navigate(action)
                 }
 
@@ -120,7 +120,7 @@ class TasksFragmentViewController(
         snackBarLayout.addView(customize, 0)
         val timer = object : CountDownTimer(5000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                timerText.text = (millisUntilFinished/1000+1).toString()
+                timerText.text = (millisUntilFinished / 1000 + 1).toString()
             }
 
             override fun onFinish() {
@@ -163,10 +163,13 @@ class TasksFragmentViewController(
             when (uiState) {
                 is UiState.Success -> {
                     if (visibilityState) {
-                        adapter.submitList(uiState.data.sortedBy { it.dateCreation.time })
+                        adapter.submitList(uiState.data
+                            .sortedWith(compareBy<TodoItem, Long?>(nullsLast()) { it.deadline?.time }
+                                .thenBy { it.dateCreation.time }))
                     } else {
                         adapter.submitList(uiState.data.filter { !it.done }
-                            .sortedBy { it.dateCreation.time })
+                            .sortedWith(compareBy<TodoItem, Long?>(nullsLast()) { it.deadline?.time }
+                                .thenBy { it.dateCreation.time }))
                     }
                     views {
                         recycler.visibility = View.VISIBLE

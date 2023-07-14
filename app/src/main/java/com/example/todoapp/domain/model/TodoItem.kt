@@ -2,8 +2,8 @@ package com.example.todoapp.domain.model
 
 import com.example.todoapp.utils.Constants.DEFAULT_DATE
 import com.google.gson.Gson
-import java.sql.Date
 import java.text.SimpleDateFormat
+import java.sql.Date
 
 data class TodoItem(
     var id: String,
@@ -22,7 +22,7 @@ data class TodoItem(
 
     fun deadlineToString(): String? {
         if (deadline != null) {
-            val dateFormat = SimpleDateFormat("dd MMMM YYYY")
+            val dateFormat = SimpleDateFormat("HH:mm, dd MMMM YYYY")
             return dateFormat.format(deadline!!)
         }
         return null

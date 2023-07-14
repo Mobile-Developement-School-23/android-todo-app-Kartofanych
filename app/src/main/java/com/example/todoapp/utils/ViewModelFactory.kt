@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.data.repository.RepositoryImpl
 import com.example.todoapp.ui.stateholders.LoginViewModel
 import com.example.todoapp.ui.stateholders.MainViewModel
+import com.example.todoapp.ui.stateholders.ManageTaskComposeViewModel
 import com.example.todoapp.ui.stateholders.ManageTaskViewModel
 import com.example.todoapp.utils.internetConnection.NetworkConnectivityObserver
 import com.example.todoapp.utils.notifications.NotificationsSchedulerImpl
@@ -27,9 +28,11 @@ class ViewModelFactory @Inject constructor(
             LoginViewModel::class.java -> {
                 LoginViewModel(repositoryImpl, coroutineScope, schedulerImpl)
             }
-
             ManageTaskViewModel::class.java -> {
                 ManageTaskViewModel(repositoryImpl, coroutineScope)
+            }
+            ManageTaskComposeViewModel::class.java -> {
+                ManageTaskComposeViewModel(repositoryImpl, coroutineScope)
             }
 
             else -> {

@@ -2,6 +2,7 @@ package com.example.todoapp.di.components
 
 import android.content.Context
 import com.example.todoapp.App
+import com.example.todoapp.ui.view.manageTaskCompose.ManageFragmentCompose
 import com.example.todoapp.di.modules.ApplicationModule
 import com.example.todoapp.di.modules.DatabaseModule
 import com.example.todoapp.di.modules.NetworkModule
@@ -44,6 +45,7 @@ interface AppComponent {
     fun inject(notificationsReceiver: NotificationsReceiver)
     fun inject(fragment: BottomSheetFragment)
     fun inject(fragment: SettingsFragment)
+    fun inject(fragment: ManageFragmentCompose)
     fun viewModelsFactory(): ViewModelFactory
     fun loginFragmentComponentBuilder(): LoginFragmentComponent.Factory
 

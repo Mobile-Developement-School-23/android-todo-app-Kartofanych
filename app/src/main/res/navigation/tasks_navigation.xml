@@ -23,6 +23,25 @@
             app:enterAnim="@anim/slide_in_right"
             app:popEnterAnim="@anim/slide_in_left"
             />
+        <action
+            android:id="@+id/action_manage_compose_task"
+            app:destination="@+id/newTaskComposeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popEnterAnim="@anim/slide_in_left"
+
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newTaskComposeFragment"
+        android:name="com.example.todoapp.ui.view.manageTaskCompose.ManageFragmentCompose"
+        android:label="manageTaskFragment"
+        tools:layout="@layout/fragment_manage_compose" >
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="true"
+            />
     </fragment>
 
     <fragment

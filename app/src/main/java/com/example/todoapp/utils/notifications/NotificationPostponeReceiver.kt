@@ -8,6 +8,7 @@ import android.util.Log
 import com.example.todoapp.App
 import com.example.todoapp.domain.model.TodoItem
 import com.example.todoapp.domain.repository.Repository
+import com.example.todoapp.utils.Constants.DAY_IN_MILLIS
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,23 +20,26 @@ class NotificationPostponeReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var repository: Repository
+
     @Inject
     lateinit var coroutineScope: CoroutineScope
+
     override fun onReceive(context: Context, intent: Intent) {
         (context.applicationContext as App).appComponent.inject(this)
 
-        val gson = Gson()
-        val item = gson.fromJson(intent.getStringExtra("item"), TodoItem::class.java)
-        val manager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.cancel(item.id.hashCode())
         try {
+            val id: String = intent.getStringExtra("id")!!
+            val manager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            manager.cancel(id.hashCode())
+
             coroutineScope.launch(Dispatchers.IO) {
-                if(item.deadline != null){
-                    repository.changeItem(item.copy(deadline = Date(item.deadline!!.time+86400000)))
+                val item = repository.getItem(id)
+                if (item.deadline != null) {
+                    repository.changeItem(item.copy(deadline = Date(item.deadline!!.time + DAY_IN_MILLIS)))
                 }
             }
-        }catch (err:Exception){
+        } catch (err: Exception) {
             Log.d("1", err.message.toString())
         }
     }

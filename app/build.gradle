@@ -80,6 +80,8 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.7.2'
 
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
+    implementation "io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc"
 
     // Navigation Component
     implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'

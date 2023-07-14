@@ -15,6 +15,12 @@ val Typography = Typography(
         fontFamily = FontFamily(Font(R.font.regular)),
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
+        letterSpacing = 0.5.sp,
+    ),
+    body2 = TextStyle(
+        fontFamily = FontFamily(Font(R.font.regular)),
+        fontWeight = FontWeight.Normal,
+        fontSize = 13.sp,
         letterSpacing = 0.5.sp
     )
     /* Other default text styles to override
