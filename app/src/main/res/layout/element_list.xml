@@ -42,7 +42,7 @@
             android:ellipsize="end"
             android:maxLines="3"
             android:text="Купить что-то"
-            style="@style/H1"
+            style="@style/Body"
             app:layout_constraintEnd_toStartOf="@+id/info"
             app:layout_constraintStart_toEndOf="@id/importance"
             app:layout_constraintTop_toTopOf="parent" />

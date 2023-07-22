@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tasks_navigation"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/loginFragment"
+    >
     <fragment
         android:id="@+id/tasks_fragment"
         android:name="com.example.todoapp.ui.view.taskList.TasksFragment"
@@ -12,10 +13,34 @@
         <action
             android:id="@+id/action_manage_task"
             app:destination="@+id/newTaskFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popEnterAnim="@anim/slide_in_left"
+
             />
         <action
             android:id="@+id/action_setting"
             app:destination="@+id/settingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popEnterAnim="@anim/slide_in_left"
+            />
+        <action
+            android:id="@+id/action_manage_compose_task"
+            app:destination="@+id/newTaskComposeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popEnterAnim="@anim/slide_in_left"
+
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newTaskComposeFragment"
+        android:name="com.example.todoapp.ui.view.manageTaskCompose.ManageFragmentCompose"
+        android:label="manageTaskFragment"
+        tools:layout="@layout/fragment_manage_compose" >
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="true"
             />
     </fragment>
 
@@ -28,10 +53,6 @@
             android:name="id"
             app:argType="string"
             app:nullable="true"
-            />
-        <action
-            android:id="@+id/action_main_tasks"
-            app:destination="@+id/tasks_fragment"
             />
     </fragment>
 

@@ -1,6 +1,7 @@
 package com.example.todoapp.ui.view
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
             controller.graph = navGraph
         }
+
     }
 
     private fun getRootNavController(): NavController {

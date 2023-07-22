@@ -13,8 +13,8 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import com.example.todoapp.App
 import com.example.todoapp.R
-import com.example.todoapp.domain.model.TodoItem
-import com.google.gson.Gson
+import com.example.todoapp.domain.repository.Repository
+import com.example.todoapp.utils.toName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,10 +25,10 @@ class NotificationsReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var scheduler: NotificationsSchedulerImpl
-
     @Inject
     lateinit var coroutineScope: CoroutineScope
-
+    @Inject
+    lateinit var repository: Repository
     private companion object {
         const val CHANNEL_ID = "deadlines"
         const val CHANNEL_NAME = "Deadline notification"
@@ -39,9 +39,10 @@ class NotificationsReceiver : BroadcastReceiver() {
         (context.applicationContext as App).appComponent.inject(this)
         try {
 
-            val gson = Gson()
-            val item = gson.fromJson(intent.getStringExtra("item"), TodoItem::class.java)
+            val id:String = intent.getStringExtra("id")!!
+
             coroutineScope.launch(Dispatchers.IO) {
+                val item = repository.getItem(id)
 
                 val manager =
                     context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -55,18 +56,18 @@ class NotificationsReceiver : BroadcastReceiver() {
 
                 val notification: Notification = NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_check_24dp)
-                    .setContentTitle("Остался час!")
+                    .setContentTitle("Остался час! Важность ${item.importance.toName()}")
                     .setContentText(item.text)
                     .setAutoCancel(true)
                     .setContentIntent(deepLinkIntent(context, item.id))
                     .addAction(
                         NotificationCompat.Action(
                             R.drawable.ic_delay, "Отложить на день",
-                            postponeIntent(context, item)
+                            postponeIntent(context, item.id)
                         )
                     )
                     .build()
-                scheduler.cancel(item)
+                scheduler.cancel(item.id)
                 manager.notify(item.id.hashCode(), notification)
             }
         } catch (err: Exception) {
@@ -77,14 +78,14 @@ class NotificationsReceiver : BroadcastReceiver() {
     private fun deepLinkIntent(context: Context, id: String): PendingIntent =
         NavDeepLinkBuilder(context)
             .setGraph(R.navigation.tasks_navigation)
-            .setDestination(R.id.newTaskFragment, bundleOf("id" to id))
+            .setDestination(R.id.newTaskComposeFragment, bundleOf("id" to id))
             .createPendingIntent()
 
-    private fun postponeIntent(context: Context, item: TodoItem): PendingIntent =
+    private fun postponeIntent(context: Context, id: String): PendingIntent =
         PendingIntent.getBroadcast(
-            context, item.id.hashCode(),
+            context, id.hashCode(),
             Intent(context, NotificationPostponeReceiver::class.java).apply {
-                putExtra("item", item.toString())
+                putExtra("id", id)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

@@ -5,15 +5,18 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.todoapp.data.repository.RepositoryImpl
 import com.example.todoapp.ui.stateholders.LoginViewModel
 import com.example.todoapp.ui.stateholders.MainViewModel
+import com.example.todoapp.ui.stateholders.ManageTaskComposeViewModel
 import com.example.todoapp.ui.stateholders.ManageTaskViewModel
 import com.example.todoapp.utils.internetConnection.NetworkConnectivityObserver
+import com.example.todoapp.utils.notifications.NotificationsSchedulerImpl
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
 class ViewModelFactory @Inject constructor(
     private val repositoryImpl: RepositoryImpl,
     private val connectivityObserver: NetworkConnectivityObserver,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
+    private val schedulerImpl: NotificationsSchedulerImpl
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -23,11 +26,13 @@ class ViewModelFactory @Inject constructor(
                 MainViewModel(repositoryImpl, connectivityObserver, coroutineScope)
             }
             LoginViewModel::class.java -> {
-                LoginViewModel(repositoryImpl, coroutineScope)
+                LoginViewModel(repositoryImpl, coroutineScope, schedulerImpl)
             }
-
             ManageTaskViewModel::class.java -> {
                 ManageTaskViewModel(repositoryImpl, coroutineScope)
+            }
+            ManageTaskComposeViewModel::class.java -> {
+                ManageTaskComposeViewModel(repositoryImpl, coroutineScope)
             }
 
             else -> {

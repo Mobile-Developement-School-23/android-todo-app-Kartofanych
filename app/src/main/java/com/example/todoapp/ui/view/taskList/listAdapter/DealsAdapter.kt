@@ -14,7 +14,6 @@ class DealsAdapter(
     private val onItemListener: OnItemListener
 ) : ListAdapter<TodoItem, ViewHolder>(DiffUtilCallbackImpl()) {
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder.create(parent)
 

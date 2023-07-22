@@ -76,6 +76,12 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun addItem(todoItem: TodoItem){
+        coroutineScope.launch(Dispatchers.IO) {
+            repository.addItem(todoItem.copy())
+        }
+    }
+
     fun deleteItem(todoItem: TodoItem) {
         coroutineScope.launch(Dispatchers.IO) {
             repository.deleteItem(todoItem)

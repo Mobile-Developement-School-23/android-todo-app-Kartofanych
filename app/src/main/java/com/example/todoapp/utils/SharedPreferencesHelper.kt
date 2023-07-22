@@ -21,7 +21,6 @@ class SharedPreferencesHelper @Inject constructor(
         editor = sharedPreferences.edit()
         if (!sharedPreferences.contains("UID")) {
             editor.putString("UID", UUID.randomUUID().toString())
-            editor.apply()
         }
 
         if (!sharedPreferences.contains("token")) {
@@ -30,9 +29,16 @@ class SharedPreferencesHelper @Inject constructor(
 
         if(!sharedPreferences.contains("mode")){
             editor.putString("mode", "system")
-            editor.apply()
         }
 
+        if(!sharedPreferences.contains("notifications")){
+            editor.putString("notifications", "hey")
+        }
+
+        if(!sharedPreferences.contains("notification_permission")){
+            editor.putString("notification_permission", "none")
+        }
+        editor.apply()
 
         Constants.phoneId = getPhoneID()
     }
@@ -80,6 +86,35 @@ class SharedPreferencesHelper @Inject constructor(
         editor.apply()
     }
 
+    fun addNotification(id:String):String{
+        editor.putString("notifications", getNotificationsId()+" $id")
+        editor.apply()
+        return sharedPreferences.getString("notifications", "").toString()
+    }
+    fun removeNotification(id:String){
+        val s = getNotificationsId()
+        val arr = ArrayList(s.split(" "))
+        if(arr.contains(id)){
+            arr.remove(id)
+        }
+        val res = arr.fold("") { previous, next -> "$previous $next" }
+        editor.putString("notifications", res)
+        editor.apply()
+    }
+    fun getNotificationsId():String{
+        return sharedPreferences.getString("notifications", "").toString()
+    }
+
+    fun putNotificationPermission(permitted:Boolean) {
+        when(permitted){
+            true -> editor.putString("notifications_permission", "true")
+            false -> editor.putString("notifications_permission", "false")
+        }
+        editor.apply()
+    }
+    fun getNotificationPermission() : String {
+       return sharedPreferences.getString("notifications_permission", "none").toString()
+    }
     private fun getPhoneID():String = sharedPreferences.getString("UID", "uid").toString()
     fun putToken(token: String) {
         editor.putString("token", token)

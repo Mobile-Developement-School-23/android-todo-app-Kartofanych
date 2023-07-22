@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="Автозагрузка в фоне"
+            android:text="Показ уведомлений"
             style="@style/H1"
             android:layout_marginStart="20dp"
             />
@@ -59,6 +59,7 @@
             android:layout_alignParentEnd="true"
             android:textColor="@color/blue"
             android:layout_marginEnd="20dp"
+            android:clickable="false"
             />
     </RelativeLayout>
 
@@ -98,8 +99,8 @@
     </RelativeLayout>
     <TextView
         android:id="@+id/log_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
         android:layout_centerVertical="true"
         android:text="Выйти"
         style="@style/H2Button"
@@ -107,9 +108,8 @@
         android:layout_alignParentEnd="true"
         app:layout_constraintTop_toBottomOf="@+id/theme"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:gravity="center_vertical"
         />
 
 
