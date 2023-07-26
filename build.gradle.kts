@@ -1,11 +1,11 @@
 buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
     dependencies {
         classpath(libs.navigation.safe.args.gradle.plugin)
         classpath(libs.coroutines)
+    }
+    repositories {
+        google()
+        mavenCentral()
     }
 }
 
@@ -14,4 +14,5 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.navigation.safe.args) apply false
+    alias(libs.plugins.android.library) apply false
 }

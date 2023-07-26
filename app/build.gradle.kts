@@ -3,58 +3,67 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.navigation.safe.args)
+    id("upload-tg-plugin")
+
+}
+
+pluginExtension {
+    enableSizeCheck.set(true)
+    fileSizeLimitInMb.set(15)
 }
 
 android {
-    namespace 'com.example.todoapp'
-    compileSdk 33
+    namespace = "com.example.todoapp"
+    compileSdk = (34)
 
     defaultConfig {
-        applicationId "com.example.todoapp"
-        minSdk 26
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
-        manifestPlaceholders = [YANDEX_CLIENT_ID:"0d0970774e284fa8ba9ff70b6b06479a"]
+        applicationId = "com.example.todoapp"
+        minSdk = (26)
+        targetSdk = (34)
+        versionCode = (1)
+        versionName = "1.0"
+        manifestPlaceholders["YANDEX_CLIENT_ID"] = "0d0970774e284fa8ba9ff70b6b06479a"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
-            useSupportLibrary true
+            useSupportLibrary = true
         }
     }
 
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug{
+            /*isShrinkResources = true
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )*/
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = "17"
     }
-    sourceSets {
-        main {
-            kotlin {
-                srcDirs += 'build/generated/source/navigation-args/'
-            }
-        }
-    }
+
     buildFeatures {
         viewBinding = true
-        compose true
+        compose = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.5"
     }
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
+
 }
 
 dependencies {
@@ -111,4 +120,7 @@ dependencies {
     // Compose
     implementation(libs.bundles.compose.core)
     implementation(libs.bundles.compose.material)
+
+    //Work manager
+    implementation(libs.work.manager)
 }

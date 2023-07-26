@@ -2,12 +2,15 @@
 core-ktx = "1.10.1"
 appcompat = "1.6.1"
 material = "1.9.0"
-constraintlayout = "2.1.4"
-coordinatorlayout = "1.2.0"
-swiperefreshlayout = "1.2.0-alpha01"
 lifecycle-runtime-ktx = "2.3.1"
 agp = "8.0.2"
 kotlin = "1.8.20"
+ktor = "2.2.3"
+
+#layouts
+constraintlayout = "2.1.4"
+coordinatorlayout = "1.2.0"
+swiperefreshlayout = "1.2.0-alpha01"
 
 #Compose
 compose = "1.4.3"
@@ -71,9 +74,11 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 
 #coroutines
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 
+#Gradle plugins
 agp = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 
 #Junit
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -117,6 +122,9 @@ dagger-android-support = { group = "com.google.dagger", name = "dagger-android-s
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 dagger-android-compiler = { group = "com.google.dagger", name = "dagger-android-processor", version.ref = "dagger" }
 
+#WorkManager
+work-manager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work_manager" }
+
 #Layouts
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coordinatorlayout", version.ref = "coordinatorlayout" }
@@ -132,14 +140,23 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 #OkHttp
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "logging" }
 
+#Ktor
+ktor-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation-safe-args-gradle-plugin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 
 [bundles]
+
+ktor = ["ktor-okhttp", "ktor-negotiation", "ktor-serialization", "ktor-logging"]
 
 navigation = ["navigation-ui-ktx", "navigation-fragment-ktx"]
 
