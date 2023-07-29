@@ -15,8 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Keyboard
-import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -102,9 +103,9 @@ fun TimePickerSwitchable(
                                     .zIndex(5f),
                                 onClick = { showingPicker.value = !showingPicker.value }) {
                                 val icon = if (showingPicker.value) {
-                                    Icons.Outlined.Keyboard
+                                    Icons.Outlined.KeyboardArrowUp
                                 } else {
-                                    Icons.Outlined.Schedule
+                                    Icons.Outlined.KeyboardArrowDown
                                 }
                                 Icon(
                                     icon,
@@ -138,7 +139,6 @@ fun TimePickerSwitchable(
                             periodSelectorSelectedContainerColor = YandexTodoTheme.colors.backPrimary,
                             clockDialUnselectedContentColor = YandexTodoTheme.colors.labelPrimary
                         ),
-
                     )
                 } else {
                     TimeInput(
