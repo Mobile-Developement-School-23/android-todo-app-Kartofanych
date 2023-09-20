@@ -1,9 +1,3 @@
-# ToDoApp Nasybullin Karim <br />
-save offline data - Room <br />
-work with server - Retrofit2 <br />
-architecture - MVVM <br />
-dependency injection - Dagger2 <br />
-# tg - @karim_nasybullin
 ![Repo Size](https://img.shields.io/github/languages/code-size/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) ![TOP_LANGUAGE](https://img.shields.io/github/languages/top/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) 
     
 # To-Do app
@@ -22,9 +16,11 @@ Project is made to learn following topics:
 - Deep links
 
 ## Screenshots
-<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122425_ToDoApp.jpg" height="300px"/>
-<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122438_ToDoApp.jpg" height="300px" />
-<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122457_ToDoApp.jpg" height="300px"/>
+<p float="left">
+  <img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122425_ToDoApp.jpg" height="500px"/>
+  <img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122438_ToDoApp.jpg" height="500px" />
+  <img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122457_ToDoApp.jpg" height="500px"/>
+</p>
 
 
 ## Built With
