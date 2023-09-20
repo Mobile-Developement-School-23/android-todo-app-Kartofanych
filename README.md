@@ -1,6 +1,14 @@
 ![Repo Size](https://img.shields.io/github/languages/code-size/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) ![TOP_LANGUAGE](https://img.shields.io/github/languages/top/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) 
     
 # To-Do app
+To-do list app with list of task, their deadlines and description. 
+Some features for user:
+- Creating task
+- Deleting task
+- Changing task
+- Receiving notifications
+- Offline work
+- Yandex login
 
 ## Description
 
@@ -14,6 +22,7 @@ Project is made to learn following topics:
 - Coroutines/Coroutine Flow
 - Yandex Authorization
 - Deep links
+- Notifications
 
 ## Screenshots
 <p float="left">
