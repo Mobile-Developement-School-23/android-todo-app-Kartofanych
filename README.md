@@ -39,5 +39,5 @@ Unfortunately, currently app is unavailavle, because backend is down.
 
 Project was made in Yandex Develop School
 
-<a href="https://t.me/karim_nasybullin"><img src="https://img2.pngdownload.id/20180514/brw/kisspng-computer-icons-telegram-logo-5afa3a71637636.6500178315263484014074.jpg" height="40px" width="40px" /></a>
+<a href="https://t.me/karim_nasybullin"><img src="https://img.shields.io/static/v1?message=Telegram&logo=telegram&label=&color=2CA5E0&logoColor=white&labelColor=&style=for-the-badge" height="40px" width="40px" /></a>
 
