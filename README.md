@@ -25,7 +25,7 @@ Project is made to learn following topics:
 
 ## Built With
 
-<a href="https://www.android.com/"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/android/android-original.svg" height="40px" width="40px" /></a><a href="https://kotlinlang.org/"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/kotlin/kotlin-original.svg" height="40px" width="40px" /></a>
+<a href="https://kotlinlang.org/"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/kotlin/kotlin-original.svg" height="40px" width="40px" /></a>
 
 ## Usage
 
