@@ -22,9 +22,9 @@ Project is made to learn following topics:
 - Deep links
 
 ## Screenshots
-<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122425_ToDoApp.jpg" />
-<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122438_ToDoApp.jpg" />
-<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122457_ToDoApp.jpg" />
+<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122425_ToDoApp.jpg" height="300px"/>
+<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122438_ToDoApp.jpg" height="300px" />
+<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122457_ToDoApp.jpg" height="300px"/>
 
 
 ## Built With
@@ -39,5 +39,5 @@ Unfortunately, currently app is unavailavle, because backend is down.
 
 Project was made in Yandex Develop School
 
-<a href="https://t.me/karim_nasybullin"><img src="https://img.shields.io/static/v1?message=Telegram&logo=telegram&label=&color=2CA5E0&logoColor=white&labelColor=&style=for-the-badge" height="40px" width="40px" /></a>
+<a href="https://t.me/karim_nasybullin"><img src="https://img.shields.io/static/v1?message=Telegram&logo=telegram&label=&color=2CA5E0&logoColor=white&labelColor=&style=for-the-badge" height="40px" /></a>
 
