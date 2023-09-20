@@ -4,7 +4,7 @@ work with server - Retrofit2 <br />
 architecture - MVVM <br />
 dependency injection - Dagger2 <br />
 # tg - @karim_nasybullin
-![Repo Size](https://img.shields.io/github/languages/code-size/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) ![TOP_LANGUAGE](https://img.shields.io/github/languages/top/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) ![FORKS](https://img.shields.io/github/forks/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge&social) 
+![Repo Size](https://img.shields.io/github/languages/code-size/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) ![TOP_LANGUAGE](https://img.shields.io/github/languages/top/Kartofanych/android-todo-app-MVVM.svg?style=for-the-badge) 
     
 # To-Do app
 
@@ -22,9 +22,9 @@ Project is made to learn following topics:
 - Deep links
 
 ## Screenshots
-<img src="https://drive.google.com/file/d/1PAzaMoCEyLCRW8aldht5p5dN1yfQoiZU/view?usp=sharing" />
-<img src="https://drive.google.com/file/d/1LFGXqaQkDs5UqbS6OFU0E7O4REGl2qOQ/view?usp=sharing" />
-<img src="https://drive.google.com/file/d/1ztBG6iKKkePv8elWuqux7IK0vbThkVQ3/view?usp=sharing" />
+<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122425_ToDoApp.jpg" />
+<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122438_ToDoApp.jpg" />
+<img src="https://github.com/Kartofanych/android-todo-app-MVVM/blob/read_me/Screenshot_20230920_122457_ToDoApp.jpg" />
 
 
 ## Built With
@@ -35,11 +35,9 @@ Project is made to learn following topics:
 
 Unfortunately, currently app is unavailavle, because backend is down.
 
-
-## License
-
-<a href="https://choosealicense.com/licenses/unlicense/"><img src="https://raw.githubusercontent.com/johnturner4004/readme-generator/master/src/components/assets/images/unlicense.svg" height=40 />The Unlicense</a>
-
 ## Acknowledgements
 
 Project was made in Yandex Develop School
+
+<a href="https://t.me/karim_nasybullin"><img src="https://img2.pngdownload.id/20180514/brw/kisspng-computer-icons-telegram-logo-5afa3a71637636.6500178315263484014074.jpg" height="40px" width="40px" /></a>
+
